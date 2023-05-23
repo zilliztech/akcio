@@ -1,0 +1,3 @@
+langchain>=0.0.151
+openai
+gradio>=3.30.0
