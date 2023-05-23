@@ -4,38 +4,51 @@ LLM is the key component to ensure the functionality of chatbot. Besides providi
 
 ## ChatAI
 
-The chatbot uses `ChatAI` module to generate responses as the final answer, which will be returned to the user end. In order to adapt the Langchain agent, this must be a Langchain `BaseLanguageModel`.
+The chatbot uses `ChatAI` module to generate responses as the final answer, which will be returned to the user end. In order to adapt the Langchain agent, this must be a Langchain `BaseChatModel`.
 
 By default, it uses `ChatOpenAI` from Langchain, which calls the chat service of OpenAI.
 Refer to [Langchain Models](https://python.langchain.com/en/latest/modules/models.html) for more LLM Yoptions.
 
-
-You can also customize `ChatAI` by modifying `chat_ai.py`:
+### Usage Example
 
 ```python
-from langchain.base_language import BaseLanguageModel
-from langchain.schema import LLMResult, PromptValue
+from langchain.schema import HumanMessage
+
+from chat_ai import ChatAI
+
+llm = ChatAI(temperature=0.0)
+messages = [HumanMessage(content='This is a test user message.')]
+resp = llm(messages)
+```
+
+### Customization
+
+You can customize `ChatAI` by modifying `chat_ai.py`:
+
+```python
+from typing import List, Optional
+
+from langchain.callbacks.manager import AsyncCallbackManagerForLLMRun, CallbackManagerForLLMRun
+from langchain.schema import BaseMessage, ChatResult
 
 
-def test_model(prompts):
-    return "test answer"
-
-class ChatAI(BaseLanguageModel):
-    def generate_prompt(
-        self,
-        prompts: List[PromptValue]
-    ) -> LLMResult:
-        """Take in a list of prompt values and return an LLMResult."""
-        output = self.agenerate_prompt(prompts=prompts)
-        return output
-
-    async def agenerate_prompt(
-        self,
-        prompts: List[PromptValue]
-    ) -> LLMResult:
-        llm_output = test_model(prompts)
-        output = LLMResult(generations=generations, llm_output=llm_output)
-        return output
+class ChatAI(BaseChatModel):
+    def _generate(self,
+                  messages: List[BaseMessage],
+                  stop: Optional[List[str]] = None,
+                  run_manager: Optional[CallbackManagerForLLMRun] = None
+                  ) -> ChatResult:
+                  # Your method here
+                  pass
+    
+    async def _agenerate(
+            self,
+            messages: List[BaseMessage],
+            stop: Optional[List[str]] = None,
+            run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
+            ) -> ChatResult:
+            # Your method here
+            pass
 ```
 
 ## QuestionGenerator

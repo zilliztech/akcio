@@ -8,14 +8,14 @@
 
 Play online:
 
-- product: [OSSChat](osschat.io)
-- demo: [HuggingFace Space] Coming soon ...
+<img src='pics/gradio_ui.png' width='75%' alignment='centre'>
 
-![gradio_ui](pics/gradio_ui.png)
+- product: [OSSChat](osschat.io)
+- demo: HuggingFace Space (coming soon ...)
 
 ## Overview
 
-![overview](pics/osschat.png)
+<img src='pics/osschat.png' width='75%' alignment='centre'>
 
 ### Modules
 
@@ -45,7 +45,7 @@ Coming soon ...
 
 1. Downloads
     ```shell
-    $ git clone https://github.com/jaelgu/akcio.git
+    $ git clone https://github.com/zilliztech/akcio.git
     $ cd akcio
     ```
 
@@ -57,22 +57,8 @@ Coming soon ...
 3. Configure modules
     - Agent
 
-        The default ChatAgent is based on Langchain ConversationChatAgent, using [customized prompts](agent/prompt.py).
-        You can modify prompts for your scenarios.
-
-        ```python
-        # Set system prompt
-        PREFIX = """Your system prompt goes here."""
-
-        # Define response format in user message
-        FORMAT_INSTRUCTIONS = """Your instructions for format response here."""
-
-        # Pass tools like search in user message
-        SUFFIX = """Your method to pass tools like search here."""
-
-        # Pass search results in user message
-        TEMPLATE_TOOL_RESPONSE = """Your method to pass search results and query here."""
-        ```
+        It will use default agents and prompts.
+        If you want to configure prompts or customize agent modules, refer to [agent](./agent) for guide.
 
     - LLM
 
@@ -82,18 +68,12 @@ Coming soon ...
         ```shell
         $ export OPENAI_API_KEY=your_keys_here
         ```
+
+        If you want to customize llm modules, you can refer to [llm](./llm) for guide.
         
     - Embedding
 
-        By default, the embedding module uses Langchain HuggingFaceEmbeddings to convert text inputs to vectors. Modify [embedding configs](embedding/config.py) to configure it, like changing models or disable normalization:
-
-        ```python
-        # Text embedding
-        textencoder_config = {
-            'model': 'multi-qa-mpnet-base-cos-v1',
-            'norm': True
-        }
-        ```
+        By default, the embedding module uses Langchain HuggingFaceEmbeddings to convert text inputs to vectors.
 
     - Store
 
@@ -127,7 +107,7 @@ Coming soon ...
     
     You can open url https://localhost:8900/docs in browser to access the web service.
 
-    ![fastapi](pics/fastapi.png)
+    <img src='pics/fastapi.png' width='75%' alignment='centre'>
 
     > `/`: Check service status
     >
@@ -140,18 +120,25 @@ Coming soon ...
 
 ## Load data
 
-### Step 1. Download or crawl (optional)**
+The `insert` function in [operations](operations.py) loads project data from url(s) or file(s).
 
-If you need download or crawl data from Internet, refer to [spider-nest]().  
+There are 2 options to load project data:
 
-If you want to load local files, skip this step.
+### Option 1: Offline
 
+You can run python script below to load data:
 
-### Step 2. Load project data
+```python
+from operations import insert
 
-There are 3 options to load project data:
+# Insert data from file (use list of files as input for bulk insert)
+insert(data_src='path/to/doc', project='project_name', source_type='file')
 
-**Option 1. Online Service**
+# Insert data from url (use list of urls as input for bulk insert)
+insert(data_src='link/to/doc', project='project_name', source_type='url')
+```
+
+### Option 2. Online
 
 When the [FastAPI service](#deployment) is up, you can use the POST request `http://localhost:8900/project/add` to load data.
 
@@ -164,7 +151,3 @@ Parameters:
 ```
 
 This method is only recommended to load a small amount of data, but **not for a large amount of data**.
-
-**Option 2. Command line**
-
-Coming soon ...
