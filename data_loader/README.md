@@ -63,3 +63,80 @@ class DataLoader:
       doc_chunks = self.splitter(docs)
       return doc_chunks
 ```
+
+### Load via third-party loaders
+
+If you want to use third-party loaders, you can add your `source_type`, and define your custom load function.
+
+#### Using Langchain Loader
+   
+For example, if you want to load arxiv, you can use [Langchain Arxiv Loader](https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/arxiv.html).
+```python
+from langchain.text_splitter import TextSplitter, RecursiveCharacterTextSplitter
+from .config import dataloader_config
+
+
+CHUNK_SIZE = dataloader_config.get('chunk_size', 300)
+
+class DataLoader:
+    '''Load data from urls or files (paths or file-like objects) as a list of doc chunks'''
+    def __init__(self,
+                 splitter: TextSplitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE)
+                 ):
+        self.splitter = splitter
+
+    def __call__(self, data_src, source_type: str = 'file') -> List[str]:
+        if not isinstance(data_src, list):
+            data_src = [data_src]
+        if source_type == 'arxiv':
+            docs = self.from_arxiv(data_src)
+        else:
+            raise AttributeError('Invalid source type. Only support "file" or "url".')
+
+        docs = self.splitter.split_documents(docs)
+        return [str(doc.page_content) for doc in docs]
+    
+    def from_arxiv(self, data_src, **kwargs):
+        from langchain.document_loaders import ArxivLoader
+        docs = ArxivLoader(query=data_src, **kwargs).load()
+        return docs
+
+```
+
+#### Using LlammaIndex Reader  
+
+For example, if you want to load from discord, you can use [LlammaIndex Discord Reader](https://gpt-index.readthedocs.io/en/latest/examples/data_connectors/DiscordDemo.html).
+
+```python
+from langchain.text_splitter import TextSplitter, RecursiveCharacterTextSplitter
+from .config import dataloader_config
+
+
+CHUNK_SIZE = dataloader_config.get('chunk_size', 300)
+
+class DataLoader:
+    '''Load data from urls or files (paths or file-like objects) as a list of doc chunks'''
+    def __init__(self,
+                 splitter: TextSplitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE)
+                 ):
+        self.splitter = splitter
+
+    def __call__(self, data_src, source_type: str = 'file') -> List[str]:
+        if not isinstance(data_src, list):
+            data_src = [data_src]
+        if source_type == 'arxiv':
+            docs = self.from_discord(data_src)
+        else:
+            raise AttributeError('Invalid source type. Only support "file" or "url".')
+
+        docs = self.splitter.split_documents(docs)
+        return [str(doc.page_content) for doc in docs]
+    
+    def from_discord(self, channel_ids):
+        from llama_index import DiscordReader
+        discord_token = "YOUR_DISCORD_TOKEN"
+        channel_ids = [channel_ids]
+        docs = DiscordReader(discord_token=discord_token).load_data(channel_ids=channel_ids)
+        return docs
+
+```
