@@ -50,12 +50,12 @@ def chat(session_id, project, question):
     #     logger.error(f'Failed to add history:\n{e}')
     return final_answer
 
-def insert(data_src, project):
+def insert(data_src, project, source_type: str = 'file'):
     '''Load project docs will load docs from data source and then insert doc embeddings into the project table in the vector store.
     If there is no project table, it will create one.
     '''
     vector_db = VectorStore(table_name=project, embedding_func=encoder)
-    docs = load_data(data_src=data_src)
+    docs = load_data(data_src=data_src, source_type=source_type)
     num = vector_db.insert(docs)
     return num
 
