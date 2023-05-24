@@ -13,7 +13,7 @@ from agent import ChatAgent
 logger = logging.getLogger(__name__)
 
 encoder = TextEncoder()
-chat_llm = ChatAI(temperature=0)
+chat_llm = ChatAI()
 load_data = DataLoader()
 
 

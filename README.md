@@ -1,19 +1,26 @@
-# Akcio: Chat with Knowledge
+# Akcio: Enhancing LLM-Powered ChatBot with CVP Stack
+
+[OSSChat](osschat.io) |
+[Documents](https://github.com/zilliztech/akcio/wiki) |
+[Contact](https://zilliz.com/contact-sales) |
+[Liscense]()
+
+Index
 
 - [Overview](#overview)
 - [Deployment](#deployment)
-    - [Option 1: Docker Image](#option-1-docker-image)
-    - [Option 2: Source Code](#option-2-source-code)
 - [Load Data](#load-data)
 
-Play online:
+ChatGPT has constraints due to its limited knowledge base, sometimes resulting in hallucinating answers when asked about unfamiliar topics. We are introducing the new AI stack, ChatGPT+Vector database+prompt-as-code, or the CVP Stack, to overcome this constraint.
 
-<img src='pics/gradio_ui.png' width='75%' alignment='centre'>
+We have built [OSSChat](https://osschat.io) as a working demonstration of the CVP stack. Now we are presenting the technology behind OSSChat in this repository with a code name of Akcio.
 
-- product: [OSSChat](osschat.io)
-- demo: HuggingFace Space (coming soon ...)
+With this project, you are able to build a knowledge-enhanced ChatBot using LLM service like ChatGPT. 
+By the end, you will learn how to start a backend service using FastAPI, which provides standby APIs to support further applications. Alternatively, we show how to use Gradio to build an online demo with user interface.
 
 ## Overview
+
+The system is built on top of Langchain Agent using vector database for semantic search and memory storage for context support.
 
 <img src='pics/osschat.png' width='75%' alignment='centre'>
 
@@ -24,8 +31,7 @@ Play online:
     - Other agents (todo)
 - [LLM](./llm)
     - ChatAI
-    - QuestionGenerator (todo)
-    - QueryModifier (todo)
+    - QuestionGenerator
 - [Embedding](./embedding/)
     - TextEncoder
     - Other encoders (todo)
@@ -36,12 +42,6 @@ Play online:
 - [DataLoader](./data_loader/)
 
 ## Deployment
-
-### Option 1: Docker Image
-
-Coming soon ...
-
-### Option 2: Source Code
 
 1. Downloads
     ```shell
@@ -63,7 +63,6 @@ Coming soon ...
     - LLM
 
         The default ChatAI module uses OpenAI service, which requires an [OpenAI API key](https://platform.openai.com/account/api-keys).
-        Skip this step for a customized system not using OpenAI.
 
         ```shell
         $ export OPENAI_API_KEY=your_keys_here
@@ -73,7 +72,12 @@ Coming soon ...
         
     - Embedding
 
-        By default, the embedding module uses Langchain HuggingFaceEmbeddings to convert text inputs to vectors.
+        By default, the embedding module uses Langchain HuggingFaceEmbeddings to convert text inputs to vectors. Here are some information about the default embedding method:
+        - model: [multi-qa-mpnet-base-cos-v1](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-cos-v1)(420MB)
+        - dim: 768
+        - normalization: True
+
+        If you want to customize embedding method, you can refere to [embedding](./embedding) for guide.
 
     - Store
 
