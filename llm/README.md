@@ -7,7 +7,27 @@ LLM is the key component to ensure the functionality of chatbot. Besides providi
 The chatbot uses `ChatAI` module to generate responses as the final answer, which will be returned to the user end. In order to adapt the Langchain agent, this must be a Langchain `BaseChatModel`.
 
 By default, it uses `ChatOpenAI` from Langchain, which calls the chat service of OpenAI.
-Refer to [Langchain Models](https://python.langchain.com/en/latest/modules/models.html) for more LLM Yoptions.
+Refer to [Langchain Models](https://python.langchain.com/en/latest/modules/models.html) for more LLM options.
+
+### Configuration
+
+You can modify [config.py](./config.py) to configure the ChatAI used to build the chat agent.
+By default, it calls OpenAI Chat service using GPT-3.5 model and sets temperature to 0.
+You can find more parameters at [OpenAI API Reference](https://platform.openai.com/docs/api-reference/chat).
+
+```python
+chatai_configs = {
+    'model_name': 'gpt-3.5-turbo',
+    'temperature': 0,
+    # 'openai_api_key':'your_openai_key_goes_here',  # will use enviornment variable if not set in configs
+    # 'openai_organization': ‘your_organization_goes_here’,  # will use enviornment variable if not set in configs
+    # 'request_timeout': 600,  # in seconds
+    # 'max_retries': 3,
+    # 'streaming': False,
+    # 'n': 1,
+    # 'max_tokens': 1000
+}
+```
 
 ### Usage Example
 
@@ -52,9 +72,5 @@ class ChatAI(BaseChatModel):
 ```
 
 ## QuestionGenerator
-
-Todo
-
-## QueryModifier
 
 Todo
