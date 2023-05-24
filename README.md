@@ -1,9 +1,9 @@
 # Akcio: Enhancing LLM-Powered ChatBot with CVP Stack
 
-[OSSChat](osschat.io) |
+[OSSChat](https://osschat.io) |
 [Documents](https://github.com/zilliztech/akcio/wiki) |
 [Contact](https://zilliz.com/contact-sales) |
-[Liscense]()
+[Liscense](#liscense)
 
 Index
 
@@ -155,3 +155,9 @@ Parameters:
 ```
 
 This method is only recommended to load a small amount of data, but **not for a large amount of data**.
+
+
+<br />
+
+---
+## Liscense
