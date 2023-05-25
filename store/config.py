@@ -7,11 +7,9 @@ vectordb_config = {
 
 # Scalar db configs
 scalardb_config = {
-    'host': 'localhost',
-    'port': 9200,
+    'hosts': 'https://localhost:9200',
     # 'ca_certs': 'path/to/ca_certs',
-    'user': 'elastic',
-    'password': 'es_password_goes_here'
+    'basic_auth': ('user', 'password')
 }
 
 # Memory db configs
