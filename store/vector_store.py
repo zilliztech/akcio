@@ -1,8 +1,9 @@
 import logging
-from typing import List
+from typing import Optional, Any, Tuple, List
 
 from langchain.vectorstores import Milvus
 from langchain.embeddings.base import Embeddings
+from langchain.docstore.document import Document
 
 import sys
 import os
@@ -37,11 +38,56 @@ class VectorStore(Milvus):
             collection_name=self.collection_name,
             connection_args=self.connect_args,
         )
+
+    def similarity_search_with_score_by_vector(
+        self,
+        embedding: List[float],
+        k: int = 4,
+        param: Optional[dict] = None,
+        expr: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
+    ) -> List[Tuple[Document, float]]:
+        if self.col is None:
+            raise RuntimeError("No existing collection to search.")
+
+        if param is None:
+            param = self.search_params
+
+        # Determine result metadata fields.
+        output_fields = self.fields[:]
+        output_fields.remove(self._vector_field)
+
+        # Perform the search.
+        res = self.col.search(
+            data=[embedding],
+            anns_field=self._vector_field,
+            param=param,
+            limit=k,
+            expr=expr,
+            output_fields=output_fields,
+            timeout=timeout,
+            **kwargs,
+        )
+        # Organize results.
+        ret = []
+        if 'doc' in output_fields:
+            doc_field = 'doc'
+        else:
+            doc_field = self._text_field
+        for result in res[0]:
+            meta = {x: result.entity.get(x) for x in output_fields}
+            doc = Document(page_content=meta.pop(doc_field), metadata=meta)
+            pair = (doc, result.score)
+            ret.append(pair)
+
+        return ret
         
-    def insert(self, docs: List[str]):
+    def insert(self, data: List[str], metadatas: Optional[list[dict]] = None):
         '''Insert data'''
         pks = self.add_texts(
-            texts=docs
+            texts=data,
+            metadatas=metadatas
         )
         return len(pks)
 
@@ -49,7 +95,8 @@ class VectorStore(Milvus):
         '''Query data'''
         res_docs = self.similarity_search(
             query=query,
-            k=TOP_K
+            k=TOP_K,
+            param=''
         )
         return res_docs
     

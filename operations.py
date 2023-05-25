@@ -50,6 +50,7 @@ def chat(session_id, project, question):
     #     logger.error(f'Failed to add history:\n{e}')
     return final_answer
 
+
 def insert(data_src, project, source_type: str = 'file'):
     '''Load project docs will load docs from data source and then insert doc embeddings into the project table in the vector store.
     If there is no project table, it will create one.
@@ -76,7 +77,8 @@ def drop(project):
     except Exception as e:
         logger.error(f'Failed to clean memory for the project:\n{e}')
         raise RuntimeError(e)
-    
+
+ 
 def check(project):
     '''Check existences of project tables in both vector and memory stores.'''
     try:
@@ -101,7 +103,8 @@ def get_history(project, session_id):
     except Exception as e:
         logger.error(f'Failed to clean memory for the project:\n{e}')
         raise RuntimeError(e)
-    
+
+
 def load(document_strs: List[str], project: str):
     '''Load doc embeddings to project table in vector store given a list of doc chunks.'''
     vector_db = VectorStore(table_name=project, embedding_func=encoder)
@@ -119,10 +122,10 @@ if __name__ == '__main__':
     # count = insert(data_src=data_src, project=project)
     # print(check(project))
 
-    answer = chat(project=project, session_id=session_id, question=question)
-    print(answer)
-    print(check(project))
-    print(get_history(project, session_id))
-
-    # drop(project=project)
+    # answer = chat(project=project, session_id=session_id, question=question)
+    # print(answer)
     # print(check(project))
+    # print(get_history(project, session_id))
+
+    drop(project=project)
+    print(check(project))
