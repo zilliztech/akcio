@@ -1,7 +1,6 @@
 from typing import Any, Iterable
 
 import elasticsearch
-from langchain.schema import BaseRetriever
 from langchain.retrievers import ElasticSearchBM25Retriever
 
 from .config import scalardb_config
@@ -11,7 +10,6 @@ CLIENT = elasticsearch.Elasticsearch(**scalardb_config)
 
 class ScalarStore(ElasticSearchBM25Retriever):
     def __init__(self, index_name: str, client: Any = CLIENT):
-        assert isinstance(self, BaseRetriever), 'Invalid ScalarStore, must be a Langchain BaseRetrieval'
         super().__init__(client=client, index_name=index_name)
 
     def insert(self, data: Iterable[str]):
