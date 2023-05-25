@@ -18,6 +18,23 @@ The `VectorStore` is storage of embeddings. It should follow API design below to
 
 By default, it uses `Milvus` in Langchain. You can modify `config.py` to configure it.
 
+## ScalarStore
+
+The `ScalarStore` is storage of scalar data, which allows information retrieval other than semantic search, such as keyword match. It should follow API design below to adapt operations in chatbot:
+
+**`ScalarStore(index_name: str, client: CLIENT)`**
+
+**Parameters:**
+
+- `index_name (str)`: table name in scalar database
+- `client`: method to connect database
+
+**Methods:**
+
+- `insert`: data insert, given a list of documents, returns how many data entities inserted
+- `search`: scalar search, given a query in string, returns a list of useful documents
+
+By default, it uses `ElasticSearch BM25` in Langchain. You can modify `config.py` to configure connection args.
 
 ## MemoryStore
 

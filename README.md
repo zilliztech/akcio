@@ -82,15 +82,25 @@ The system is built on top of Langchain Agent using vector database for semantic
     - Store
 
         - Vector Store: You need to prepare the service of vector database in advance. For example, you can refer to [Milvus Documents](https://milvus.io/docs) or [Zilliz Cloud](https://zilliz.com/doc/quick_start) to learn about how to start a Milvus service.
+        - Scalar Store (Optional): This is optional, only work when elastic is enabled in operation. To prepare the Elasticsearch service, you can refer to its [official document](https://www.elastic.co/).
         - Memory Store: You need to prepare the database for memory storage as well. By default, the memory store uses [Postgresql](https://www.postgresqltutorial.com) which requires installation.
 
-        You can configure both stores via [config.py](store/config.py):
+        You can configure all stores via [config.py](store/config.py), including set up connection arguments for each database:
         ```python
         # Vector db configs
         vectordb_config = {
             'host': 'localhost',
             'port': 19530,
             'top_k': 10,
+        }
+
+        # Scalar db configs (optional)
+        scalardb_config = {
+            'host': 'localhost',
+            'port': 9200,
+            # 'ca_certs': 'path/to/ca_certs',
+            'user': 'elastic',
+            'password': 'es_password_goes_here'
         }
 
         # Memory db configs
