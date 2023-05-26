@@ -1,0 +1,12 @@
+filters:
+  ".*":
+    reviewers:
+      - jaelgu
+      - zc277584121
+      - soothing-rain
+      - xiaofan-luan
+    approvers:
+      - jaelgu
+      - zc277584121
+      - soothing-rain
+      - xiaofan-luan 
