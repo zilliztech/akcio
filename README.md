@@ -3,7 +3,7 @@
 [OSSChat](https://osschat.io) |
 [Documents](https://github.com/zilliztech/akcio/wiki) |
 [Contact](https://zilliz.com/contact-sales) |
-[Liscense](#liscense)
+[Liscense](#license)
 
 Index
 
@@ -31,7 +31,6 @@ The system is built on top of Langchain Agent using vector database for semantic
     - Other agents (todo)
 - [LLM](./llm)
     - ChatAI
-    - QuestionGenerator
 - [Embedding](./embedding/)
     - TextEncoder
     - Other encoders (todo)
@@ -40,6 +39,8 @@ The system is built on top of Langchain Agent using vector database for semantic
     - MemoryStore
     - Other stores (todo)
 - [DataLoader](./data_loader/)
+    - DataParser
+    - QuestionGenerator
 
 ## Deployment
 
@@ -140,17 +141,9 @@ There are 2 options to load project data:
 
 ### Option 1: Offline
 
-You can run python script below to load data:
-
-```python
-from operations import insert
-
-# Insert data from file (use list of files as input for bulk insert)
-insert(data_src='path/to/doc', project='project_name', source_type='file')
-
-# Insert data from url (use list of urls as input for bulk insert)
-insert(data_src='link/to/doc', project='project_name', source_type='url')
-```
+We recommend this method, which loads data in separate steps.
+There is also advanced options to load document with advanced options.
+Refer to [offline_tools](./offline_tools) for instructions.
 
 ### Option 2. Online
 
@@ -170,4 +163,4 @@ This method is only recommended to load a small amount of data, but **not for a 
 <br />
 
 ---
-## Liscense
+## License
