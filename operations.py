@@ -3,7 +3,7 @@ from typing import List
 
 from langchain.agents import Tool, AgentExecutor
 
-from data_loader import DataLoader
+from data_loader import DataParser
 from store import MemoryStore, DocStore
 from embedding import TextEncoder
 from llm import ChatAI
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 encoder = TextEncoder()
 chat_llm = ChatAI()
-load_data = DataLoader()
+load_data = DataParser()
 
 
 def chat(session_id, project, question, enable_es: bool = False):
