@@ -19,9 +19,9 @@ load_data = DataParser()
 
 def chat(session_id, project, question, enable_es: bool = False):
     '''Chat API'''
-    doc_db = DocStore(table_name=project, embedding_func=encoder, use_scalar=enable_es)
+    doc_db = DocStore(table_name=project,
+                      embedding_func=encoder, use_scalar=enable_es)
     memory_db = MemoryStore(table_name=project, session_id=session_id)
-        
 
     tools = [
         Tool(
@@ -36,7 +36,7 @@ def chat(session_id, project, question, enable_es: bool = False):
         tools=tools,
         memory=memory_db.memory,
         verbose=False
-        )
+    )
 
     final_answer = agent_chain.run(input=question)
 
@@ -54,7 +54,8 @@ def insert(data_src, project, source_type: str = 'file', enable_es: bool = True)
     '''Load project docs will load docs from data source and then insert doc embeddings into the project table in the vector store.
     If there is no project table, it will create one.
     '''
-    doc_db = DocStore(table_name=project, embedding_func=encoder, use_scalar=enable_es)
+    doc_db = DocStore(table_name=project,
+                      embedding_func=encoder, use_scalar=enable_es)
     docs = load_data(data_src=data_src, source_type=source_type)
     num = doc_db.insert(docs)
     return num
@@ -64,34 +65,36 @@ def drop(project):
     '''Drop project will clean both vector and memory stores.'''
     # Clear vector db
     try:
-        doc_db = DocStore(table_name=project, embedding_func=encoder, use_scalar=True)
+        doc_db = DocStore(table_name=project,
+                          embedding_func=encoder, use_scalar=True)
         doc_db.drop()
     except Exception as e:
-        logger.error(f'Failed to drop table in vector db:\n{e}')
-        raise RuntimeError(e)
+        logger.error(f'Failed to drop table in vector db:\n%s', e)
+        raise RuntimeError from e
     # Clear memory
     try:
         memory_db = MemoryStore(table_name=project, session_id='')
         memory_db.drop(project)
     except Exception as e:
-        logger.error(f'Failed to clean memory for the project:\n{e}')
-        raise RuntimeError(e)
+        logger.error('Failed to clean memory for the project:\n%s', e)
+        raise RuntimeError from e
 
- 
+
 def check(project):
     '''Check existences of project tables in both vector and memory stores.'''
     try:
         doc_check = DocStore.has_project(project)
     except Exception as e:
-        logger.error(f'Failed to check table in vector db:\n{e}')
-        raise RuntimeError(e)
+        logger.error('Failed to check table in vector db:\n%s', e)
+        raise RuntimeError from e
     # Clear memory
     try:
         memory_check = MemoryStore.check(project)
     except Exception as e:
-        logger.error(f'Failed to clean memory for the project:\n{e}')
-        raise RuntimeError(e)
+        logger.error('Failed to clean memory for the project:\n%s', e)
+        raise RuntimeError from e
     return {'vector db': doc_check, 'memory': memory_check}
+
 
 def get_history(project, session_id):
     '''Get conversation history from memory store.'''
@@ -100,23 +103,23 @@ def get_history(project, session_id):
         messages = memory_db.get_history()
         return messages
     except Exception as e:
-        logger.error(f'Failed to clean memory for the project:\n{e}')
-        raise RuntimeError(e)
+        logger.error('Failed to clean memory for the project:\n%s', e)
+        raise RuntimeError from e
 
 
 def load(document_strs: List[str], project: str, enable_es: bool = True):
     '''Load doc embeddings to project table in vector store given a list of doc chunks.'''
-    doc_db = DocStore(table_name=project, embedding_func=encoder, use_scalar=enable_es)
+    doc_db = DocStore(table_name=project,
+                      embedding_func=encoder, use_scalar=enable_es)
     num = doc_db.insert(document_strs)
     return num
-    
 
 
-if __name__ == '__main__':
-    project = 'akcio'
-    data_src = './requirements.txt'
-    session_id = 'test000'
-    question = 'What does it mean?'
+# if __name__ == '__main__':
+#     project = 'akcio'
+#     data_src = './requirements.txt'
+#     session_id = 'test000'
+#     question = 'What does it mean?'
 
     # count = insert(data_src=data_src, project=project, enable_es=False)
     # print(check(project))
@@ -126,5 +129,5 @@ if __name__ == '__main__':
     # print(check(project))
     # print(get_history(project, session_id))
 
-    drop(project=project)
-    print(check(project))
+    # drop(project=project)
+    # print(check(project))
