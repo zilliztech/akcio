@@ -19,8 +19,11 @@ load_data = DataParser()
 
 def chat(session_id, project, question, enable_es: bool = False):
     '''Chat API'''
-    doc_db = DocStore(table_name=project,
-                      embedding_func=encoder, use_scalar=enable_es)
+    doc_db = DocStore(
+        table_name=project,
+        embedding_func=encoder,
+        use_scalar=enable_es
+        )
     memory_db = MemoryStore(table_name=project, session_id=session_id)
 
     tools = [
@@ -50,12 +53,12 @@ def chat(session_id, project, question, enable_es: bool = False):
     return final_answer
 
 
-def insert(data_src, project, source_type: str = 'file', enable_es: bool = True):
+def insert(data_src, project, source_type: str = 'file'):
     '''Load project docs will load docs from data source and then insert doc embeddings into the project table in the vector store.
     If there is no project table, it will create one.
     '''
     doc_db = DocStore(table_name=project,
-                      embedding_func=encoder, use_scalar=enable_es)
+                      embedding_func=encoder, use_scalar=True)
     docs = load_data(data_src=data_src, source_type=source_type)
     num = doc_db.insert(docs)
     return num
@@ -65,11 +68,9 @@ def drop(project):
     '''Drop project will clean both vector and memory stores.'''
     # Clear vector db
     try:
-        doc_db = DocStore(table_name=project,
-                          embedding_func=encoder, use_scalar=True)
-        doc_db.drop()
+        DocStore.drop(project)
     except Exception as e:
-        logger.error(f'Failed to drop table in vector db:\n%s', e)
+        logger.error('Failed to drop project:\n%s', e)
         raise RuntimeError from e
     # Clear memory
     try:
@@ -119,15 +120,16 @@ def load(document_strs: List[str], project: str, enable_es: bool = True):
 #     project = 'akcio'
 #     data_src = './requirements.txt'
 #     session_id = 'test000'
-#     question = 'What does it mean?'
+#     question = 'What is the version requirement for Langchain?'
 
-    # count = insert(data_src=data_src, project=project, enable_es=False)
-    # print(check(project))
+#     # count = insert(data_src=data_src, project=project)
+#     # print('Count:', count)
+#     # print('Check:', check(project))
 
-    # answer = chat(project=project, session_id=session_id, question=question, enable_es=False)
-    # print(answer)
-    # print(check(project))
-    # print(get_history(project, session_id))
+#     answer = chat(project=project, session_id=session_id, question=question, enable_es=True)
+#     print('Answer:', answer)
+#     print('Check:', check(project))
+#     print('History:', get_history(project, session_id))
 
-    # drop(project=project)
-    # print(check(project))
+#     drop(project=project)
+#     print(check(project))
