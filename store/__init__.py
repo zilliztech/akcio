@@ -44,6 +44,8 @@ class DocStore:
         if self.vector_db:
             vec_count = self.vector_db.insert(data=data, metadatas=metadatas)
         if self.scalar_db:
+            if metadatas and 'doc' in metadatas[0]:
+                data = [doc['doc'] for doc in metadatas]
             scalar_count = self.scalar_db.insert(data=data)
         if vec_count and scalar_count:
             assert vec_count == scalar_count, f'Data count does not match: {vec_count} in vector db VS {scalar_count} in scalar db.'
