@@ -1,70 +1,84 @@
 import os
 import re
 from typing import Optional, List
-import openai
+from langchain.chat_models.base import BaseChatModel
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from tqdm import tqdm
 
-from .config import chatai_configs
+from llm.config import chatai_configs
+from langchain.schema import (
+    SystemMessage
+)
+from langchain.output_parsers import StructuredOutputParser, ResponseSchema
+from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
+from langchain.chat_models import ChatOpenAI
 
 
 class QuestionGenerator:
     '''Use LLM to generate potential questions given document.'''
-    model_name: str = chatai_configs.get('model_name', 'gpt-3.5-turbo')
     temperature: float = chatai_configs.get('temperature', 0.0)
     openai_api_key: Optional[str] = chatai_configs.get('openai_api_key', os.getenv('OPENAI_API_KEY'))
     max_tokens: Optional[int] = chatai_configs.get('max_tokens', None)
 
-    openai.api_key = openai_api_key
+    chat: BaseChatModel = ChatOpenAI(temperature=temperature, openai_api_key=openai_api_key)
 
-    def generate_qa(self, doc: str, project: str, num: int =20, chunk_size: int = 300):
-        max_doc = chunk_size
-        docs = self.split_doc(doc, max_doc)
-        q_doc = []
-        for doc_chunk in docs:   
-            messages = self.build_llm_input(doc_chunk, project, num)
-            resp = openai.ChatCompletion.create(
-                model=self.model_name,
-                messages=messages,
-                temperature=self.temperature,
+    def generate_qa(self, doc: str, project: str, chunk_size: int = 300):
+        no_answer_str = 'NO ANSWER'
+        question_list_str = 'question_list'
+        answer_list_str = 'answer_list'
+
+        docs = self.split_doc(doc, chunk_size)
+        all_q_doc_list = []
+        for doc_chunk in tqdm(docs):
+            human_template = '''The first step is to generate some meaningful questions according to the following doc chunk.
+In the second step, according to the content of the doc chunk, answer the answer to each question in the first step. Note if the corresponding answer cannot be found in the doc chunk, the answer is a str: "{no_answer_str}".
+
+{format_instructions}
+====================================================
+Doc chunk of an open-source project {project}:
+----------------------------------------------------
+{doc}
+----------------------------------------------------
+'''
+
+            response_schemas = [
+                ResponseSchema(name=question_list_str,
+                               description="List[str] of questions generated in the first step."),
+                ResponseSchema(name=answer_list_str,
+                               description=f'''List[str] of answers for the second step, corresponding to the questions generated in the first step. If the corresponding answer cannot be found in the doc chunk, the answer is a str: "{no_answer_str}".''')
+            ]
+            output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
+            format_instructions = output_parser.get_format_instructions()
+
+            prompt = ChatPromptTemplate(
+                messages=[
+                    SystemMessage(
+                        content="You are a powerful assistant that can help generate QA on any project documentation."),
+                    HumanMessagePromptTemplate.from_template(human_template)
+                ],
+                input_variables=["project", "doc", "no_answer_str"],
+                partial_variables={"format_instructions": format_instructions}
             )
+            _input = prompt.format_prompt(project=project, doc=doc_chunk, no_answer_str=no_answer_str)
+            output = self.chat(_input.to_messages())
+            output_dict = output_parser.parse(output.content)
+            try:
+                questions = self.get_questions_from_dict(output_dict, no_answer_str, question_list_str, answer_list_str)
+                all_q_doc_list.extend([(question, doc_chunk) for question in questions])
+            except:
+                print('Warn! parse_output_dict() failed.')
+                continue
+        return all_q_doc_list
 
-            questions = self.parse_llm_output(resp)
-            for q in questions:
-                q_doc.append((q, doc_chunk))
-                          
-        return q_doc
-
-    def build_llm_input(self, doc: str, project: str, num: int = 20) -> List[dict]:
-        system_prompt = f'''Extract {num} q&a pairs for user questions from the given document in user message.
-        
-        Each answer should only use the given document as source.
-            
-        Your question list should cover all content of the document.
-            
-        Return questions in json format only.'''
-
-        user_prompt = f'Doc of an open-source project {project}:\n{doc}'
-
-        return [
-            {'role': 'system', 'content': system_prompt},
-            {'role': 'user', 'content': user_prompt}
-        ]
-
-    def parse_llm_output(self, response) -> List[str]:
-        '''Parse response from LLM to return a list of extracted questions'''
-        content = response['choices'][0]['message']['content']
-        questions = []
-        for q in content.split('\n'):
-                q = ('. ').join(q.split('. ')[1:])
-                if q is None:
-                    raise ValueError('Invalid question value: None.')
-                else:
-                    questions.append(q)
-        total_tokens = response['usage']['total_tokens']
-        if total_tokens == 4097 and not questions[-1].endswith('.'):
-            del questions[-1]
-        return questions
-
+    def get_questions_from_dict(self, output_dict, no_answer_str, question_list_str, answer_list_str):
+        question_list = output_dict[question_list_str]
+        answer_list = output_dict[answer_list_str]
+        good_questions = []
+        assert len(question_list) == len(answer_list)
+        for question, answer in zip(question_list, answer_list):
+            if answer != no_answer_str:
+                good_questions.append(question)
+        return good_questions
 
     def split_doc(self, doc: str, max_len: int) -> List[str]:
         if self.count_token(doc) < max_len:
@@ -73,10 +87,9 @@ class QuestionGenerator:
             lines = doc.split('\n')
             new_lines = self.remove_long_code(lines, max_len)
             docs = []
-            # There is an issue for MarkdownTextSplitter, so we use RecursiveCharacterTextSplitter
-            # https://github.com/hwchase17/langchain/issues/2836
-            # markdown_splitter = MarkdownTextSplitter(chunk_size=max_len, chunk_overlap=0, length_function=lambda x: self.count_token(x))  # , chunk_overlap=100)
-            markdown_splitter = RecursiveCharacterTextSplitter(chunk_size=max_len, chunk_overlap=0, length_function=lambda x: self.count_token(x))  # , chunk_overlap=100)
+            markdown_splitter = RecursiveCharacterTextSplitter(chunk_size=max_len, chunk_overlap=0,
+                                                               length_function=lambda x: self.count_token(
+                                                                   x))  # , chunk_overlap=100)
             documents = markdown_splitter.create_documents(['\n'.join(new_lines)])
             # for doc_chunk in documents:
             #     print(doc_chunk.page_content)
@@ -136,8 +149,8 @@ class QuestionGenerator:
         left = re.sub(r'[a-zA-Z]', '', left).strip()
         per = len(left) / len(text)
         return per
-    
-    def strip_line(self, l):      
+
+    def strip_line(self, l):
         l = re.sub(r'<(.*?)>', '', l)
         return l.lstrip()
 
@@ -152,3 +165,11 @@ class QuestionGenerator:
 
     def is_title(self, line):
         return line.split('# ')[0].replace('#', '') == ''
+
+
+if __name__ == '__main__':
+    qg = QuestionGenerator()
+    file_path = 'your test doc path'
+    with open(file_path, 'r') as f:
+        f_doc = f.read()
+        qg.generate_qa(f_doc, 'your project name')
