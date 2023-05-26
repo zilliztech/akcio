@@ -1,6 +1,6 @@
 import gradio
 
-from operations import chat, insert, get_history
+from akcio.operations import chat, insert, get_history
 
 def respond(session, project, msg):
     chat(session, project, msg)
