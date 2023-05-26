@@ -6,13 +6,20 @@ from .memory_store import MemoryStore
 
 
 class DocStore:
-    def __init__(self, table_name: str, embedding_func: Embeddings = None, use_scalar: bool = False) -> None:
+    '''Integrate vector store and scalar store.'''
+    def __init__(
+            self,
+            table_name: str,
+            embedding_func: Embeddings = None,
+            use_scalar: bool = False
+            ) -> None:
         self.table_name = table_name
         self.use_scalar = use_scalar
         self.embedding_func = embedding_func
-        
+
         if embedding_func:
-            self.vector_db = VectorStore(table_name=table_name, embedding_func=self.embedding_func)
+            self.vector_db = VectorStore(
+                table_name=table_name, embedding_func=self.embedding_func)
         else:
             self.vector_db = None
 
@@ -22,7 +29,6 @@ class DocStore:
             self.scalar_db = None
 
         assert (self.vector_db or self.scalar_db)
-        
 
     def search(self, query: str):
         res = []
@@ -50,7 +56,7 @@ class DocStore:
         if vec_count and scalar_count:
             assert vec_count == scalar_count, f'Data count does not match: {vec_count} in vector db VS {scalar_count} in scalar db.'
         return vec_count or scalar_count
-    
+
     def drop(self):
         if self.scalar_db:
             self.scalar_db.drop()

@@ -17,10 +17,11 @@ async def check_api():
 @app.get('/answer')
 async def do_answer_api(session_id: str, project: str, question: str):
     try:
-        final_answer = chat(session_id=session_id, project=project, question=question)
+        final_answer = chat(session_id=session_id,
+                            project=project, question=question)
         assert isinstance(final_answer, str)
         return jsonable_encoder({'status': True, 'msg': final_answer}), 200
-    except Exception:
+    except Exception:  # pylint: disable=W0718
         return jsonable_encoder({'status': False, 'msg': 'Failed to answer question.', 'code': 400}), 400
 
 
@@ -29,9 +30,9 @@ async def do_project_add_api(data_src: str, project: str):
     try:
         num = insert(data_src=data_src, project=project)
         return jsonable_encoder({'status': True, 'msg': f'Successfully inserted doc chunks: {num}'}), 200
-    except Exception as e:
-        return jsonable_encoder({'status': False, 'msg': f'Failed to load data:\n{e}'}), 400 
-       
+    except Exception as e:  # pylint: disable=W0718
+        return jsonable_encoder({'status': False, 'msg': f'Failed to load data:\n{e}'}), 400
+
 
 @app.post('/project/drop')
 async def do_project_drop_api(project: str):
@@ -39,9 +40,8 @@ async def do_project_drop_api(project: str):
     try:
         drop(project=project)
         return jsonable_encoder({'status': True, 'msg': f'Dropped project: {project}'}), 200
-    except Exception as e:
+    except Exception as e:  # pylint: disable=W0718
         return jsonable_encoder({'status': False, 'msg': f'Failed to drop project:\n{e}'}), 400
-    
 
 
 if __name__ == '__main__':
