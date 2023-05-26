@@ -91,14 +91,19 @@ class VectorStore(Milvus):
         )
         return len(pks)
 
-    def search(self, query: str):
+    def search(self, query: str) -> List[Document]:
         '''Query data'''
-        res_docs = self.similarity_search(
+        docs = self.similarity_search(
             query=query,
             k=TOP_K,
             param=''
         )
-        return res_docs
+        res = []
+        for doc in docs:
+            if 'text' in doc.metadata:
+                del doc.metadata['text']
+            res.append(doc)
+        return res
     
     def drop(self):
         confirm = input(f'Confirm to drop table {self.collection_name} vector db (y/n): ')
