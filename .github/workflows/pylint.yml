@@ -20,4 +20,4 @@ jobs:
     - name: Python pylint
       run: |
         pip install pylint==2.10.2
-        pylint --rcfile=.pylintrc --output-format=colorized akcio
+        pylint --rcfile=.pylintrc --output-format=colorized src

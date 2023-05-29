@@ -10,14 +10,15 @@ NORM = textencoder_config.get('norm', False)
 
 
 class TextEncoder(OpenAIEmbeddings):
+    '''Text encoder converts text input(s) into embedding(s)'''
     def __init__(self, *args, **kwargs):
         assert isinstance(
             self, Embeddings), 'Invalid text encoder. Only accept Langchain embeddings.'
         kwargs['model_name'] = kwargs.get('model_name', MODEL)
         super().__init__(*args, **kwargs)
 
-    def embed_documents(self, texts: List[str], norm: bool = NORM) -> List[List[float]]:
-        embeds = super().embed_documents(texts)
+    def embed_documents(self, texts: List[str], norm: bool = NORM, chunk_size: int = 1000) -> List[List[float]]:
+        embeds = super().embed_documents(texts, chunk_size=chunk_size)
         if norm:
             import numpy  # pylint: disable=C0415
             embeds = [(x / numpy.linalg.norm(x)).tolist() for x in embeds]

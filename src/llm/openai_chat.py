@@ -1,6 +1,5 @@
 from typing import Optional, Union, Tuple
 
-from langchain.chat_models.base import BaseChatModel
 from langchain.chat_models import ChatOpenAI
 
 from .config import chatllm_configs

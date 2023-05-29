@@ -11,6 +11,7 @@ CONNECTION_ARGS = scalardb_config.get(
 
 
 class ScalarStore(ElasticSearchBM25Retriever):
+    '''Scalar store to save and retrieve scalar data.'''
     def __init__(self, index_name: str, client: Any = elasticsearch.Elasticsearch(**CONNECTION_ARGS)):
         super().__init__(client=client, index_name=index_name)
 

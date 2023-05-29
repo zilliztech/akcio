@@ -10,8 +10,10 @@ CHUNK_SIZE = dataparser_config.get('chunk_size', 300)
 
 class DataParser:
     '''Load data from urls or files (paths or file-like objects) as a list of doc chunks'''
+
     def __init__(self,
-                 splitter: TextSplitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE)
+                 splitter: TextSplitter = RecursiveCharacterTextSplitter(
+                     chunk_size=CHUNK_SIZE)
                  ):
         self.splitter = splitter
 
@@ -21,9 +23,10 @@ class DataParser:
         if source_type == 'file':
             docs = self.from_files(data_src)
         elif source_type == 'url':
-            docs= self.from_urls(data_src)
+            docs = self.from_urls(data_src)
         else:
-            raise AttributeError('Invalid source type. Only support "file" or "url".')
+            raise AttributeError(
+                'Invalid source type. Only support "file" or "url".')
 
         docs = self.splitter.split_documents(docs)
         return [str(doc.page_content) for doc in docs]
@@ -38,12 +41,12 @@ class DataParser:
                 file_path = file
             with open(file_path, encoding=encoding) as f:
                 text = f.read()
-            metadata = {"source": file_path}
+            metadata = {'source': file_path}
             docs.append(Document(page_content=text, metadata=metadata))
         return docs
-    
+
     def from_urls(self, urls: List[str]) -> List[Document]:
-        from langchain.document_loaders import UnstructuredURLLoader
+        from langchain.document_loaders import UnstructuredURLLoader  # pylint: disable=C0415
 
         loader = UnstructuredURLLoader(urls=urls)
         docs = loader.load()

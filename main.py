@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 
-from akcio.operations import chat, insert, drop
+from src.operations import chat, insert, drop
 
 
 app = FastAPI()

@@ -7,9 +7,9 @@ import time
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from akcio.offline_tools.load_to_vector_db import load_to_vector_db
-from akcio.offline_tools.generate_questions import get_output_csv
-from akcio.embedding import TextEncoder
+from src.offline_tools.load_to_vector_db import load_to_vector_db
+from src.offline_tools.generate_questions import get_output_csv
+from src.embedding import TextEncoder
 from tqdm import tqdm
 
 

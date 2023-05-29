@@ -26,19 +26,19 @@ The system is built on top of Langchain Agent using vector database for semantic
 
 ### Modules
 
-- [Agent](./akcio/agent)
+- [Agent](./src/agent)
     - ChatAgent
     - Other agents (todo)
-- [LLM](./akcio/llm)
+- [LLM](./src/llm)
     - ChatAI
-- [Embedding](./akcio/embedding/)
+- [Embedding](./src/embedding/)
     - TextEncoder
     - Other encoders (todo)
-- [Store](./akcio/store)
+- [Store](./src/store)
     - VectorStore
     - MemoryStore
     - Other stores (todo)
-- [DataLoader](./akcio/data_loader/)
+- [DataLoader](./src/data_loader/)
     - DataParser
     - QuestionGenerator
 
@@ -59,7 +59,7 @@ The system is built on top of Langchain Agent using vector database for semantic
     - Agent
 
         It will use default agents and prompts.
-        If you want to configure prompts or customize agent modules, refer to [agent](./akcio/agent) for guide.
+        If you want to configure prompts or customize agent modules, refer to [agent](./src/agent) for guide.
 
     - LLM
 
@@ -69,7 +69,7 @@ The system is built on top of Langchain Agent using vector database for semantic
         $ export OPENAI_API_KEY=your_keys_here
         ```
 
-        If you want to customize llm modules, you can refer to [llm](./akcio/llm) for guide.
+        If you want to customize llm modules, you can refer to [llm](./src/llm) for guide.
         
     - Embedding
 
@@ -78,7 +78,7 @@ The system is built on top of Langchain Agent using vector database for semantic
         - dim: 768
         - normalization: True
 
-        If you want to customize embedding method, you can refer to [embedding](./akcio/embedding) for guide.
+        If you want to customize embedding method, you can refer to [embedding](./src/embedding) for guide.
 
     - Store
 
@@ -86,7 +86,7 @@ The system is built on top of Langchain Agent using vector database for semantic
         - Scalar Store (Optional): This is optional, only work when elastic is enabled in operation. To prepare the Elasticsearch service, you can refer to its [official document](https://www.elastic.co/).
         - Memory Store: You need to prepare the database for memory storage as well. By default, the memory store uses [Postgresql](https://www.postgresqltutorial.com) which requires installation.
 
-        You can configure all stores via [config.py](./akcio/store/config.py), including set up connection arguments for each database:
+        You can configure all stores via [config.py](./src/store/config.py), including set up connection arguments for each database:
         ```python
         # Vector db configs
         vectordb_config = {
@@ -135,7 +135,7 @@ The system is built on top of Langchain Agent using vector database for semantic
 
 ## Load data
 
-The `insert` function in [operations](./akcio/operations.py) loads project data from url(s) or file(s).
+The `insert` function in [operations](./src/operations.py) loads project data from url(s) or file(s).
 
 There are 2 options to load project data:
 
@@ -143,7 +143,7 @@ There are 2 options to load project data:
 
 We recommend this method, which loads data in separate steps.
 There is also advanced options to load document with advanced options.
-Refer to [offline_tools](./akcio/offline_tools) for instructions.
+Refer to [offline_tools](./src/offline_tools) for instructions.
 
 ### Option 2. Online
 

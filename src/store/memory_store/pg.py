@@ -5,7 +5,8 @@ from langchain.memory import PostgresChatMessageHistory, ConversationBufferMemor
 from ..config import memorydb_config
 
 
-CONNECT_STR = memorydb_config.get('connect_str', 'postgresql://postgres:postgres@localhost/chat_history')
+CONNECT_STR = memorydb_config.get(
+    'connect_str', 'postgresql://postgres:postgres@localhost/chat_history')
 
 
 class MemoryStore:
@@ -15,12 +16,12 @@ class MemoryStore:
         '''Initialize memory storage: e.g. history_db'''
         self.table_name = table_name
         self.session_id = session_id
-        
+
         self.history_db = PostgresChatMessageHistory(
             table_name=self.table_name,
             session_id=self.session_id,
             connection_string=CONNECT_STR,
-            )
+        )
         self.memory = ConversationBufferMemory(
             memory_key='chat_history',
             chat_memory=self.history_db,
@@ -53,17 +54,16 @@ class MemoryStore:
                     q = None
                 messages.append((q, x.content))
         return messages
-    
 
     @classmethod
     def connect(cls, connect_str: str = CONNECT_STR):
-        import psycopg
-        from psycopg.rows import dict_row
+        import psycopg  # pylint: disable=C0415
+        from psycopg.rows import dict_row  # pylint: disable=C0415
 
         connection = psycopg.connect(connect_str)
         cursor = connection.cursor(row_factory=dict_row)
         return connection, cursor
-    
+
     @classmethod
     def drop(cls, table_name, connect_str: str = CONNECT_STR):
         connection, cursor = cls.connect(connect_str)
@@ -72,18 +72,15 @@ class MemoryStore:
         query = f'DROP TABLE {table_name};'
         cursor.execute(query)
         connection.commit()
-        
+
         existence = cls.check(table_name=table_name)
         assert not existence, f'Failed to drop table {table_name}.'
 
-    @classmethod 
+    @classmethod
     def check(cls, table_name, connect_str: str = CONNECT_STR):
         _, cursor = cls.connect(connect_str)
-        
-        check = f'SELECT COUNT(*) FROM pg_class WHERE relname = %s;'
+
+        check = 'SELECT COUNT(*) FROM pg_class WHERE relname = %s;'
         cursor.execute(check, (table_name,))
         record = cursor.fetchall()
-        if record[0]['count'] > 0:
-            return True
-        else:
-            return False
+        return bool(record[0]['count'] > 0)
