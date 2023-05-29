@@ -80,7 +80,7 @@ Doc chunk of an open-source project {project}:
                 good_questions.append(question)
         return good_questions
 
-    def split_doc(self, doc: str, max_len: int) -> List[str]:
+    def split_doc(self, doc: str, max_len: int = 300) -> List[str]:
         if self.count_token(doc) < max_len:
             docs = [doc]
         else:
