@@ -21,7 +21,7 @@ class VectorStore(Milvus):
     Vector database APIs: insert, search
     '''
 
-    def __init__(self, table_name: str, embedding_func: Embeddings, connection_args: dict = CONNECTION_ARGS):
+    def __init__(self, table_name: str, embedding_func: Embeddings = None, connection_args: dict = CONNECTION_ARGS):
         '''Initialize vector db'''
         assert isinstance(
             embedding_func, Embeddings), 'Invalid embedding function. Only accept langchain.embeddings.'
@@ -87,6 +87,66 @@ class VectorStore(Milvus):
             metadatas=metadatas
         )
         return len(pks)
+
+    def insert_embeddings(self,
+                          data: List[float],
+                          metadatas: list[dict],
+                          timeout: Optional[int] = None,
+                          batch_size: int = 1000,
+                          **kwargs: Any
+                          ):
+        '''Insert embeddings with texts'''
+        from pymilvus import Collection, MilvusException
+
+        embeddings = list(data)
+        texts = []
+        for d in metadatas:
+            texts.append(d.pop('text'))
+
+        if len(embeddings) == 0:
+            logger.debug("Nothing to insert, skipping.")
+            return []
+
+        # If the collection hasnt been initialized yet, perform all steps to do so
+        if not isinstance(self.col, Collection):
+            self._init(embeddings, metadatas)
+
+        # Dict to hold all insert columns
+        insert_dict: dict[str, list] = {
+            self._text_field: texts,
+            self._vector_field: embeddings,
+        }
+
+        # Collect the metadata into the insert dict.
+        for d in metadatas:
+            for key, value in d.items():
+                if key in self.fields:
+                    insert_dict.setdefault(key, []).append(value)
+
+        # Total insert count
+        vectors: list = insert_dict[self._vector_field]
+        total_count = len(vectors)
+
+        pks: list[str] = []
+
+        assert isinstance(self.col, Collection)
+        for i in range(0, total_count, batch_size):
+            # Grab end index
+            end = min(i + batch_size, total_count)
+            # Convert dict to list of lists batch for insertion
+            insert_list = [insert_dict[x][i:end] for x in self.fields]
+            # Insert into the collection.
+            try:
+                res: Collection
+                res = self.col.insert(insert_list, timeout=timeout, **kwargs)
+                pks.extend(res.primary_keys)
+            except MilvusException as e:
+                logger.error(
+                    "Failed to insert batch starting at entity: %s/%s", i, total_count
+                )
+                raise e
+        return pks
+
 
     def search(self, query: str) -> List[Document]:
         '''Query data'''

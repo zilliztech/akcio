@@ -12,13 +12,14 @@ class DocStore:
             self,
             table_name: str,
             embedding_func: Embeddings = None,
-            use_scalar: bool = False
+            use_scalar: bool = True
     ) -> None:
         self.table_name = table_name
         self.use_scalar = use_scalar
         self.embedding_func = embedding_func
 
-        self.vector_db = VectorStore(table_name=table_name, embedding_func=self.embedding_func)
+        self.vector_db = VectorStore(
+            table_name=table_name, embedding_func=self.embedding_func)
 
         if self.use_scalar:
             self.scalar_db = ScalarStore(index_name=table_name)
@@ -45,7 +46,26 @@ class DocStore:
         vec_count = self.vector_db.insert(data=data, metadatas=metadatas)
         if metadatas and 'doc' in metadatas[0]:
             data = [doc['doc'] for doc in metadatas]
-        scalar_count = self.scalar_db.insert(data=data)
+        if self.scalar_db:
+            scalar_count = self.scalar_db.insert(data=data)
+        if vec_count and scalar_count:
+            assert vec_count == scalar_count, f'Data count does not match: {vec_count} in vector db VS {scalar_count} in scalar db.'
+        return vec_count
+
+    def insert_embeddings(self, data: List(float), metadatas: List[dict]):
+        vec_count = None
+        scalar_count = None
+        docs = []
+        for d in metadatas:
+            assert 'text' in d, 'Embedding insert must have corresponding text in metadatas.'
+            if 'doc' in d:
+                docs.append(d['doc'])
+            else:
+                docs.append(d['text'])
+        vec_count = self.vector_db.insert_embeddings(
+            data=data, metadatas=metadatas)
+        if self.scalar_db:
+            scalar_count = self.scalar_db.insert(data=docs)
         if vec_count and scalar_count:
             assert vec_count == scalar_count, f'Data count does not match: {vec_count} in vector db VS {scalar_count} in scalar db.'
         return vec_count

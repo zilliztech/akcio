@@ -5,7 +5,7 @@ import numpy as np
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from store import VectorStore
+from store import DocStore
 
 
 class DBReader(object):
@@ -32,7 +32,7 @@ def load_to_vector_db(npy_path, project, batch_size=128, enable_qa=True):
         doc_chunk_col_ind = 1
         embedding_col_ind = 3
     reader = DBReader(npy_path)
-    vect_db = VectorStore(table_name=project)
+    doc_db = DocStore(table_name=project, use_scalar=True)
     row_ind = 0
     it = iter(reader)
     batch_rows = []
@@ -48,7 +48,7 @@ def load_to_vector_db(npy_path, project, batch_size=128, enable_qa=True):
                     metadatas = [{'text': row[question_col_ind], 'doc': row[doc_chunk_col_ind]} for row in batch_rows]
                 else:
                     metadatas = [{'text': row[doc_chunk_col_ind] for row in batch_rows}]
-                vect_db.insert_embedding(data, metadatas)
+                doc_db.insert_embeddings(data, metadatas)
                 batch_rows = []
         except StopIteration:
             break
