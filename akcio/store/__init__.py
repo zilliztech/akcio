@@ -52,7 +52,7 @@ class DocStore:
             assert vec_count == scalar_count, f'Data count does not match: {vec_count} in vector db VS {scalar_count} in scalar db.'
         return vec_count
 
-    def insert_embeddings(self, data: List(float), metadatas: List[dict]):
+    def insert_embeddings(self, data: List[float], metadatas: List[dict]):
         vec_count = None
         scalar_count = None
         docs = []

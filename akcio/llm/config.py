@@ -9,14 +9,3 @@ chatai_configs = {
     # 'n': 1,
     # 'max_tokens': None
 }
-
-questiongenerator_configs = {
-    # 'model_name': 'gpt-3.5-turbo',
-    'temperature': 0,
-}
-
-queryrewriter_configs = {
-    # 'model_name': 'gpt-3.5-turbo',
-    'temperature': 0.,
-    'max_tokens': 200
-}
