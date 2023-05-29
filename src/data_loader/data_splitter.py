@@ -6,6 +6,7 @@ from langchain.docstore.document import Document as LCDocument
 
 
 class MarkDownSplitter(TextSplitter):
+    '''To split markdown'''
     def split_text(self, text: str) -> List[str]:
         if self.count_token(text) < self._chunk_size:
             texts = [text]
@@ -13,7 +14,7 @@ class MarkDownSplitter(TextSplitter):
             lines = text.split('\n')
             new_lines = self.remove_long_code(lines)
             markdown_splitter = RecursiveCharacterTextSplitter(chunk_size=self._chunk_size, chunk_overlap=0,
-                                                               length_function=lambda x: self.count_token(x))
+                                                               length_function=self.count_token)
             documents = markdown_splitter.create_documents(['\n'.join(new_lines)])
             texts = self._keep_parent_title(documents)
         return texts

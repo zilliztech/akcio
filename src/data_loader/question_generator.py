@@ -1,17 +1,16 @@
 import os
 import re
+from tqdm import tqdm
 from typing import Optional, List
+
 from langchain.chat_models.base import BaseChatModel
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from tqdm import tqdm
-
-from .config import questiongenerator_configs
-from langchain.schema import (
-    SystemMessage
-)
+from langchain.schema import SystemMessage
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.chat_models import ChatOpenAI
+
+from .config import questiongenerator_configs
 
 
 class QuestionGenerator:
@@ -31,7 +30,8 @@ class QuestionGenerator:
         all_q_doc_list = []
         for doc_chunk in tqdm(docs):
             human_template = '''The first step is to generate some meaningful questions according to the following doc chunk.
-In the second step, according to the content of the doc chunk, answer the answer to each question in the first step. Note if the corresponding answer cannot be found in the doc chunk, the answer is a str: "{no_answer_str}".
+In the second step, according to the content of the doc chunk, answer the answer to each question in the first step.
+Note if the corresponding answer cannot be found in the doc chunk, the answer is a str: "{no_answer_str}".
 
 {format_instructions}
 ====================================================
@@ -43,9 +43,10 @@ Doc chunk of an open-source project {project}:
 
             response_schemas = [
                 ResponseSchema(name=question_list_str,
-                               description="List[str] of questions generated in the first step."),
+                               description='List[str] of questions generated in the first step.'),
                 ResponseSchema(name=answer_list_str,
-                               description=f'''List[str] of answers for the second step, corresponding to the questions generated in the first step. If the corresponding answer cannot be found in the doc chunk, the answer is a str: "{no_answer_str}".''')
+                               description=f'''List[str] of answers for the second step, corresponding to the questions generated in the first step.
+If the corresponding answer cannot be found in the doc chunk, the answer is a str: "{no_answer_str}".''')
             ]
             output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
             format_instructions = output_parser.get_format_instructions()
@@ -53,19 +54,19 @@ Doc chunk of an open-source project {project}:
             prompt = ChatPromptTemplate(
                 messages=[
                     SystemMessage(
-                        content="You are a powerful assistant that can help generate QA on any project documentation."),
+                        content='You are a powerful assistant that can help generate QA on any project documentation.'),
                     HumanMessagePromptTemplate.from_template(human_template)
                 ],
-                input_variables=["project", "doc", "no_answer_str"],
-                partial_variables={"format_instructions": format_instructions}
+                input_variables=['project', 'doc', 'no_answer_str'],
+                partial_variables={'format_instructions': format_instructions}
             )
-            _input = prompt.format_prompt(project=project, doc=doc_chunk, no_answer_str=no_answer_str)
+            _input = prompt.format_prompt(project=project, doc=doc_chunk, no_answer_str=no_answer_str)  # pylint: disable=C0103
             output = self.chat(_input.to_messages())
             output_dict = output_parser.parse(output.content)
             try:
                 questions = self.get_questions_from_dict(output_dict, no_answer_str, question_list_str, answer_list_str)
                 all_q_doc_list.extend([(question, doc_chunk) for question in questions])
-            except:
+            except Exception:  # pylint: disable=W0703
                 print('Warn! parse_output_dict() failed.')
                 continue
         return all_q_doc_list
@@ -88,8 +89,9 @@ Doc chunk of an open-source project {project}:
             new_lines = self.remove_long_code(lines, max_len)
             docs = []
             markdown_splitter = RecursiveCharacterTextSplitter(chunk_size=max_len, chunk_overlap=0,
-                                                               length_function=lambda x: self.count_token(
-                                                                   x))  # , chunk_overlap=100)
+                                                               length_function=self.count_token,
+                                                               # chunk_overlap=100
+                                                               )
             documents = markdown_splitter.create_documents(['\n'.join(new_lines)])
             # for doc_chunk in documents:
             #     print(doc_chunk.page_content)
@@ -167,9 +169,11 @@ Doc chunk of an open-source project {project}:
         return line.split('# ')[0].replace('#', '') == ''
 
 
-if __name__ == '__main__':
-    qg = QuestionGenerator()
-    file_path = 'your test doc path'
-    with open(file_path, 'r') as f:
-        f_doc = f.read()
-        qg.generate_qa(f_doc, 'your project name')
+# if __name__ == '__main__':
+#     qg = QuestionGenerator()
+#     file_path = '../../requirements.txt'
+
+#     with open(file_path, 'r') as f:
+#         f_doc = f.read()
+#         res = qg.generate_qa(f_doc, 'test')
+#         print(res)

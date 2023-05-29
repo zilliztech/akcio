@@ -6,7 +6,7 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from akcio.data_loader import QuestionGenerator
+from src.data_loader import QuestionGenerator
 from datetime import datetime
 from glob import glob
 from tqdm import tqdm

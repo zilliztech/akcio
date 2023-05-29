@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Any, Tuple, List
+from typing import Optional, Any, Tuple, List, Dict
 
 from langchain.vectorstores import Milvus
 from langchain.embeddings.base import Embeddings
@@ -46,7 +46,7 @@ class VectorStore(Milvus):
         **kwargs: Any,
     ) -> List[Tuple[Document, float]]:
         if self.col is None:
-            raise RuntimeError("No existing collection to search.")
+            raise RuntimeError('No existing collection to search.')
 
         if param is None:
             param = self.search_params
@@ -80,7 +80,7 @@ class VectorStore(Milvus):
 
         return ret
 
-    def insert(self, data: List[str], metadatas: Optional[list[dict]] = None):
+    def insert(self, data: List[str], metadatas: Optional[List[dict]] = None):
         '''Insert data'''
         pks = self.add_texts(
             texts=data,
@@ -90,13 +90,13 @@ class VectorStore(Milvus):
 
     def insert_embeddings(self,
                           data: List[float],
-                          metadatas: list[dict],
+                          metadatas: List[dict],
                           timeout: Optional[int] = None,
                           batch_size: int = 1000,
                           **kwargs: Any
                           ):
         '''Insert embeddings with texts'''
-        from pymilvus import Collection, MilvusException
+        from pymilvus import Collection, MilvusException  # pylint: disable=C0415
 
         embeddings = list(data)
         texts = []
@@ -104,7 +104,7 @@ class VectorStore(Milvus):
             texts.append(d.pop('text'))
 
         if len(embeddings) == 0:
-            logger.debug("Nothing to insert, skipping.")
+            logger.debug('Nothing to insert, skipping.')
             return []
 
         # If the collection hasnt been initialized yet, perform all steps to do so
@@ -112,7 +112,7 @@ class VectorStore(Milvus):
             self._init(embeddings, metadatas)
 
         # Dict to hold all insert columns
-        insert_dict: dict[str, list] = {
+        insert_dict: Dict[str, list] = {
             self._text_field: texts,
             self._vector_field: embeddings,
         }
@@ -127,7 +127,7 @@ class VectorStore(Milvus):
         vectors: list = insert_dict[self._vector_field]
         total_count = len(vectors)
 
-        pks: list[str] = []
+        pks: List[str] = []
 
         assert isinstance(self.col, Collection)
         for i in range(0, total_count, batch_size):
@@ -142,7 +142,7 @@ class VectorStore(Milvus):
                 pks.extend(res.primary_keys)
             except MilvusException as e:
                 logger.error(
-                    "Failed to insert batch starting at entity: %s/%s", i, total_count
+                    'Failed to insert batch starting at entity: %s/%s', i, total_count
                 )
                 raise e
         return pks

@@ -7,11 +7,11 @@ from langchain.agents import Tool, AgentExecutor
 
 sys.path.append(os.path.dirname(__file__))
 
-from data_loader import DataParser
-from store import MemoryStore, DocStore
-from embedding import TextEncoder
-from llm import ChatLLM
-from agent import ChatAgent
+from data_loader import DataParser  # pylint: disable=C0413
+from store import MemoryStore, DocStore  # pylint: disable=C0413
+from embedding import TextEncoder  # pylint: disable=C0413
+from llm import ChatLLM  # pylint: disable=C0413
+from agent import ChatAgent  # pylint: disable=C0413
 
 
 logger = logging.getLogger(__name__)
@@ -120,20 +120,20 @@ def load(document_strs: List[str], project: str, enable_es: bool = True):
     return num
 
 
-if __name__ == '__main__':
-    project = 'akcio'
-    data_src = '../requirements.txt'
-    session_id = 'test000'
-    question = 'Anything else?'
+# if __name__ == '__main__':
+#     project = 'akcio'
+#     data_src = '../requirements.txt'
+#     session_id = 'test000'
+#     question = 'What version is required for Langchain?'
 
-    count = insert(data_src=data_src, project=project)
-    print('Count:', count)
-    print('Check:', check(project))
+#     count = insert(data_src=data_src, project=project)
+#     print('Count:', count)
+#     print('Check:', check(project))
 
-    answer = chat(project=project, session_id=session_id, question=question, enable_es=True)
-    print('Answer:', answer)
-    print('Check:', check(project))
-    print('History:', get_history(project, session_id))
+#     answer = chat(project=project, session_id=session_id, question=question, enable_es=True)
+#     print('Answer:', answer)
+#     print('Check:', check(project))
+#     print('History:', get_history(project, session_id))
 
-    drop(project=project)
-    print(check(project))
+#     drop(project=project)
+#     print(check(project))
