@@ -6,7 +6,7 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from data_loader import QuestionGenerator
+from akcio.data_loader import QuestionGenerator
 from datetime import datetime
 from glob import glob
 from tqdm import tqdm
@@ -18,6 +18,18 @@ def get_named_col_names(df):
         if 'unnamed' not in col_name.lower():
             named_col_names.append(col_name)
     return named_col_names
+
+
+def get_file_or_repo(data_dir, f, mode):
+    if mode == 'project':
+        file_or_repo = os.path.relpath(f, data_dir)
+    else:
+        if '|' in os.path.basename(data_dir):  # when data_dir is a repo with '|'
+            file_or_repo = os.path.basename(data_dir).replace('|', '/')
+        else:  # when data_dir is a root containing repo folders with '|'
+            replaced_rel_path = os.path.relpath(f, data_dir).replace('|', '/')
+            file_or_repo = replaced_rel_path[:replaced_rel_path.rfind('/')]
+    return file_or_repo
 
 
 def run_batch(arg: dict):
@@ -54,14 +66,7 @@ def run_batch(arg: dict):
                         if q is None:
                             raise ValueError('Failed for Invalid question value (None).')
                         else:
-                            if mode == 'project':
-                                file_or_repo = os.path.relpath(f, data_dir)
-                            else:
-                                if '|' in os.path.basename(data_dir):  # when data_dir is a repo with '|'
-                                    file_or_repo = os.path.basename(data_dir).replace('|', '/')
-                                else:  # when data_dir is a root containing repo folders with '|'
-                                    replaced_rel_path = os.path.relpath(f, data_dir).replace('|', '/')
-                                    file_or_repo = replaced_rel_path[:replaced_rel_path.rfind('/')]
+                            file_or_repo = get_file_or_repo(data_dir, f, mode)
                             writer.writerow({
                                 FILE_OR_REPO: file_or_repo,
                                 'question': q[0],
@@ -74,7 +79,7 @@ def run_batch(arg: dict):
             print(f'Invalid file: {f}\n')
 
 
-def try_generate_questions(data_dir, project_name, mode, patterns, num_parallel=10, existed_files=set()):
+def try_generate_questions(data_dir, project_name, mode, patterns, num_parallel=8, existed_files=set()):
     chat_cli = QuestionGenerator()
 
     src_pattern_files = []
@@ -125,7 +130,7 @@ def try_generate_questions(data_dir, project_name, mode, patterns, num_parallel=
     return finished_files
 
 
-def generate_questions(data_dir, project_name, domain, mode, patterns, num_parallel=10):
+def get_output_csv(data_dir, project_name, domain, mode, patterns, enable_qa=True, num_parallel=8):
     if mode == 'github':
         FILE_OR_REPO = 'repo'
     else:
@@ -145,39 +150,45 @@ def generate_questions(data_dir, project_name, domain, mode, patterns, num_paral
 
     csv_file = data_dir + '.csv'
 
-    finished_files = set()
-    if os.path.exists(csv_file):
-        exist_df = pd.read_csv(csv_file)
+    if enable_qa:
+        finished_files = set()
+        if os.path.exists(csv_file):
+            exist_df = pd.read_csv(csv_file)
 
-        finished_files = set(exist_df[FILE_OR_REPO].value_counts().index.to_list())
-        print('finished_files num = ', len(finished_files))
+            finished_files = set(exist_df[FILE_OR_REPO].value_counts().index.to_list())
+            print('finished_files num = ', len(finished_files))
 
-    for try_time in range(2):
-        finished_files = try_generate_questions(data_dir, project_name, mode, patterns, num_parallel,
-                                                existed_files=finished_files)
+        for try_time in range(2):
+            finished_files = try_generate_questions(data_dir, project_name, mode, patterns, num_parallel,
+                                                    existed_files=finished_files)
 
+    else:
+        chat_cli = QuestionGenerator()
+        pattern_files = []
+        for pattern in patterns:
+            pattern_files.extend(glob(os.path.join(data_dir, '**', pattern), recursive=True))
+
+        for f in pattern_files:
+            if os.path.isfile(f):
+                print(f'Start for {f}...')
+                with open(f, 'r') as doc_f:
+                    doc = doc_f.read()
+                doc_chunk_list = chat_cli.split_doc(doc=doc)
+                header = [FILE_OR_REPO, 'question', 'doc_chunk']
+                with open(csv_file, 'w') as file:
+                    writer = csv.DictWriter(file, fieldnames=header)
+                    for doc_chunk in doc_chunk_list:
+                        file_or_repo = get_file_or_repo(data_dir, f, mode)
+                        writer.writerow({
+                            FILE_OR_REPO: file_or_repo,
+                            'doc_chunk': doc_chunk
+                        })
+                print(f'Done for {f}\n')
+
+    df = pd.read_csv(csv_file)
     if domain[-1] == '/':
         domain = domain[:-1]
 
-    df = pd.read_csv(csv_file)
-    print('before dropna, len = ', len(df))
-    df = df.dropna(subset=['question'])
-    df = df.dropna(subset=['doc_chunk'])
-    # df = df.loc[(df['doc_chunk'] != '') & (df['doc_chunk'] != '\n\n')]
-    df.drop(df[df['doc_chunk'] == '\n\n'].index, inplace=True)
-    df = df.reset_index(drop=True)
-    print('after dropna, len = ', len(df))
-    assert len(df['question'].dropna().values.tolist()) == len(df)
-
-    df_file_list = df[FILE_OR_REPO].drop_duplicates().values.tolist()
-    for df_file in df_file_list:
-        if df_file not in pattern_files:
-            print(f'{df_file} not in pattern_files.')
-    for pattern_file in pattern_files:
-        if pattern_file not in df_file_list:
-            print(f'{pattern_file} not in df_file_list.')
-    print(f'len of df_file_list = {len(df_file_list)}')
-    print(f'len of pattern_files = {len(pattern_files)}')
 
     def add_url_column(df, domain):
         if 'url' not in df.columns:
