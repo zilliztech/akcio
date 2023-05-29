@@ -3,7 +3,7 @@ from typing import Any, Iterable
 import elasticsearch
 from langchain.retrievers import ElasticSearchBM25Retriever
 
-from .config import scalardb_config
+from ..config import scalardb_config
 
 
 CONNECTION_ARGS = scalardb_config.get(

@@ -5,7 +5,7 @@ from langchain.vectorstores import Milvus
 from langchain.embeddings.base import Embeddings
 from langchain.docstore.document import Document
 
-from .config import vectordb_config
+from ..config import vectordb_config
 
 
 logger = logging.getLogger('vector_store')

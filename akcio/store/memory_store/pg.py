@@ -2,12 +2,7 @@ from typing import List
 from langchain.schema import HumanMessage, AIMessage
 from langchain.memory import PostgresChatMessageHistory, ConversationBufferMemory
 
-import sys
-import os
-
-sys.path.append(os.path.dirname(__file__))
-
-from config import memorydb_config
+from ..config import memorydb_config
 
 
 CONNECT_STR = memorydb_config.get('connect_str', 'postgresql://postgres:postgres@localhost/chat_history')

@@ -39,7 +39,10 @@ query_embedding = encoder.embed_query('test')
 
 ### Customization
 
-You can modify `text_encoder.py` to customize text encoder:
+To change embedding method used in operations, you can modify [__init__.py](./__init__.py) to import a different TextEncoder.
+For example, changing `.langchain_huggingface` to `.openai_embedding` in the init file will switch to OpenAI embedding.
+In the meantime, don't forget to modify [config.py](./config.py) for a changed embedding method.
+The text encoder should inherit Langchain Embeddings and you can rewrite the methods `embed_documents` and `embed_query` to customize the module:
 
 ```python
 from langchain.embeddings.base import Embeddings
