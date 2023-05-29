@@ -3,11 +3,11 @@ from typing import List
 
 from langchain.agents import Tool, AgentExecutor
 
-from data_loader import DataParser
-from store import MemoryStore, DocStore
-from embedding import TextEncoder
-from llm import ChatAI
-from agent import ChatAgent
+from .data_loader import DataParser
+from .store import MemoryStore, DocStore
+from .embedding import TextEncoder
+from .llm import ChatAI
+from .agent import ChatAgent
 
 
 logger = logging.getLogger(__name__)
@@ -118,13 +118,13 @@ def load(document_strs: List[str], project: str, enable_es: bool = True):
 
 # if __name__ == '__main__':
 #     project = 'akcio'
-#     data_src = './requirements.txt'
+#     data_src = '../requirements.txt'
 #     session_id = 'test000'
-#     question = 'What is the version requirement for Langchain?'
+#     question = 'Anything else?'
 
-#     # count = insert(data_src=data_src, project=project)
-#     # print('Count:', count)
-#     # print('Check:', check(project))
+#     count = insert(data_src=data_src, project=project)
+#     print('Count:', count)
+#     print('Check:', check(project))
 
 #     answer = chat(project=project, session_id=session_id, question=question, enable_es=True)
 #     print('Answer:', answer)

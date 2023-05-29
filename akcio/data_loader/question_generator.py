@@ -5,7 +5,7 @@ from langchain.chat_models.base import BaseChatModel
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from tqdm import tqdm
 
-from llm.config import chatai_configs
+from .config import questiongenerator_configs
 from langchain.schema import (
     SystemMessage
 )
@@ -16,9 +16,9 @@ from langchain.chat_models import ChatOpenAI
 
 class QuestionGenerator:
     '''Use LLM to generate potential questions given document.'''
-    temperature: float = chatai_configs.get('temperature', 0.0)
-    openai_api_key: Optional[str] = chatai_configs.get('openai_api_key', os.getenv('OPENAI_API_KEY'))
-    max_tokens: Optional[int] = chatai_configs.get('max_tokens', None)
+    temperature: float = questiongenerator_configs.get('temperature', 0.0)
+    openai_api_key: Optional[str] = questiongenerator_configs.get('openai_api_key', os.getenv('OPENAI_API_KEY'))
+    max_tokens: Optional[int] = questiongenerator_configs.get('max_tokens', None)
 
     chat: BaseChatModel = ChatOpenAI(temperature=temperature, openai_api_key=openai_api_key)
 
