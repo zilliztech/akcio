@@ -1,4 +1,4 @@
-chatai_configs = {
+chatllm_configs = {
     # 'model_name': 'gpt-3.5-turbo',
     'temperature': 0.8,
     # 'openai_api_key':'your_openai_key_goes_here',  # will use enviornment variable if not set in configs

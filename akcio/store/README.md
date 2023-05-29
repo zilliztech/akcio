@@ -47,7 +47,7 @@ The `MemoryStore` records chat history in database. It should follow API design 
 - `table_name (str)`: table name in database
 - `session_id (str)`: identifier for sessions, allowing for different sessions of conversation
 
-**Attribues:**
+**Attributes:**
 
 - `memory (BaseMemory)`: a Langchain base memory to adapt agent
 

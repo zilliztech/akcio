@@ -1,8 +1,8 @@
 from typing import Optional, List
 
-from .vector_store import VectorStore, Embeddings
-from .scalar_store import ScalarStore
-from .memory_store import MemoryStore
+from .vector_store.milvus import VectorStore, Embeddings
+from .scalar_store.es import ScalarStore
+from .memory_store.pg import MemoryStore
 
 
 class DocStore:

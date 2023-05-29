@@ -1,1 +1,1 @@
-from .text_encoder import TextEncoder
+from .langchain_huggingface import TextEncoder
