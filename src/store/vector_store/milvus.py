@@ -23,8 +23,8 @@ class VectorStore(Milvus):
 
     def __init__(self, table_name: str, embedding_func: Embeddings = None, connection_args: dict = CONNECTION_ARGS):
         '''Initialize vector db'''
-        assert isinstance(
-            embedding_func, Embeddings), 'Invalid embedding function. Only accept langchain.embeddings.'
+        # assert isinstance(
+        #     embedding_func, Embeddings), 'Invalid embedding function. Only accept langchain.embeddings.'
         self.embedding_func = embedding_func
         self.connect_args = connection_args
         self.collection_name = table_name
@@ -145,7 +145,7 @@ class VectorStore(Milvus):
                     'Failed to insert batch starting at entity: %s/%s', i, total_count
                 )
                 raise e
-        return pks
+        return len(pks)
 
 
     def search(self, query: str) -> List[Document]:

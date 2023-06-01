@@ -1,7 +1,7 @@
 # Akcio: Enhancing LLM-Powered ChatBot with CVP Stack
 
 [OSSChat](https://osschat.io) |
-[Documents](https://github.com/zilliztech/akcio/wiki) |
+[Documentation](https://github.com/zilliztech/akcio/wiki) |
 [Contact](https://zilliz.com/contact-sales) |
 [License](#license)
 
@@ -21,26 +21,27 @@ By the end, you will learn how to start a backend service using FastAPI, which p
 ## Overview
 
 The system is built on top of Langchain Agent using vector database for semantic search and memory storage for context support.
+You can find more details and instructions at our [documentation](https://github.com/zilliztech/akcio/wiki).
 
 <img src='pics/osschat.png' width='75%' alignment='centre'>
 
 ### Modules
 
 - [Agent](./src/agent)
-    - ChatAgent
+    - ChatAgent: agent ensembles all modules together to build up qa system.
     - Other agents (todo)
 - [LLM](./src/llm)
-    - ChatAI
+    - ChatLLM: large language model or service to generate response given prompts.
 - [Embedding](./src/embedding/)
-    - TextEncoder
+    - TextEncoder: encoder converts each text input to a vector.
     - Other encoders (todo)
 - [Store](./src/store)
-    - VectorStore
-    - MemoryStore
+    - VectorStore: vector database stores document chunks in embeddings, and performs document retrieval via semantic search.
+    - MemoryStore: memory storage stores chat history to support context in conversation.
     - Other stores (todo)
 - [DataLoader](./src/data_loader/)
-    - DataParser
-    - QuestionGenerator
+    - DataParser: tool loads data from given source and then splits documents into processed doc chunks.
+    - QuestionGenerator: tool generates a list of potential questions for each document chunk.
 
 ## Deployment
 
@@ -86,28 +87,18 @@ The system is built on top of Langchain Agent using vector database for semantic
         - Scalar Store (Optional): This is optional, only work when elastic is enabled in operation. To prepare the Elasticsearch service, you can refer to its [official document](https://www.elastic.co/).
         - Memory Store: You need to prepare the database for memory storage as well. By default, the memory store uses [Postgresql](https://www.postgresqltutorial.com) which requires installation.
 
-        You can configure all stores via [config.py](./src/store/config.py), including set up connection arguments for each database:
-        ```python
-        # Vector db configs
-        vectordb_config = {
-            'host': 'localhost',
-            'port': 19530,
-            'top_k': 10,
-        }
+        The store will use [default store configs](./src/store/config.py).
+        You can modify the the [config file](./src/store/config.py).
+        To set up your special connections for each database, you can also export environment variables instead of modifying:
 
-        # Scalar db configs (optional)
-        scalardb_config = {
-            'host': 'localhost',
-            'port': 9200,
-            # 'ca_certs': 'path/to/ca_certs',
-            'user': 'elastic',
-            'password': 'es_password_goes_here'
-        }
-
-        # Memory db configs
-        memorydb_config = {
-            'connect_str': 'postgresql://postgres:postgres@localhost/chat_history'
-        }
+        ```shell
+        $ export MILVUS_HOST=localhost
+        $ export MILVUS_PORT=19530
+        $ export ES_HOSTS=https://localhost:9200
+        $ export ES_CA_CERTS=path/to/es_ca_certs
+        $ export ES_USER=elastic
+        $ export ES_PASSWORD=your_es_password
+        $ export PG_URI=postgresql://postgres:postgres@localhost/chat_history
         ```
 
 4. Start service
@@ -153,7 +144,16 @@ Parameters:
 ```json
 {
   "project": "project_name",
-  "data_src": "path/to/data"
+  "data_src": "path_to_doc",
+  "source_type": "file"
+}
+```
+or
+```json
+{
+  "project": "project_name",
+  "data_src": "doc_url",
+  "source_type": "url"
 }
 ```
 
