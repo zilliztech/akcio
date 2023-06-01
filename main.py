@@ -26,9 +26,9 @@ async def do_answer_api(session_id: str, project: str, question: str):
 
 
 @app.post('/project/add')
-async def do_project_add_api(data_src: str, project: str):
+async def do_project_add_api(data_src: str, project: str, source_type: str = 'file'):
     try:
-        num = insert(data_src=data_src, project=project)
+        num = insert(data_src=data_src, project=project, source_type=source_type)
         return jsonable_encoder({'status': True, 'msg': f'Successfully inserted doc chunks: {num}'}), 200
     except Exception as e:  # pylint: disable=W0718
         return jsonable_encoder({'status': False, 'msg': f'Failed to load data:\n{e}'}), 400

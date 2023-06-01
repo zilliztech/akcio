@@ -1,3 +1,8 @@
-langchain>=0.0.151
+langchain==0.0.151
+unstructured
+pdf2image
+psycopg
 openai
 gradio>=3.30.0
+fastapi
+uvicorn

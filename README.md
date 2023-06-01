@@ -3,7 +3,7 @@
 [OSSChat](https://osschat.io) |
 [Documents](https://github.com/zilliztech/akcio/wiki) |
 [Contact](https://zilliz.com/contact-sales) |
-[Liscense](#license)
+[License](#license)
 
 Index
 
