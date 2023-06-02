@@ -6,7 +6,7 @@ from .config import chatllm_configs
 
 
 class ChatLLM(ChatOpenAI):
-    '''Chat with LLM given context. Must be a Langchain BaseLanguageModel to adapt agent.'''
+    '''Chat with LLM given context. Must be a LangChain BaseLanguageModel to adapt agent.'''
     model_name: str = chatllm_configs.get('model_name', 'gpt-3.5-turbo')
     temperature: float = chatllm_configs.get('temperature', 0.0)
     openai_api_key: Optional[str] = chatllm_configs.get('openai_api_key', None)

@@ -13,7 +13,7 @@ from .prompt import PREFIX, SUFFIX, TEMPLATE_TOOL_RESPONSE
 
 
 class ChatAgent(ConversationalChatAgent):
-    '''Customize Langchain ConversationalChatAgent'''
+    '''Customize LangChain ConversationalChatAgent'''
 
     output_parser: AgentOutputParser = Field(default_factory=OutputParser)
     template_tool_response: str = TEMPLATE_TOOL_RESPONSE

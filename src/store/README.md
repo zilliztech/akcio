@@ -16,7 +16,7 @@ The `VectorStore` is storage of embeddings. It should follow API design below to
 - `insert`: data insert, given a list of documents, returns how many data entities inserted
 - `search`: semantic search, given a query in string, returns a list of useful documents
 
-By default, it uses `Milvus` in Langchain. You can modify `config.py` to configure it.
+By default, it uses `Milvus` in LangChain. You can modify `config.py` to configure it.
 
 ## ScalarStore
 
@@ -34,7 +34,7 @@ The `ScalarStore` is storage of scalar data, which allows information retrieval 
 - `insert`: data insert, given a list of documents, returns how many data entities inserted
 - `search`: scalar search, given a query in string, returns a list of useful documents
 
-By default, it uses `ElasticSearch BM25` in Langchain. You can modify `config.py` to configure connection args.
+By default, it uses `ElasticSearch BM25` in LangChain. You can modify `config.py` to configure connection args.
 
 ## MemoryStore
 
@@ -49,12 +49,12 @@ The `MemoryStore` records chat history in database. It should follow API design 
 
 **Attributes:**
 
-- `memory (BaseMemory)`: a Langchain base memory to adapt agent
+- `memory (BaseMemory)`: a LangChain base memory to adapt agent
 
 **Methods:**
 
 - `add_history`: insert chat history to database, given a list of dictionaries with keys of 'question' and 'answer', [{'question': 'xxx', 'answer': 'xxx'}]
 - `get_history`: return chat history in a list of tuples, [('this is question', 'this is answer')]
 
-By default, it uses `PostgresChatMessageHistory` and `ConversationBufferMemory` in Langchain to build memory. You can modify `config.py` to configure it.
+By default, it uses `PostgresChatMessageHistory` and `ConversationBufferMemory` in LangChain to build memory. You can modify `config.py` to configure it.
 
