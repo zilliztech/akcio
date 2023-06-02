@@ -3,9 +3,9 @@ import sys
 
 import numpy as np
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from store import DocStore
+from src.store import DocStore
 
 
 class DBReader(object):
@@ -37,10 +37,10 @@ def load_to_vector_db(npy_path, project, batch_size=128, enable_qa=True):
     it = iter(reader)
     batch_rows = []
     while True:
-        print(row_ind)
+        # print(row_ind)
         try:
             row = next(it)
-            print(row)
+            # print(row)
             batch_rows.append(row)
             if (row_ind + 1) % batch_size == 0 or row_ind == len(reader) - 1:
                 data = [row[embedding_col_ind] for row in batch_rows]
@@ -53,7 +53,7 @@ def load_to_vector_db(npy_path, project, batch_size=128, enable_qa=True):
         except StopIteration:
             break
         row_ind += 1
-    print('row_ind = ', row_ind)
+    # print('row_ind = ', row_ind)
 
 
 if __name__ == '__main__':
