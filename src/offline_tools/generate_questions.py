@@ -168,14 +168,19 @@ def get_output_csv(data_dir, project_name, domain, mode, patterns, enable_qa=Tru
         for pattern in patterns:
             pattern_files.extend(glob(os.path.join(data_dir, '**', pattern), recursive=True))
 
+        header = [FILE_OR_REPO, 'doc_chunk']
+        if not os.path.exists(csv_file):
+            with open(csv_file, 'a+', newline='') as file:
+                writer = csv.DictWriter(file, fieldnames=header)
+                writer.writeheader()
+
         for f in pattern_files:
             if os.path.isfile(f):
-                print(f'Start for {f}...')
                 with open(f, 'r') as doc_f:
                     doc = doc_f.read()
                 doc_chunk_list = chat_cli.split_doc(doc=doc)
-                header = [FILE_OR_REPO, 'question', 'doc_chunk']
-                with open(csv_file, 'w') as file:
+
+                with open(csv_file, 'a+') as file:
                     writer = csv.DictWriter(file, fieldnames=header)
                     for doc_chunk in doc_chunk_list:
                         file_or_repo = get_file_or_repo(data_dir, f, mode)
@@ -183,7 +188,6 @@ def get_output_csv(data_dir, project_name, domain, mode, patterns, enable_qa=Tru
                             FILE_OR_REPO: file_or_repo,
                             'doc_chunk': doc_chunk
                         })
-                print(f'Done for {f}\n')
 
     df = pd.read_csv(csv_file)
     if domain[-1] == '/':

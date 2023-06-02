@@ -31,14 +31,18 @@ def get_named_col_names(df):
     return named_col_names
 
 
-def get_embedding_array(df, batch_size=64):
+def get_embedding_array(df, enable_qa=True, batch_size=64):
     encoder = TextEncoder()
     original_col = get_named_col_names(df)
     print('original_col = ', original_col)
     q_list = []
     embeddings = []
     t1 = time.time()
-    for i, question in enumerate(tqdm(df['question'])):
+    if enable_qa:
+        emb_col = 'question'
+    else:
+        emb_col = 'doc_chunk'
+    for i, question in enumerate(tqdm(df[emb_col])):
         q_list.append(question)
         if (i + 1) % batch_size == 0 or i == len(df) - 1:
             batch_embeddings = encoder.embed_documents(q_list)
@@ -46,14 +50,14 @@ def get_embedding_array(df, batch_size=64):
             q_list = []
     t2 = time.time()
     print('time = ', t2 - t1)
-    df['question_embedding'] = embeddings
-    cols_to_save = original_col + ['question_embedding']
+    df['embedding'] = embeddings
+    cols_to_save = original_col + ['embedding']
 
     embeddings_array = df[cols_to_save].to_numpy()
     return embeddings_array
 
 
-def save_embedding(csv_file, batch_size=64):
+def save_embedding(csv_file, enable_qa=True, batch_size=64):
     if '|' in os.path.basename(csv_file):
         dst_csv_path = os.path.join(os.path.dirname(csv_file), os.path.basename(csv_file).replace('|', '-'))
         os.rename(csv_file, dst_csv_path)
@@ -63,20 +67,20 @@ def save_embedding(csv_file, batch_size=64):
 
     if 'like' in df.columns:
         df = df.drop(labels='like', axis=1)
-    embedding_array = get_embedding_array(df, batch_size=batch_size)
+    embedding_array = get_embedding_array(df, enable_qa=enable_qa, batch_size=batch_size)
     output_npy_path = f'{csv_file[:-4]}_embedding.npy'
     np.save(output_npy_path, embedding_array)
     print('combined_array.shape = ', embedding_array.shape)
     return output_npy_path
 
 
-def embed_questions(csv_path, batch_size=64):
+def embed_questions(csv_path, enable_qa=True, batch_size=64):
     npy_path = f'{csv_path[:-4]}_embedding.npy'
     if os.path.exists(npy_path):
         print('exist...')
         return npy_path
     try:
-        npy_path = save_embedding(csv_path, batch_size=batch_size)
+        npy_path = save_embedding(csv_path, enable_qa=enable_qa, batch_size=batch_size)
         return npy_path
     except Exception as e:
         print('save_embedding failed. ', e)
@@ -105,7 +109,7 @@ def run_loading(project_root_or_file, project_name, mode, url_domain=None, emb_b
     #     pass
     #
     # # output_csv: 'file_or_repo', 'question', 'doc_chunk', 'url', 'embedding'
-    output_npy = embed_questions(output_csv, batch_size=emb_batch_size)
+    output_npy = embed_questions(output_csv, enable_qa=enable_qa, batch_size=emb_batch_size)
     print(f'finish embed_questions, output_npy =\n{output_npy}')
 
     load_to_vector_db(output_npy, project_name, batch_size=load_batch_size, enable_qa=enable_qa)
@@ -125,9 +129,8 @@ if __name__ == '__main__':
     # when mode == 'stackoverflow',
     # `project_root_or_file` can be a project folder containing json files, or a root containing project folders.
     parser.add_argument("--mode", type=str, choices=['project', 'github', 'stackoverflow', 'custom'], required=True,
-                        help='''when mode == 'project', `project_root_or_file` is a repo root which contains **/*.md files.
-when mode == 'github', `project_root_or_file` can be a repo with '|', or a root containing repo folders with '|'.
-when mode == 'stackoverflow', `project_root_or_file` can be a project folder containing json files, or a root containing project folders.''')
+                        help='''When mode == 'project', `project_root_or_file` is a repo root which contains **/*.md files.\n
+When mode == 'github', `project_root_or_file` can be a repo with '|', which means "(namespace)|(repo_name)", or a root containing repo folders with '|'.''')
     parser.add_argument("--url_domain", type=str, required=False, help='''When the mode is project, you can specify a url domain, so that the relative directory of your file is the same relative path added after your domain.
 When the mode is github, there is no need to specify the url, the url path is the url of your github repo.
 When the mode is stackoverflow, there is no need to specify the url, because the url can be obtained in the answer json.''')
@@ -135,16 +138,17 @@ When the mode is stackoverflow, there is no need to specify the url, because the
                         help='Batch size when extracting embedding.')
     parser.add_argument("--load_batch_size", type=int, required=False, default=256,
                         help='Batch size when loading to vector db.')
-    parser.add_argument("--enable_qa", type=bool, required=False, default=True,
+    parser.add_argument("--enable_qa", type=int, required=False, default=1,
                         help='Whether to use the generate question mode, which will use llm to generate questions related to doc chunks, and use questions to match instead of doc chunks.')
-    parser.add_argument("--qa_num_parallel", default=8, type=int, required=False)
+    parser.add_argument("--qa_num_parallel", default=8, type=int, required=False,
+                        help='The number of concurrent request when generating problems. If your openai account does not support high request rates, I suggest you set this value very small, such as 1, else you can use a higher num such as 8, or 16.')
     # parser.add_argument("--embedding_devices", type=str, default='0,1', required=False)
     args = parser.parse_args()
+    enable_qa = False if args.enable_qa == 0 else True
     t0 = time.time()
-
     # embedding_devices = [int(device_id) for device_id in args.embedding_devices.split(',')]
     run_loading(args.project_root_or_file, args.project_name, args.mode, args.url_domain, args.emb_batch_size,
-                args.load_batch_size, args.enable_qa, args.qa_num_parallel)
+                args.load_batch_size, enable_qa, args.qa_num_parallel)
     t1 = time.time()
     total_sec = t1 - t0
     print(f'total time = {total_sec} (s) = {total_sec / 3600} (h).')
