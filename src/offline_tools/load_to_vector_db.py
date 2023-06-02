@@ -47,7 +47,7 @@ def load_to_vector_db(npy_path, project, batch_size=128, enable_qa=True):
                 if enable_qa:
                     metadatas = [{'text': row[question_col_ind], 'doc': row[doc_chunk_col_ind]} for row in batch_rows]
                 else:
-                    metadatas = [{'text': row[doc_chunk_col_ind] for row in batch_rows}]
+                    metadatas = [{'text': row[doc_chunk_col_ind]} for row in batch_rows]
                 doc_db.insert_embeddings(data, metadatas)
                 batch_rows = []
         except StopIteration:
