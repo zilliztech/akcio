@@ -2,7 +2,7 @@
 
 The `DataLoader` parses documents from given data source and split documents into a list of doc chunks.
 
-By default, it allows files or urls as data source, and uses Langchain `RecursiveCharacterTextSplitter` to split documents.
+By default, it allows files or urls as data source, and uses LangChain `RecursiveCharacterTextSplitter` to split documents.
 
 To configure it, you can modify [config.py](./config.py) to change parameters like chunk size.
 
@@ -10,7 +10,7 @@ To configure it, you can modify [config.py](./config.py) to change parameters li
 
 **`DataLoader(splitter)`:**
 
-- `splitter (TextSplitter)`: a Langchain text splitter, defaults to RecursiveCharacterTextSplitter with chunk size in config.py
+- `splitter (TextSplitter)`: a LangChain text splitter, defaults to RecursiveCharacterTextSplitter with chunk size in config.py
 
 ### Methods
 
@@ -68,9 +68,9 @@ class DataLoader:
 
 If you want to use third-party loaders, you can add your `source_type`, and define your custom load function.
 
-#### Using Langchain Loader
+#### Using LangChain Loader
    
-For example, if you want to load arxiv, you can use [Langchain Arxiv Loader](https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/arxiv.html).
+For example, if you want to load arxiv, you can use [LangChain Arxiv Loader](https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/arxiv.html).
 ```python
 from langchain.text_splitter import TextSplitter, RecursiveCharacterTextSplitter
 from .config import dataloader_config

@@ -20,7 +20,7 @@ By the end, you will learn how to start a backend service using FastAPI, which p
 
 ## Overview
 
-The system is built on top of Langchain Agent using vector database for semantic search and memory storage for context support.
+The system is built on top of LangChain Agent using vector database for semantic search and memory storage for context support.
 You can find more details and instructions at our [documentation](https://github.com/zilliztech/akcio/wiki).
 
 <img src='pics/osschat.png' width='75%' alignment='centre'>
@@ -75,7 +75,7 @@ You can find more details and instructions at our [documentation](https://github
         
     - Embedding
 
-        By default, the embedding module uses Langchain HuggingFaceEmbeddings to convert text inputs to vectors. Here are some information about the default embedding method:
+        By default, the embedding module uses LangChain HuggingFaceEmbeddings to convert text inputs to vectors. Here are some information about the default embedding method:
         - model: [multi-qa-mpnet-base-cos-v1](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-cos-v1)(420MB)
         - dim: 768
         - normalization: True

@@ -32,7 +32,7 @@ class DataParser:
         return [str(doc.page_content) for doc in docs]
 
     def from_files(self, files: list, encoding: Optional[str] = None) -> List[Document]:
-        '''Load documents from path or file-like object, return a list of unsplit Langchain Documents'''
+        '''Load documents from path or file-like object, return a list of unsplit LangChain Documents'''
         docs = []
         for file in files:
             if hasattr(file, 'name'):

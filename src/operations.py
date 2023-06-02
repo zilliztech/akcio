@@ -124,7 +124,7 @@ def load(document_strs: List[str], project: str, enable_es: bool = True):
 #     project = 'akcio'
 #     data_src = '../requirements.txt'
 #     session_id = 'test000'
-#     question = 'What version is required for Langchain?'
+#     question = 'What version is required for LangChain?'
 
 #     count = insert(data_src=data_src, project=project)
 #     print('Count:', count)

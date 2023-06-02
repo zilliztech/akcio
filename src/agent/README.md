@@ -7,7 +7,7 @@ ChatAgent is able to build a chat system with action options from given tools su
 
 ### Configuration
 
-The default ChatAgent is based on Langchain `ConversationChatAgent`, using [customized prompts](agent/prompt.py).
+The default ChatAgent is based on LangChain `ConversationChatAgent`, using [customized prompts](agent/prompt.py).
  You can modify prompts for your scenarios.
 
 ```python

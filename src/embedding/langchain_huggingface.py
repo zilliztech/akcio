@@ -15,7 +15,7 @@ class TextEncoder(HuggingFaceEmbeddings):
 
     def __init__(self, *args, **kwargs):
         assert isinstance(
-            self, Embeddings), 'Invalid text encoder. Only accept Langchain embeddings.'
+            self, Embeddings), 'Invalid text encoder. Only accept LangChain embeddings.'
         kwargs['model_name'] = kwargs.get('model_name', MODEL)
         super().__init__(*args, **kwargs)
 
