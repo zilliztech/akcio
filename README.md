@@ -37,6 +37,7 @@ You can find more details and instructions at our [documentation](https://github
     - Other encoders (todo)
 - [Store](./src/store)
     - VectorStore: vector database stores document chunks in embeddings, and performs document retrieval via semantic search.
+    - ScalarStore: optional, database stores metadata for each document chunk, which supports additional information retrieval.
     - MemoryStore: memory storage stores chat history to support context in conversation.
     - Other stores (todo)
 - [DataLoader](./src/data_loader/)
