@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import time
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from src.offline_tools.load_to_vector_db import load_to_vector_db
 from src.offline_tools.generate_questions import get_output_csv
@@ -74,7 +74,7 @@ def embed_questions(csv_path, batch_size=64):
     npy_path = f'{csv_path[:-4]}_embedding.npy'
     if os.path.exists(npy_path):
         print('exist...')
-        return None
+        return npy_path
     try:
         npy_path = save_embedding(csv_path, batch_size=batch_size)
         return npy_path
