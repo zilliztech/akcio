@@ -10,12 +10,12 @@ origins = ['*']
 
 
 @app.get('/')
-async def check_api():
+def check_api():
     return jsonable_encoder({'status': True, 'msg': 'ok'}), 200
 
 
 @app.get('/answer')
-async def do_answer_api(session_id: str, project: str, question: str):
+def do_answer_api(session_id: str, project: str, question: str):
     try:
         final_answer = chat(session_id=session_id,
                             project=project, question=question)
@@ -26,7 +26,7 @@ async def do_answer_api(session_id: str, project: str, question: str):
 
 
 @app.post('/project/add')
-async def do_project_add_api(data_src: str, project: str, source_type: str = 'file'):
+def do_project_add_api(data_src: str, project: str, source_type: str = 'file'):
     try:
         num = insert(data_src=data_src, project=project, source_type=source_type)
         return jsonable_encoder({'status': True, 'msg': f'Successfully inserted doc chunks: {num}'}), 200
@@ -35,7 +35,7 @@ async def do_project_add_api(data_src: str, project: str, source_type: str = 'fi
 
 
 @app.post('/project/drop')
-async def do_project_drop_api(project: str):
+def do_project_drop_api(project: str):
     # Drop data in vector db
     try:
         drop(project=project)
