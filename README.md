@@ -31,14 +31,14 @@ You can find more details and instructions at our [documentation](https://github
     - ChatAgent: agent ensembles all modules together to build up qa system.
     - Other agents (todo)
 - [LLM](./src/llm)
-    - ChatLLM: large language model or service to generate response given prompts.
+    - ChatLLM: large language model or service to generate answers (available: [OpenAI](src/llm/openai_chat.py), [Dolly](src/llm/dolly_chat.py))
 - [Embedding](./src/embedding/)
-    - TextEncoder: encoder converts each text input to a vector.
+    - TextEncoder: encoder converts each text input to a vector (available: [OpenAI embedding](src/embedding/openai_embedding.py), [HuggingFace Hub](src/embedding/langchain_huggingface.py))
     - Other encoders (todo)
 - [Store](./src/store)
-    - VectorStore: vector database stores document chunks in embeddings, and performs document retrieval via semantic search.
-    - ScalarStore: optional, database stores metadata for each document chunk, which supports additional information retrieval.
-    - MemoryStore: memory storage stores chat history to support context in conversation.
+    - VectorStore: vector database stores document chunks in embeddings, and performs document retrieval via semantic search. (available: [Milvus/Zilliz Cloud](src/store/vector_store/milvus.py))
+    - ScalarStore: optional, database stores metadata for each document chunk, which supports additional information retrieval. (available: [Elastic](src/store/scalar_store/es.py))
+    - MemoryStore: memory storage stores chat history to support context in conversation. (available: [Postgresql](src/store/memory_store/pg.py))
     - Other stores (todo)
 - [DataLoader](./src/data_loader/)
     - DataParser: tool loads data from given source and then splits documents into processed doc chunks.
@@ -85,7 +85,7 @@ You can find more details and instructions at our [documentation](https://github
     - Store
 
         - Vector Store: You need to prepare the service of vector database in advance. For example, you can refer to [Milvus Documents](https://milvus.io/docs) or [Zilliz Cloud](https://zilliz.com/doc/quick_start) to learn about how to start a Milvus service.
-        - Scalar Store (Optional): This is optional, only work when elastic is enabled in operation. To prepare the Elasticsearch service, you can refer to its [official document](https://www.elastic.co/).
+        - Scalar Store (Optional): This is optional, only work when `USE_SCALAR` is true in [configuration](./src/store/config.py). If this is enabled (i.e. USE_SCALAR=True), the default scalar store will use [Elastic](https://www.elastic.co/). In this case, you need to prepare the Elasticsearch service in advance.
         - Memory Store: You need to prepare the database for memory storage as well. By default, the memory store uses [Postgresql](https://www.postgresqltutorial.com) which requires installation.
 
         The store will use [default store configs](./src/store/config.py).
@@ -93,12 +93,7 @@ You can find more details and instructions at our [documentation](https://github
         To set up your special connections for each database, you can also export environment variables instead of modifying:
 
         ```shell
-        $ export MILVUS_HOST=localhost
-        $ export MILVUS_PORT=19530
-        $ export ES_HOSTS=https://localhost:9200
-        $ export ES_CA_CERTS=path/to/es_ca_certs
-        $ export ES_USER=elastic
-        $ export ES_PASSWORD=your_es_password
+        $ export MILVUS_URI=https://localhost:19530
         $ export PG_URI=postgresql://postgres:postgres@localhost/chat_history
         ```
 
@@ -165,3 +160,5 @@ This method is only recommended to load a small amount of data, but **not for a 
 
 ---
 ## License
+
+Akcio is a proprietary project owned and developed by [Zilliz](https://zilliz.com).

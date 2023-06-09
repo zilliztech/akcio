@@ -1,8 +1,11 @@
 from typing import Optional, List
 
 from .vector_store.milvus import VectorStore, Embeddings
-from .scalar_store.es import ScalarStore
 from .memory_store.pg import MemoryStore
+from .config import USE_SCALAR
+
+if USE_SCALAR:
+    from .scalar_store.es import ScalarStore
 
 
 class DocStore:
@@ -12,7 +15,7 @@ class DocStore:
             self,
             table_name: str,
             embedding_func: Embeddings = None,
-            use_scalar: bool = True
+            use_scalar: bool = USE_SCALAR
     ) -> None:
         self.table_name = table_name
         self.use_scalar = use_scalar
@@ -71,21 +74,26 @@ class DocStore:
         return vec_count
 
     @classmethod
-    def drop(cls, project: str):
+    def drop(cls, project):
         status = cls.has_project(project)
         assert status['vector store'], f'No table in vector db: {project}'
-        assert status['scalar store'], f'No table in scalar db: {project}'
+
 
         VectorStore.drop(project)
-        ScalarStore.drop(project)
+
+        if USE_SCALAR:
+            assert status['scalar store'], f'No table in scalar db: {project}'
+            ScalarStore.drop(project)
 
         status = cls.has_project(project)
         assert not status['vector store'], f'Failed to drop table in vector db: {project}'
-        assert not status['scalar store'], f'Failed to drop table in scalar db: {project}'
+        if USE_SCALAR:
+            assert not status['scalar store'], f'Failed to drop table in scalar db: {project}'
 
     @classmethod
     def has_project(cls, project):
         status = {}
         status['vector store'] = VectorStore.has_project(project)
-        status['scalar store'] = ScalarStore.has_project(project)
+        if USE_SCALAR:
+            status['scalar store'] = ScalarStore.has_project(project)
         return status

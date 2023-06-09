@@ -1,10 +1,11 @@
 import os
 
+USE_SCALAR = False
+
 # Vector db configs
 vectordb_config = {
     'connection_args': {
-        'host': os.getenv('MILVUS_HOST', 'localhost'),
-        'port': os.getenv('MILVUS_PORT', '19530'),
+        'uri': os.getenv('MILVUS_URI', 'https://localhost:19530'),
         },
         'top_k': 10,
         'index_params': {

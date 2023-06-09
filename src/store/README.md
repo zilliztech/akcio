@@ -16,9 +16,28 @@ The `VectorStore` is storage of embeddings. It should follow API design below to
 - `insert`: data insert, given a list of documents, returns how many data entities inserted
 - `search`: semantic search, given a query in string, returns a list of useful documents
 
-By default, it uses `Milvus` in LangChain. You can modify `config.py` to configure it.
+By default, it uses `Milvus` in LangChain. You can modify [config.py](./config.py) to configure it.
+The default module also works with [Zilliz Cloud](https://zilliz.com) by setting configurations for the vector store below:
 
-## ScalarStore
+```python
+# Vector db configs
+vectordb_config = {
+    'connection_args': {
+        'uri': os.getenv('MILVUS_URI', 'your_endpoint'),
+        'user': os.getenv('MILVUS_USER', 'user_name'),
+        'password': os.getenv('MILVUS_PASSWORD', 'password_goes_here'),
+        'secure': True
+        },
+        'top_k': 10,
+        'index_params': {
+            'metric_type': 'IP',
+            'index_type': 'AUTOINDEX',
+            'params': {}
+            }
+}
+```
+
+## ScalarStore (Optional)
 
 The `ScalarStore` is storage of scalar data, which allows information retrieval other than semantic search, such as keyword match. It should follow API design below to adapt operations in chatbot:
 
@@ -34,7 +53,8 @@ The `ScalarStore` is storage of scalar data, which allows information retrieval 
 - `insert`: data insert, given a list of documents, returns how many data entities inserted
 - `search`: scalar search, given a query in string, returns a list of useful documents
 
-By default, it uses `ElasticSearch BM25` in LangChain. You can modify `config.py` to configure connection args.
+To enable scalar store, you need to set `USE_SCALAR=True` in [config.py](./config.py).
+By default, it uses `ElasticSearch BM25` in LangChain. You can modify [config.py](config.py) to configure connection args.
 
 ## MemoryStore
 
