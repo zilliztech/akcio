@@ -1,4 +1,4 @@
-from typing import Mapping, Any
+from typing import Mapping, Any, List
 
 import torch
 from transformers import pipeline
