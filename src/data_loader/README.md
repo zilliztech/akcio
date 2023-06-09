@@ -1,6 +1,6 @@
-# Data Loader
+# Data Parser
 
-The `DataLoader` parses documents from given data source and split documents into a list of doc chunks.
+The `DataParser` parses documents from given data source and split documents into a list of doc chunks.
 
 By default, it allows files or urls as data source, and uses LangChain `RecursiveCharacterTextSplitter` to split documents.
 
@@ -8,7 +8,7 @@ To configure it, you can modify [config.py](./config.py) to change parameters li
 
 ## APIs
 
-**`DataLoader(splitter)`:**
+**`DataParser(splitter)`:**
 
 - `splitter (TextSplitter)`: a LangChain text splitter, defaults to RecursiveCharacterTextSplitter with chunk size in config.py
 
@@ -22,12 +22,12 @@ To configure it, you can modify [config.py](./config.py) to change parameters li
 ### Example Usage
 
 ```python
-from data_loader import DataLoader
+from data_parser import DataParser
 
-load_data = DataLoader()
+load_data = DataParser()
 
 # Or use your splitter
-# load_data = DataLoader(splitter=MySplitter(chunk_size=100))
+# load_data = DataParser(splitter=MySplitter(chunk_size=100))
 
 docs = load_data(data_src='path/to/doc')
 
@@ -35,20 +35,20 @@ docs = load_data(data_src='path/to/doc')
 # docs = load_data(data_src='https://zilliz.com/doc/about_zilliz_cloud', source_type='url')
 ```
 
-## Customize DataLoader
+## Customize DataParser
 
-Modify `DataLoader` in [__init__.py](./__init__.py).
+Modify `DataParser` in [__init__.py](./__init__.py).
 
 ```python
 from langchain.text_splitter import TextSplitter
 
 from .data_splitter import MarkDownSplitter
-from .config import dataloader_config
+from .config import dataparser_config
 
 
-CHUNK_SIZE = dataloader_config.get('chunk_size', 300)
+CHUNK_SIZE = dataparser_config.get('chunk_size', 300)
 
-class DataLoader:
+class DataParser:
     def __init__(self,
                  splitter: TextSplitter = MarkDownSplitter(chunk_size=CHUNK_SIZE),
                  ):
@@ -73,12 +73,12 @@ If you want to use third-party loaders, you can add your `source_type`, and defi
 For example, if you want to load arxiv, you can use [LangChain Arxiv Loader](https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/arxiv.html).
 ```python
 from langchain.text_splitter import TextSplitter, RecursiveCharacterTextSplitter
-from .config import dataloader_config
+from .config import dataparser_config
 
 
-CHUNK_SIZE = dataloader_config.get('chunk_size', 300)
+CHUNK_SIZE = dataparser_config.get('chunk_size', 300)
 
-class DataLoader:
+class DataParser:
     '''Load data from urls or files (paths or file-like objects) as a list of doc chunks'''
     def __init__(self,
                  splitter: TextSplitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE)
@@ -109,12 +109,12 @@ For example, if you want to load from discord, you can use [LlammaIndex Discord 
 
 ```python
 from langchain.text_splitter import TextSplitter, RecursiveCharacterTextSplitter
-from .config import dataloader_config
+from .config import dataparser_config
 
 
-CHUNK_SIZE = dataloader_config.get('chunk_size', 300)
+CHUNK_SIZE = dataparser_config.get('chunk_size', 300)
 
-class DataLoader:
+class DataParser:
     '''Load data from urls or files (paths or file-like objects) as a list of doc chunks'''
     def __init__(self,
                  splitter: TextSplitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE)
