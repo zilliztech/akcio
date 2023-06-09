@@ -21,12 +21,11 @@ chat_llm = ChatLLM()
 load_data = DataParser()
 
 
-def chat(session_id, project, question, enable_es: bool = False):
+def chat(session_id, project, question):
     '''Chat API'''
     doc_db = DocStore(
         table_name=project,
         embedding_func=encoder,
-        use_scalar=enable_es
         )
     memory_db = MemoryStore(table_name=project, session_id=session_id)
 
@@ -62,7 +61,7 @@ def insert(data_src, project, source_type: str = 'file'):
     If there is no project table, it will create one.
     '''
     doc_db = DocStore(table_name=project,
-                      embedding_func=encoder, use_scalar=True)
+                      embedding_func=encoder)
     docs = load_data(data_src=data_src, source_type=source_type)
     num = doc_db.insert(docs)
     return num
@@ -112,10 +111,10 @@ def get_history(project, session_id):
         raise RuntimeError from e
 
 
-def load(document_strs: List[str], project: str, enable_es: bool = True):
+def load(document_strs: List[str], project: str):
     '''Load doc embeddings to project table in vector store given a list of doc chunks.'''
     doc_db = DocStore(table_name=project,
-                      embedding_func=encoder, use_scalar=enable_es)
+                      embedding_func=encoder)
     num = doc_db.insert(document_strs)
     return num
 
@@ -130,7 +129,7 @@ def load(document_strs: List[str], project: str, enable_es: bool = True):
 #     print('Count:', count)
 #     print('Check:', check(project))
 
-#     answer = chat(project=project, session_id=session_id, question=question, enable_es=True)
+#     answer = chat(project=project, session_id=session_id, question=question)
 #     print('Answer:', answer)
 #     print('Check:', check(project))
 #     print('History:', get_history(project, session_id))
