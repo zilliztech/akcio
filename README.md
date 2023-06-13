@@ -3,13 +3,14 @@
 [OSSChat](https://osschat.io) |
 [Documentation](https://github.com/zilliztech/akcio/wiki) |
 [Contact](https://zilliz.com/contact-sales) |
-[License](#license)
+[ToS](./ToS.md)
 
 Index
 
 - [Overview](#overview)
 - [Deployment](#deployment)
 - [Load Data](#load-data)
+- [Notice](#notice)
 
 ChatGPT has constraints due to its limited knowledge base, sometimes resulting in hallucinating answers when asked about unfamiliar topics. We are introducing the new AI stack, ChatGPT+Vector database+prompt-as-code, or the CVP Stack, to overcome this constraint.
 
@@ -159,6 +160,7 @@ This method is only recommended to load a small amount of data, but **not for a 
 <br />
 
 ---
-## License
 
-Akcio is a proprietary project owned and developed by [Zilliz](https://zilliz.com).
+## Notice
+
+By using our project or any part of our project, you agree to the [Terms of Service](./ToS.md).
