@@ -1,8 +1,12 @@
-langchain==0.0.151
+langchain==0.0.230
 unstructured
+pexpect
 pdf2image
-psycopg
+SQLAlchemy>=2.0.15
+# psycopg2-binary
 openai
 gradio>=3.30.0
 fastapi
 uvicorn
+towhee>=1.1.0
+pymilvus
