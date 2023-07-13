@@ -1,18 +1,34 @@
+import argparse
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 
-from src.operations import chat, insert, drop
 
+# Specify mode
+parser = argparse.ArgumentParser(description='Start service with different modes.')
+parser.add_argument('--langchain', action='store_true')
+parser.add_argument('--towhee', action='store_true')
+
+args = parser.parse_args()
+
+USE_LANGCHAIN = args.langchain
+USE_TOWHEE = args.towhee
+
+assert (USE_LANGCHAIN and not USE_TOWHEE ) or (USE_TOWHEE and not USE_LANGCHAIN), \
+    'The service should start with either "--langchain" or "--towhee".'
+
+if USE_LANGCHAIN:
+    from langchain_src.operations import chat, insert, drop
+if USE_TOWHEE:
+    from towhee_src.operations import chat, insert, drop
 
 app = FastAPI()
 origins = ['*']
 
-
 @app.get('/')
 def check_api():
     return jsonable_encoder({'status': True, 'msg': 'ok'}), 200
-
 
 @app.get('/answer')
 def do_answer_api(session_id: str, project: str, question: str):
@@ -21,8 +37,8 @@ def do_answer_api(session_id: str, project: str, question: str):
                             project=project, question=question)
         assert isinstance(final_answer, str)
         return jsonable_encoder({'status': True, 'msg': final_answer}), 200
-    except Exception:  # pylint: disable=W0718
-        return jsonable_encoder({'status': False, 'msg': 'Failed to answer question.', 'code': 400}), 400
+    except Exception as e:  # pylint: disable=W0718
+        return jsonable_encoder({'status': False, 'msg': f'Failed to answer question:\n{e}', 'code': 400}), 400
 
 
 @app.post('/project/add')
