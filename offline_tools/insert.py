@@ -10,7 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from offline_tools.utils.load_npy import langchain_load
 from offline_tools.utils.stackoverflow_json2csv import stackoverflow_json2csv
 from offline_tools.generator_questions import get_output_csv
-from langchain_src.embedding import TextEncoder
+from src_langchain.embedding import TextEncoder
 
 
 def split_df_by_row(df, n):

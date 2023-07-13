@@ -67,13 +67,13 @@ class TestOperations(unittest.TestCase):
         
     def test_chat(self):
 
-        with patch('towhee_src.pipelines.TowheePipelines') as mock_pipelines, \
-             patch('towhee_src.memory.MemoryStore') as mock_memory:
+        with patch('src_towhee.pipelines.TowheePipelines') as mock_pipelines, \
+             patch('src_towhee.memory.MemoryStore') as mock_memory:
             mock_pipelines.return_value = MockPipeline()
             mock_memory.return_value = MockStore()
 
-            from towhee_src.pipelines import TowheePipelines
-            from towhee_src.memory import MemoryStore
+            from src_towhee.pipelines import TowheePipelines
+            from src_towhee.memory import MemoryStore
 
 
             with patch.object(TowheePipelines, 'search_pipeline', mock_pipelines.search_pipeline), \
@@ -81,7 +81,7 @@ class TestOperations(unittest.TestCase):
                  patch.object(MemoryStore, 'get_history', mock_memory.get_history), \
                  patch.object(MemoryStore, 'drop', mock_memory.drop):
         
-                from towhee_src.operations import chat, get_history, clear_history
+                from src_towhee.operations import chat, get_history, clear_history
 
                 answer = chat(self.session_id, self.project, self.question)
                 assert answer == self.expect_answer
@@ -96,13 +96,13 @@ class TestOperations(unittest.TestCase):
 
     def test_insert(self):
 
-        with patch('towhee_src.pipelines.TowheePipelines') as mock_pipelines, \
-             patch('towhee_src.memory.MemoryStore') as mock_memory:
+        with patch('src_towhee.pipelines.TowheePipelines') as mock_pipelines, \
+             patch('src_towhee.memory.MemoryStore') as mock_memory:
             mock_pipelines.return_value = MockPipeline()
             mock_memory.return_value = MockStore()
 
-            from towhee_src.pipelines import TowheePipelines
-            from towhee_src.memory import MemoryStore
+            from src_towhee.pipelines import TowheePipelines
+            from src_towhee.memory import MemoryStore
 
             with patch.object(TowheePipelines, 'insert_pipeline', mock_pipelines.insert_pipeline), \
                 patch.object(TowheePipelines, 'count_entities', mock_pipelines.count_entities), \
@@ -111,7 +111,7 @@ class TestOperations(unittest.TestCase):
                 patch.object(MemoryStore, 'check', mock_memory.check), \
                 patch.object(MemoryStore, 'drop', mock_memory.drop):
                 
-                from towhee_src.operations import insert, check, drop
+                from src_towhee.operations import insert, check, drop
 
                 count = insert(self.test_src, self.project)
                 assert count == self.expect_len

@@ -18,7 +18,7 @@ class TestERNIE(unittest.TestCase):
             mock_res2._content = b'{ "result" : "mock answer", "usage" : 2 }'
             mock_post.return_value = mock_res1
             mock_request.return_value = mock_res2
-            from langchain_src.llm.ernie import ChatLLM
+            from src_langchain.llm.ernie import ChatLLM
 
             chat_llm = ChatLLM(api_key='mock-key', secret_key='mock-key')
             messages = [HumanMessage(content='hello')]

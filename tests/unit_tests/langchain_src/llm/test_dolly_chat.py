@@ -18,7 +18,7 @@ class TestDollyChat(unittest.TestCase):
 
         with patch('transformers.pipeline') as mock_pipelines:
             mock_pipelines.return_value = MockGenerateText()
-            from langchain_src.llm.dolly_chat import ChatLLM
+            from src_langchain.llm.dolly_chat import ChatLLM
 
             chat_llm = ChatLLM(model_name='mock', device='cpu', )
             messages = [HumanMessage(content='hello')]

@@ -1,4 +1,3 @@
-import os
 import uuid
 import argparse
 import gradio as gr
@@ -17,9 +16,9 @@ assert (USE_LANGCHAIN and not USE_TOWHEE ) or (USE_TOWHEE and not USE_LANGCHAIN)
     'The service should start with either "--langchain" or "--towhee".'
 
 if USE_LANGCHAIN:
-    from langchain_src.operations import chat, insert, check, drop, get_history, clear_history
+    from src_langchain.operations import chat, insert, check, drop, get_history, clear_history
 if USE_TOWHEE:
-    from towhee_src.operations import chat, insert, check, drop, get_history, clear_history
+    from src_towhee.operations import chat, insert, check, drop, get_history, clear_history
 
 
 def create_session_id():

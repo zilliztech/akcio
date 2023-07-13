@@ -9,8 +9,8 @@ from milvus import default_server
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
-from towhee_src.base import BasePipelines
-from towhee_src.pipelines import TowheePipelines
+from src_towhee.base import BasePipelines
+from src_towhee.pipelines import TowheePipelines
 from config import CHAT_CONFIG, TEXTENCODER_CONFIG, VECTORDB_CONFIG
 
 

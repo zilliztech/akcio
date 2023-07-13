@@ -20,6 +20,6 @@ jobs:
     - name: Python pylint
       run: |
         pip install pylint==2.10.2
-        pylint --rcfile=.pylintrc --output-format=colorized towhee_src
-        pylint --rcfile=.pylintrc --output-format=colorized langchain_src
+        pylint --rcfile=.pylintrc --output-format=colorized src_towhee
+        pylint --rcfile=.pylintrc --output-format=colorized src_langchain
         pylint --rcfile=.pylintrc --output-format=colorized offline_tools

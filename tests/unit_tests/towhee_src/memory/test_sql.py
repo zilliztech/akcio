@@ -4,8 +4,8 @@ import unittest
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
-from towhee_src.memory.sql import MemoryStore
-from towhee_src.base import BaseMemory
+from src_towhee.memory.sql import MemoryStore
+from src_towhee.base import BaseMemory
 
 
 class TestSql(unittest.TestCase):
