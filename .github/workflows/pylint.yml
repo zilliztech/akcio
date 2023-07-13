@@ -2,7 +2,7 @@ name: Workflow for pylint
 on:
   pull_request:
     branches:
-      - master
+      - main
       # file paths to consider in the event
     paths:
       - '**.py'
@@ -20,4 +20,6 @@ jobs:
     - name: Python pylint
       run: |
         pip install pylint==2.10.2
-        pylint --rcfile=.pylintrc --output-format=colorized src
+        pylint --rcfile=.pylintrc --output-format=colorized towhee_src
+        pylint --rcfile=.pylintrc --output-format=colorized langchain_src
+        pylint --rcfile=.pylintrc --output-format=colorized offline_tools
