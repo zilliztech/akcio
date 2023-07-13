@@ -4,8 +4,8 @@ import logging
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from towhee_src.memory import MemoryStore
-from towhee_src.pipelines import TowheePipelines
+from src_towhee.memory import MemoryStore
+from src_towhee.pipelines import TowheePipelines
 
 
 logger = logging.getLogger(__name__)

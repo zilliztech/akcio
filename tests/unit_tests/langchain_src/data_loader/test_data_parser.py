@@ -10,7 +10,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../../..'))
 
-from langchain_src.data_loader import DataParser
+from src_langchain.data_loader import DataParser
 
 
 class TestDataParser(unittest.TestCase):

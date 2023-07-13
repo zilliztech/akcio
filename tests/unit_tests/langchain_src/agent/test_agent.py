@@ -7,7 +7,7 @@ from langchain.llms.fake import FakeListLLM
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
-from langchain_src.agent import ChatAgent
+from src_langchain.agent import ChatAgent
 
 
 class TestChatAgent(unittest.TestCase):

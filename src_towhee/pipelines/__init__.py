@@ -7,8 +7,8 @@ from towhee import AutoConfig, AutoPipes
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from towhee_src.base import BasePipelines
-from towhee_src.pipelines.prompts import PROMPT_OP
+from src_towhee.base import BasePipelines
+from src_towhee.pipelines.prompts import PROMPT_OP
 from config import (
     USE_SCALAR, LLM_OPTION,
     TEXTENCODER_CONFIG, CHAT_CONFIG,

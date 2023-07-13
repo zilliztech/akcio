@@ -9,7 +9,7 @@ from sqlalchemy import create_engine, inspect, MetaData, Table, Column, String, 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 from config import MEMORYDB_CONFIG
-from towhee_src.base import BaseMemory
+from src_towhee.base import BaseMemory
 
         
 class MemoryStore(BaseMemory):

@@ -4,7 +4,7 @@ import unittest
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../../..'))
 
-from langchain_src.data_loader.data_splitter import MarkDownSplitter
+from src_langchain.data_loader.data_splitter import MarkDownSplitter
 
 
 class TestMarkDownSplitter(unittest.TestCase):

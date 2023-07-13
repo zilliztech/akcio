@@ -6,8 +6,8 @@ from langchain.schema import AgentAction, AgentFinish
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
-from langchain_src.agent.prompt import FORMAT_INSTRUCTIONS
-from langchain_src.agent.output_parser import OutputParser
+from src_langchain.agent.prompt import FORMAT_INSTRUCTIONS
+from src_langchain.agent.output_parser import OutputParser
 
 
 class TestOutputParser(unittest.TestCase):

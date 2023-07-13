@@ -5,7 +5,7 @@ import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
-from towhee_src.pipelines.prompts import PROMPT_OP, QUERY_PROMPT, SYSTEM_PROMPT
+from src_towhee.pipelines.prompts import PROMPT_OP, QUERY_PROMPT, SYSTEM_PROMPT
 
 
 class TestPrompts(unittest.TestCase):
