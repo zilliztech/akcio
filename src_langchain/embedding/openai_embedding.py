@@ -7,7 +7,7 @@ from langchain.embeddings import OpenAIEmbeddings
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from config import TEXTENCODER_CONFIG
+from config import TEXTENCODER_CONFIG # pylint: disable=C0413
 
 
 MODEL = TEXTENCODER_CONFIG.get('model', 'text-embedding-ada-002')

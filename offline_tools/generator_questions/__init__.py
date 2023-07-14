@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from offline_tools.generator_questions.question_generator import QuestionGenerator
+from offline_tools.generator_questions.question_generator import QuestionGenerator  # pylint: disable=C0413
 
 
 def get_named_col_names(df):
@@ -41,7 +41,7 @@ def run_batch(arg: dict):
     chat_cli = arg['chat_cli']
     target_csv = arg['target_csv']
     header = arg['header']
-    FILE_OR_REPO = arg['FILE_OR_REPO']
+    FILE_OR_REPO = arg['FILE_OR_REPO']  # pylint: disable=C0103
     for f in files:
         if os.path.isfile(f):
             if os.path.relpath(f, data_dir) in existed_files:
@@ -50,7 +50,7 @@ def run_batch(arg: dict):
 
             try:
                 print(f'Start for {f}...')
-                with open(f, 'r') as doc_f:
+                with open(f, 'r', encoding='utf-8') as doc_f:
                     doc = doc_f.read()
                 if mode == 'github' and (project_name is None or project_name == ''):
                     project = os.path.basename(os.path.dirname(f)).split('/')[-1].split('|')[-1]
@@ -60,7 +60,7 @@ def run_batch(arg: dict):
                 questions = chat_cli.generate_qa(doc=doc, project=project)
                 assert len(questions) > 0, 'No questions.'
                 print('Writing questions to csv ...')
-                with open(target_csv, 'a+') as file:
+                with open(target_csv, 'a+', encoding='utf-8') as file:
                     writer = csv.DictWriter(file, fieldnames=header)
                     for q in questions:
                         if q is None:
@@ -73,13 +73,13 @@ def run_batch(arg: dict):
                                 'doc_chunk': q[1]
                             })
                 print(f'Done for {f}\n')
-            except Exception as e:
+            except Exception as e:  # pylint: disable=W0703
                 print(f'Failed for {f}:\n {e}\n')
         else:
             print(f'Invalid file: {f}\n')
 
 
-def try_generate_questions(data_dir, project_name, mode, patterns, num_parallel=8, existed_files=set()):
+def try_generate_questions(data_dir, project_name, mode, patterns, num_parallel=8, existed_files=set()):  # pylint: disable=W0102
     chat_cli = QuestionGenerator()
 
     src_pattern_files = []
@@ -93,16 +93,16 @@ def try_generate_questions(data_dir, project_name, mode, patterns, num_parallel=
 
     target_csv = data_dir + '.csv'
 
-    FILE_OR_REPO = 'file' if mode == 'project' else 'repo'
+    FILE_OR_REPO = 'file' if mode == 'project' else 'repo'  # pylint: disable=C0103
 
     header = [FILE_OR_REPO, 'question', 'doc_chunk']
     if not os.path.exists(target_csv):
-        with open(target_csv, 'a+', newline='') as file:
+        with open(target_csv, 'a+', newline='', encoding='utf-8') as file:
             writer = csv.DictWriter(file, fieldnames=header)
             writer.writeheader()
 
     now = datetime.now()
-    print(now.strftime("%Y-%m-%d %H:%M:%S"))
+    print(now.strftime('%Y-%m-%d %H:%M:%S'))
 
     batches = []
     max_batch_size = len(pattern_files) // num_parallel + 1
@@ -121,7 +121,7 @@ def try_generate_questions(data_dir, project_name, mode, patterns, num_parallel=
                      'header': header,
                      'FILE_OR_REPO': FILE_OR_REPO})
     with multiprocessing.Pool(num_parallel) as pool:
-        processed_items = pool.map(run_batch, args)
+        pool.map(run_batch, args)
     finished_files = existed_files
     if os.path.exists(target_csv):
         finished_df = pd.read_csv(target_csv)
@@ -132,9 +132,9 @@ def try_generate_questions(data_dir, project_name, mode, patterns, num_parallel=
 
 def get_output_csv(data_dir, project_name, domain, mode, patterns, enable_qa=True, num_parallel=8):
     if mode == 'github':
-        FILE_OR_REPO = 'repo'
+        FILE_OR_REPO = 'repo'  # pylint: disable=C0103
     else:
-        FILE_OR_REPO = 'file'
+        FILE_OR_REPO = 'file'  # pylint: disable=C0103
 
     pattern_files = []
     for pattern in patterns:
@@ -143,10 +143,10 @@ def get_output_csv(data_dir, project_name, domain, mode, patterns, enable_qa=Tru
 
     total_lines = 0
     for file in tqdm(pattern_files):
-        with open(file, 'r') as f:
+        with open(file, 'r', encoding='utf-8') as f:
             lines = len(f.readlines())
             total_lines += lines
-    print("Total number of lines in pattern_files:", total_lines)
+    print('Total number of lines in pattern_files:', total_lines)
 
     csv_file = data_dir + '.csv'
 
@@ -158,7 +158,7 @@ def get_output_csv(data_dir, project_name, domain, mode, patterns, enable_qa=Tru
             finished_files = set(exist_df[FILE_OR_REPO].value_counts().index.to_list())
             print('finished_files num = ', len(finished_files))
 
-        for try_time in range(2):
+        for _ in range(2):
             finished_files = try_generate_questions(data_dir, project_name, mode, patterns, num_parallel,
                                                     existed_files=finished_files)
 
@@ -170,17 +170,17 @@ def get_output_csv(data_dir, project_name, domain, mode, patterns, enable_qa=Tru
 
         header = [FILE_OR_REPO, 'doc_chunk']
         if not os.path.exists(csv_file):
-            with open(csv_file, 'a+', newline='') as file:
+            with open(csv_file, 'a+', newline='', encoding='utf-8') as file:
                 writer = csv.DictWriter(file, fieldnames=header)
                 writer.writeheader()
 
         for f in pattern_files:
             if os.path.isfile(f):
-                with open(f, 'r') as doc_f:
+                with open(f, 'r', encoding='utf-8') as doc_f:
                     doc = doc_f.read()
                 doc_chunk_list = chat_cli.split_doc(doc=doc)
 
-                with open(csv_file, 'a+') as file:
+                with open(csv_file, 'a+', encoding='utf-8') as file:
                     writer = csv.DictWriter(file, fieldnames=header)
                     for doc_chunk in doc_chunk_list:
                         file_or_repo = get_file_or_repo(data_dir, f, mode)

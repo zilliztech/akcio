@@ -5,10 +5,11 @@ import numpy as np
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from src_langchain.store import DocStore
+from src_langchain.store import DocStore  # pylint: disable=C0413
 
 
 class DBReader(object):
+    '''numpy reader'''
     def __init__(self, path):
         self.path = path
         self.db = np.load(path, allow_pickle=True)[()]

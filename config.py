@@ -51,7 +51,7 @@ TEXTENCODER_CONFIG = {
 
 
 ################## Store ##################
-USE_SCALAR = os.getenv('USE_SCALAR', False)
+USE_SCALAR = True if os.getenv('USE_SCALAR', 'False').lower() == 'true' else False
 
 # Vector db configs
 VECTORDB_CONFIG = {

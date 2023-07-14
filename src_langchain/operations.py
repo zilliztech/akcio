@@ -7,11 +7,11 @@ from langchain.agents import Tool, AgentExecutor
 
 sys.path.append(os.path.dirname(__file__))
 
-from data_loader import DataParser  # pylint: disable=C0413
-from store import MemoryStore, DocStore  # pylint: disable=C0413
-from embedding import TextEncoder  # pylint: disable=C0413
-from llm import ChatLLM  # pylint: disable=C0413
 from agent import ChatAgent  # pylint: disable=C0413
+from llm import ChatLLM  # pylint: disable=C0413
+from embedding import TextEncoder  # pylint: disable=C0413
+from store import MemoryStore, DocStore  # pylint: disable=C0413
+from data_loader import DataParser  # pylint: disable=C0413
 
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ def chat(session_id, project, question):
     doc_db = DocStore(
         table_name=project,
         embedding_func=encoder,
-        )
+    )
     memory_db = MemoryStore(table_name=project, session_id=session_id)
 
     tools = [
@@ -46,7 +46,7 @@ def chat(session_id, project, question):
     try:
         final_answer = agent_chain.run(input=question)
         return final_answer
-    except Exception:
+    except Exception:  # pylint: disable=W0703
         return 'Something went wrong. Please clear history and try again!'
 
 
@@ -103,7 +103,7 @@ def get_history(project, session_id):
     except Exception as e:
         logger.error('Failed to clean memory for the project:\n%s', e)
         raise RuntimeError from e
-    
+
 
 def clear_history(project, session_id):
     '''Clear conversation history from memory store.'''
@@ -111,7 +111,7 @@ def clear_history(project, session_id):
         memory_db = MemoryStore(project, session_id)
         memory_db.drop(table_name=project, session_id=session_id)
     except Exception as e:
-        raise RuntimeError(f'Failed to clear memory:\n{e}')
+        raise RuntimeError(f'Failed to clear memory:\n{e}') from e
 
 
 def load(document_strs: List[str], project: str):
@@ -133,7 +133,7 @@ def load(document_strs: List[str], project: str):
 #     count = insert(data_src=data_src, project=project, source_type='url')
 #     print('\nCount:', count)
 #     print('\nCheck:', check(project))
-    
+
 #     answer = chat(project=project, session_id=session_id, question=question0)
 #     print('\nAnswer:', answer)
 

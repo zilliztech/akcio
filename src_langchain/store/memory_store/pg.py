@@ -6,7 +6,7 @@ from langchain.memory import PostgresChatMessageHistory, ConversationBufferMemor
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from config import MEMORYDB_CONFIG
+from config import MEMORYDB_CONFIG  # pylint: disable=C0413
 
 
 CONNECT_STR = MEMORYDB_CONFIG.get(

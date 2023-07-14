@@ -7,7 +7,7 @@ from .memory_store.pg import MemoryStore
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from config import USE_SCALAR
+from config import USE_SCALAR  # pylint: disable=C0413
 
 if USE_SCALAR:
     from .scalar_store.es import ScalarStore

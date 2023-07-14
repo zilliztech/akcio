@@ -8,7 +8,7 @@ from langchain.embeddings import HuggingFaceEmbeddings
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from config import TEXTENCODER_CONFIG
+from config import TEXTENCODER_CONFIG  # pylint: disable=C0413
 
 MODEL = TEXTENCODER_CONFIG.get('model', 'multi-qa-mpnet-base-cos-v1')
 NORM = TEXTENCODER_CONFIG.get('norm', False)

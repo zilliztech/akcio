@@ -1,5 +1,3 @@
-from src_towhee.base import BaseMemory
-from config import MEMORYDB_CONFIG
 import sys
 import os
 import json
@@ -9,6 +7,9 @@ from sqlalchemy import create_engine, inspect, MetaData, Table, Column, String, 
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+
+from src_towhee.base import BaseMemory # pylint: disable=C0413
+from config import MEMORYDB_CONFIG # pylint: disable=C0413
 
 
 class MemoryStore(BaseMemory):

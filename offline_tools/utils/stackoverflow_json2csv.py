@@ -39,7 +39,7 @@ def json_to_csv(json_root, dst_csv_path):
     good_df_row_list = []
     bad_df_row_list = []
     for json_file in glob(os.path.join(json_root, '*.json')):
-        with open(json_file, 'r') as f:
+        with open(json_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
             for question_dict in tqdm(data['questions']):
                 if 'title' not in question_dict or question_dict['title'] == '':
@@ -93,7 +93,7 @@ def concat_csv(dst_csv_path_list, root_or_folder):
         try:  # empty file
             df = pd.read_csv(file_path)
             df_list.append(df)
-        except:
+        except:  # pylint: disable=W0702
             continue
         os.remove(file_path)
     merged_df = pd.concat(df_list)

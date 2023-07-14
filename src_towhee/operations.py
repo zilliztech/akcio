@@ -4,8 +4,8 @@ import logging
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from src_towhee.memory import MemoryStore
-from src_towhee.pipelines import TowheePipelines
+from src_towhee.pipelines import TowheePipelines  # pylint: disable=C0413
+from src_towhee.memory import MemoryStore  # pylint: disable=C0413
 
 
 logger = logging.getLogger(__name__)
@@ -18,6 +18,7 @@ memory_store = MemoryStore()
 insert_pipeline = towhee_pipelines.insert_pipeline
 search_pipeline = towhee_pipelines.search_pipeline
 
+
 def chat(session_id, project, question):
     '''Chat API'''
     try:
@@ -29,12 +30,11 @@ def chat(session_id, project, question):
         messages = [(question, final_answer)]
         memory_store.add_history(project, session_id, messages)
         return final_answer
-    except Exception as e:
-        print(e)
+    except Exception: # pylint: disable=W0703
         return 'Something went wrong. Please clear history and try again!'
 
 
-def insert(data_src, project, source_type: str = 'file'):
+def insert(data_src, project, source_type: str = 'file'): # pylint: disable=W0613
     '''Load project docs will load docs from data source and then insert doc embeddings into the project table in the vector store.
     If there is no project table, it will create one.
     '''
@@ -93,14 +93,14 @@ def get_history(project, session_id):
     except Exception as e:
         logger.error('Failed to clean memory for the project:\n%s', e)
         raise RuntimeError from e
-    
+
 
 def clear_history(project, session_id):
     '''Clear conversation history from memory store.'''
     try:
         memory_store.drop(project, session_id)
     except Exception as e:
-        raise RuntimeError(f'Failed to clear memory:\n{e}')
+        raise RuntimeError(f'Failed to clear memory:\n{e}') from e
 
 
 # if __name__ == '__main__':
@@ -114,7 +114,7 @@ def clear_history(project, session_id):
 #     count = insert(data_src=data_src, project=project, source_type='url')
 #     print('\nCount:', count)
 #     print('\nCheck:', check(project))
-    
+
 #     answer = chat(project=project, session_id=session_id, question=question0)
 #     print('\nAnswer:', answer)
 

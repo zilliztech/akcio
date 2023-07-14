@@ -7,7 +7,7 @@ from langchain.text_splitter import TextSplitter, RecursiveCharacterTextSplitter
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from config import DATAPARSER_CONFIG
+from config import DATAPARSER_CONFIG  # pylint: disable=C0413
 
 
 CHUNK_SIZE = DATAPARSER_CONFIG.get('chunk_size', 300)

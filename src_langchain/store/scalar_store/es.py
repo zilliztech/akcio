@@ -7,7 +7,7 @@ from langchain.retrievers import ElasticSearchBM25Retriever
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from config import SCALARDB_CONFIG
+from config import SCALARDB_CONFIG  # pylint: disable=C0413
 
 
 CONNECTION_ARGS = SCALARDB_CONFIG.get(

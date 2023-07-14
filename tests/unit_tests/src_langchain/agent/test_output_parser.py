@@ -20,7 +20,6 @@ class TestOutputParser(unittest.TestCase):
         action_name = 'mock_action'
         action_input = 'mock_action_input'
         text = '''
-        ```json
         {
           "action": "mock_action",
           "action_input": "mock_action_input"

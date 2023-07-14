@@ -30,7 +30,7 @@ class BaseMemory(ABC):
 
 class BasePipelines(ABC):
     '''Base module to create Towhee pipelines'''
-            
+
     @property
     def search_pipeline(self) -> RuntimePipeline:
         '''Define search pipeline'''
@@ -40,7 +40,7 @@ class BasePipelines(ABC):
     def insert_pipeline(self) -> RuntimePipeline:
         '''Define insert pipeline'''
         pass
-    
+
     @abstractmethod
     def create(self, project: str):
         '''Create project table(s) in database(s)'''
@@ -50,13 +50,13 @@ class BasePipelines(ABC):
     def check(self, project) -> bool:
         '''Check if project table(s) exist.'''
         pass
-    
+
     @abstractmethod
     def drop(self, project):
         '''Drop project table(s).'''
         pass
 
-    @abstractmethod 
+    @abstractmethod
     def count_entities(self, project) -> int:
         '''Count doc chunks in project.'''
         pass

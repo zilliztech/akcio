@@ -7,27 +7,28 @@ from towhee import AutoConfig, AutoPipes
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from src_towhee.base import BasePipelines
-from src_towhee.pipelines.prompts import PROMPT_OP
-from config import (
+from config import ( # pylint: disable=C0413
     USE_SCALAR, LLM_OPTION,
     TEXTENCODER_CONFIG, CHAT_CONFIG,
     VECTORDB_CONFIG, SCALARDB_CONFIG,
     RERANK_CONFIG
-    )
+)
+from src_towhee.pipelines.prompts import PROMPT_OP  # pylint: disable=C0413
+from src_towhee.base import BasePipelines  # pylint: disable=C0413
 
 
 class TowheePipelines(BasePipelines):
-    def __init__(self, 
-                 llm_src: str = LLM_OPTION, 
-                 use_scalar: bool = USE_SCALAR, 
+    '''Towhee pipelines'''
+    def __init__(self,
+                 llm_src: str = LLM_OPTION,
+                 use_scalar: bool = USE_SCALAR,
                  prompt_op: Any = PROMPT_OP,
                  chat_config: Dict = CHAT_CONFIG,
                  textencoder_config: Dict = TEXTENCODER_CONFIG,
                  vectordb_config: Dict = VECTORDB_CONFIG,
                  scalardb_config: Dict = SCALARDB_CONFIG,
                  rerank_config: Dict = RERANK_CONFIG
-                 ):
+                 ): # pylint: disable=W0102
         self.prompt_op = prompt_op
         self.use_scalar = use_scalar
         self.llm_src = llm_src
@@ -55,11 +56,11 @@ class TowheePipelines(BasePipelines):
         )
 
         if self.use_scalar:
-            from elasticsearch import Elasticsearch
+            from elasticsearch import Elasticsearch  # pylint: disable=C0415
 
             self.es_uri = scalardb_config['connection_args']['hosts']
             self.es_host = self.es_uri.split('https://')[1].split(':')[0]
-            self.es_port= self.es_uri.split('https://')[1].split(':')[1]
+            self.es_port = self.es_uri.split('https://')[1].split(':')[1]
             self.es_ca_certs = scalardb_config['connection_args']['ca_certs']
             self.es_basic_auth = scalardb_config['connection_args']['basic_auth']
             self.es_user = self.es_basic_auth[0]
@@ -68,16 +69,18 @@ class TowheePipelines(BasePipelines):
                 self.es_uri,
                 ca_certs=self.es_ca_certs,
                 basic_auth=self.es_basic_auth
-                )
+            )
 
     @property
     def search_pipeline(self):
-        search_pipeline = AutoPipes.pipeline('osschat-search', config=self.search_config)
+        search_pipeline = AutoPipes.pipeline(
+            'osschat-search', config=self.search_config)
         return search_pipeline
 
     @property
     def insert_pipeline(self):
-        insert_pipeline = AutoPipes.pipeline('osschat-insert', config=self.insert_config)
+        insert_pipeline = AutoPipes.pipeline(
+            'osschat-insert', config=self.insert_config)
         return insert_pipeline
 
     @property
@@ -87,12 +90,12 @@ class TowheePipelines(BasePipelines):
             llm_src=self.llm_src,
             **self.rerank_config,
             **self.chat_config[self.llm_src]
-            )
-        
+        )
+
         # Configure embedding
         search_config.embedding_model = self.textencoder_config['model']
-        search_config.embedding_normalize = self.textencoder_config['norm']      
-        
+        search_config.embedding_normalize = self.textencoder_config['norm']
+
         # Configure prompt
         if self.prompt_op:
             search_config.customize_prompt = self.prompt_op
@@ -104,7 +107,7 @@ class TowheePipelines(BasePipelines):
         search_config.milvus_password = self.milvus_password
         search_config.milvus_top_k = self.milvus_topk
         search_config.threshold = self.milvus_threshold
-        
+
         # Configure scalar store (ES)
         if self.use_scalar:
             search_config.es_enable = True
@@ -116,7 +119,7 @@ class TowheePipelines(BasePipelines):
         else:
             search_config.es_enable = False
         return search_config
-    
+
     @property
     def insert_config(self):
         insert_config = AutoConfig.load_config('osschat-insert')
@@ -142,21 +145,26 @@ class TowheePipelines(BasePipelines):
         else:
             insert_config.es_enable = False
         return insert_config
-    
+
     def create(self, project: str):
-        from pymilvus import CollectionSchema, FieldSchema, DataType
+        from pymilvus import CollectionSchema, FieldSchema, DataType # pylint: disable=C0415
 
         fields = [
-            FieldSchema(name='id', dtype=DataType.INT64, description='ids', is_primary=True, auto_id=True),
-            FieldSchema(name='text_id', dtype=DataType.VARCHAR, description='text', max_length=500),
-            FieldSchema(name='text', dtype=DataType.VARCHAR, description='text', max_length=1000),
-            FieldSchema(name='embedding', dtype=DataType.FLOAT_VECTOR, description='embedding vectors', dim=self.textencoder_config['dim'])
-            ]
+            FieldSchema(name='id', dtype=DataType.INT64,
+                        description='ids', is_primary=True, auto_id=True),
+            FieldSchema(name='text_id', dtype=DataType.VARCHAR,
+                        description='text', max_length=500),
+            FieldSchema(name='text', dtype=DataType.VARCHAR,
+                        description='text', max_length=1000),
+            FieldSchema(name='embedding', dtype=DataType.FLOAT_VECTOR,
+                        description='embedding vectors', dim=self.textencoder_config['dim'])
+        ]
         schema = CollectionSchema(fields=fields, description='osschat')
         collection = Collection(name=project, schema=schema)
 
         index_params = self.milvus_index_params
-        collection.create_index(field_name="embedding", index_params=index_params)
+        collection.create_index(field_name='embedding',
+                                index_params=index_params)
         return collection
 
     def drop(self, project):
@@ -169,16 +177,18 @@ class TowheePipelines(BasePipelines):
             # drop scalar store
             self.es_client.indices.delete(index=project)
 
-        assert not self.check(project), f'Failed to drop project store : {project}'
+        assert not self.check(
+            project), f'Failed to drop project store : {project}'
 
     def check(self, project):
-        from pymilvus import utility
+        from pymilvus import utility  # pylint: disable=C0415
 
-        status = utility.has_collection(project) # check vector store
+        status = utility.has_collection(project)  # check vector store
         if self.use_scalar:
-            assert self.es_client.indices.exists(index=project) == status # check scalar store
+            assert self.es_client.indices.exists(
+                index=project) == status  # check scalar store
         return status
-    
+
     def count_entities(self, project):
         collection = Collection(project)
         collection.flush()
