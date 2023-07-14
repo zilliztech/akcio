@@ -1,3 +1,5 @@
+from src_towhee.base import BaseMemory
+from config import MEMORYDB_CONFIG
 import sys
 import os
 import json
@@ -8,12 +10,10 @@ from sqlalchemy import create_engine, inspect, MetaData, Table, Column, String, 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from config import MEMORYDB_CONFIG
-from src_towhee.base import BaseMemory
 
-        
 class MemoryStore(BaseMemory):
     '''Memory store using SQL databases supported by sqlalchemy. (eg. Postgresql)'''
+
     def __init__(self, configs: Dict = MEMORYDB_CONFIG):
         '''Initialize memory storage'''
         self.engine = create_engine(url=configs['connect_str'])
@@ -23,9 +23,10 @@ class MemoryStore(BaseMemory):
         project_table = self._create_table_if_not_exists(project)
 
         data = [
-            {'session_id': session_id, 'message': json.dumps(self._message_to_dict(message))}
+            {'session_id': session_id, 'message': json.dumps(
+                self._message_to_dict(message))}
             for message in messages
-            ]
+        ]
         with self.engine.connect() as conn:
             query = project_table.insert()
             conn.execute(query, data)
@@ -33,7 +34,8 @@ class MemoryStore(BaseMemory):
 
     def get_history(self, project: str, session_id: str):
         if self.check(project):
-            project_table = Table(project, self.meta, autoload_with=self.engine)
+            project_table = Table(project, self.meta,
+                                  autoload_with=self.engine)
             query = project_table.select().where(project_table.c.session_id == session_id)
             messages = []
             with self.engine.connect() as conn:
@@ -50,17 +52,19 @@ class MemoryStore(BaseMemory):
     def _create_table_if_not_exists(self, project):
         if not self.check(project):
             project_table = Table(project, self.meta,
-                                Column('id', Integer, primary_key=True, autoincrement=True),
-                                Column('session_id', String, nullable=False),
-                                Column('message', JSON, nullable=False)
-                                )
+                                  Column('id', Integer, primary_key=True,
+                                         autoincrement=True),
+                                  Column('session_id', String, nullable=False),
+                                  Column('message', JSON, nullable=False),
+                                  )
             self.meta.create_all(self.engine)
-        project_table = Table(project, self.meta, autoload_with=self.engine)
+        project_table = Table(project, self.meta, autoload_with=self.engine, extend_existing=True)
         return project_table
-        
+
     def drop(self, project, session_id=None):
         if self.check(project):
-            project_table = Table(project, self.meta, autoload_with=self.engine)
+            project_table = Table(project, self.meta,
+                                  autoload_with=self.engine)
             if session_id and len(session_id) > 0:
                 query = project_table.delete().where(project_table.c.session_id == session_id)
                 with self.engine.connect() as conn:
@@ -75,11 +79,11 @@ class MemoryStore(BaseMemory):
 
     def check(self, project):
         return inspect(self.engine).has_table(project)
-    
+
     @staticmethod
     def _message_from_dict(message: dict):
         return tuple(message['data'])
-    
+
     @staticmethod
     def _message_to_dict(message: tuple) -> dict:
         return {'type': 'chat', 'data': message}

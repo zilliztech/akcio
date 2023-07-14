@@ -37,7 +37,7 @@ def do_answer_api(session_id: str, project: str, question: str):
                             project=project, question=question)
         assert isinstance(final_answer, str)
         return jsonable_encoder({'status': True, 'msg': final_answer}), 200
-    except Exception as e:  # pylint: disable=W0718
+    except Exception as e:  # pylint: disable=W0703
         return jsonable_encoder({'status': False, 'msg': f'Failed to answer question:\n{e}', 'code': 400}), 400
 
 
@@ -46,7 +46,7 @@ def do_project_add_api(data_src: str, project: str, source_type: str = 'file'):
     try:
         num = insert(data_src=data_src, project=project, source_type=source_type)
         return jsonable_encoder({'status': True, 'msg': f'Successfully inserted doc chunks: {num}'}), 200
-    except Exception as e:  # pylint: disable=W0718
+    except Exception as e:  # pylint: disable=W0703
         return jsonable_encoder({'status': False, 'msg': f'Failed to load data:\n{e}'}), 400
 
 
@@ -56,7 +56,7 @@ def do_project_drop_api(project: str):
     try:
         drop(project=project)
         return jsonable_encoder({'status': True, 'msg': f'Dropped project: {project}'}), 200
-    except Exception as e:  # pylint: disable=W0718
+    except Exception as e:  # pylint: disable=W0703
         return jsonable_encoder({'status': False, 'msg': f'Failed to drop project:\n{e}'}), 400
 
 
