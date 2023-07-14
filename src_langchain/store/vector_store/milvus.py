@@ -9,7 +9,7 @@ from langchain.docstore.document import Document
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
-from config import VECTORDB_CONFIG
+from config import VECTORDB_CONFIG  # pylint: disable=C0413
 
 
 logger = logging.getLogger('vector_store')

@@ -10,7 +10,8 @@ from langchain.schema import BaseMessage, ChatResult, HumanMessage, AIMessage, C
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from config import CHAT_CONFIG
+from config import CHAT_CONFIG  # pylint: disable=C0413
+
 
 CHAT_CONFIG = CHAT_CONFIG['dolly']
 llm_kwargs = CHAT_CONFIG.get('llm_kwargs', {})
@@ -27,18 +28,18 @@ class ChatLLM(BaseChatModel):
 
     def _generate(self,
                   messages: List[BaseMessage],
-                  stop: Optional[List[str]] = None,
-                  run_manager: Optional[Any] = None,
+                  stop: Optional[List[str]] = None, # pylint: disable=W0613
+                  run_manager: Optional[Any] = None, # pylint: disable=W0613
                   ) -> ChatResult:
         prompt = self._create_prompt(messages)
         resp = self.generate_text(prompt)
         return self._create_chat_result(resp)
 
-    def _agenerate(self,
-                   messages: List[BaseMessage],
-                   stop: Optional[List[str]] = None,
-                   run_manager: Optional[Any] = None,
-                   ) -> ChatResult:
+    async def _agenerate(self,
+                         messages: List[BaseMessage],
+                         stop: Optional[List[str]] = None, # pylint: disable=W0613
+                         run_manager: Optional[Any] = None, # pylint: disable=W0613
+                         ) -> ChatResult:
         prompt = self._create_prompt(messages)
         resp = self.generate_text(prompt)
         return self._create_chat_result(resp)
@@ -55,7 +56,8 @@ class ChatLLM(BaseChatModel):
         gen = ChatGeneration(message=message)
         generations = [gen]
         return ChatResult(generations=generations)
-    
+
+    @property
     def _llm_type(self) -> str:
         return 'dolly'
 

@@ -1,2 +1,2 @@
 towhee
-install milvus[client]
+milvus

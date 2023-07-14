@@ -13,7 +13,7 @@ from langchain.chat_models import ChatOpenAI
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from config import QUESTIONGENERATOR_CONFIG
+from config import QUESTIONGENERATOR_CONFIG  # pylint: disable=C0413
 
 
 class QuestionGenerator:

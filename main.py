@@ -19,9 +19,9 @@ assert (USE_LANGCHAIN and not USE_TOWHEE ) or (USE_TOWHEE and not USE_LANGCHAIN)
     'The service should start with either "--langchain" or "--towhee".'
 
 if USE_LANGCHAIN:
-    from src_langchain.operations import chat, insert, drop
+    from src_langchain.operations import chat, insert, drop  # pylint: disable=C0413
 if USE_TOWHEE:
-    from src_towhee.operations import chat, insert, drop
+    from src_towhee.operations import chat, insert, drop  # pylint: disable=C0413
 
 app = FastAPI()
 origins = ['*']

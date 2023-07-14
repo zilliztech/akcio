@@ -4,11 +4,12 @@ import unittest
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
-from src_towhee.memory.sql import MemoryStore
-from src_towhee.base import BaseMemory
+from src_towhee.base import BaseMemory  # pylint: disable=C0413
+from src_towhee.memory.sql import MemoryStore  # pylint: disable=C0413
 
 
 class TestSql(unittest.TestCase):
+    '''SQL test'''
     project = 'akcio_ut'
     session_id = 'test000'
     messages = [('test question', 'test answer')]
@@ -20,7 +21,7 @@ class TestSql(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         if os.path.exists(cls.db_path):
-            os.remove(cls.db_path)   
+            os.remove(cls.db_path)
 
         assert isinstance(cls.memory, BaseMemory)
         assert hasattr(cls.memory, 'add_history')
@@ -49,5 +50,5 @@ class TestSql(unittest.TestCase):
         os.remove(cls.db_path)
 
 
-if __name__== '__main__':
+if __name__ == '__main__':
     unittest.main()

@@ -1,3 +1,4 @@
+from config import CHAT_CONFIG
 import sys
 import os
 from typing import Mapping, Any, List, Optional
@@ -9,7 +10,6 @@ from langchain.schema import BaseMessage, ChatResult, SystemMessage, HumanMessag
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from config import CHAT_CONFIG
 
 CHAT_CONFIG = CHAT_CONFIG['minimax']
 llm_kwargs = CHAT_CONFIG.get('llm_kwargs', {})
@@ -19,15 +19,17 @@ class ChatLLM(BaseChatModel):
     '''Chat with LLM given context. Must be a LangChain BaseLanguageModel to adapt agent.'''
 
     model_name: str = CHAT_CONFIG['minimax_model']
-    api_key: str = CHAT_CONFIG['minimax_api_key'] or os.getenv('MINIMAX_API_KEY')
-    group_id: str = CHAT_CONFIG['minimax_group_id'] or os.getenv('MINIMAX_GROUP_ID')
+    api_key: str = CHAT_CONFIG['minimax_api_key'] or os.getenv(
+        'MINIMAX_API_KEY')
+    group_id: str = CHAT_CONFIG['minimax_group_id'] or os.getenv(
+        'MINIMAX_GROUP_ID')
     llm_kwargs: dict = llm_kwargs
 
     url = f'https://api.minimax.chat/v1/text/chatcompletion?GroupId={group_id}'
-    
+
     def _generate(self, messages: List[BaseMessage],
-                  stop: Optional[List[str]] = None,
-                  run_manager: Optional[Any] = None,
+                  stop: Optional[List[str]] = None, # pylint: disable=W0613
+                  run_manager: Optional[Any] = None, # pylint: disable=W0613
                   **kwargs: Any
                   ) -> ChatResult:
         payload = kwargs
@@ -45,20 +47,20 @@ class ChatLLM(BaseChatModel):
                     'bot_name': 'Bot'
                 },
             })
-    
+
         headers = {
             'Authorization': f'Bearer {self.api_key}',
             'Content-Type': 'application/json'
         }
 
         resp = requests.post(self.url, headers=headers, json=payload).json()
-    
+
         return self._create_chat_result(resp)
 
-    def _agenerate(self,
+    async def _agenerate(self,
                    messages: List[BaseMessage],
-                   stop: Optional[List[str]] = None,
-                   run_manager: Optional[Any] = None,
+                   stop: Optional[List[str]] = None, # pylint: disable=W0613
+                   run_manager: Optional[Any] = None, # pylint: disable=W0613
                    **kwargs: Any
                    ) -> ChatResult:
         payload = kwargs
@@ -76,16 +78,15 @@ class ChatLLM(BaseChatModel):
                     'bot_name': 'Bot'
                 },
             })
-    
+
         headers = {
             'Authorization': f'Bearer {self.api_key}',
             'Content-Type': 'application/json'
         }
 
         resp = requests.post(self.url, headers=headers, json=payload).json()
-    
-        return self._create_chat_result(resp)
 
+        return self._create_chat_result(resp)
 
     def _parse_inputs(self, messages: List[BaseMessage]):
         new_messages = []
@@ -110,7 +111,8 @@ class ChatLLM(BaseChatModel):
         gen = ChatGeneration(message=message)
         generations = [gen]
         return ChatResult(generations=generations)
-    
+
+    @property
     def _llm_type(self) -> str:
         return 'minimax'
 

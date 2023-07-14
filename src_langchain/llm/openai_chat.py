@@ -1,12 +1,12 @@
 import os
 import sys
-from typing import Optional, Union, Tuple
+from typing import Optional
 
 from langchain.chat_models import ChatOpenAI
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from config import CHAT_CONFIG
+from config import CHAT_CONFIG  # pylint: disable=C0413
 
 CHAT_CONFIG = CHAT_CONFIG['openai']
 llm_kwargs = CHAT_CONFIG.get('llm_kwargs', {})

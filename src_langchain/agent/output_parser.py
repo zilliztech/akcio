@@ -9,15 +9,16 @@ from .prompt import FORMAT_INSTRUCTIONS
 
 
 class OutputParser(ConvoOutputParser):
+    '''Parse llm output'''
     def get_format_instructions(self) -> str:
         return FORMAT_INSTRUCTIONS
 
     def parse(self, text: str) -> Union[AgentAction, AgentFinish]:
         try:
             return super().parse(text)
-        except Exception:
+        except Exception:  # pylint: disable=W0703
             text = re.sub('\n', r'\\n', text)
-            if '''"action": "Search"''' and '''"action_input":''' in text:
+            if '"action": "Search"' in text and '"action_input":' in text:
                 text = text.split('''"action_input":''')[1].strip()
                 json_text = '{\n ' + f'   "action": "Search",\n    "action_input": "{text}"\n' + '}'
             else:

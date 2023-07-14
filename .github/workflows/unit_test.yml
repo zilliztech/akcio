@@ -1,0 +1,50 @@
+name: Unit test
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    # file paths to consider in the event
+    paths:
+      - '**.py'
+      - '!**.md'
+      - 'tests/**'
+      - '.github/workflows/unit_test.yml'
+
+jobs:
+  run:
+    runs-on: ubuntu-20.04
+    
+    steps:
+    - uses: actions/checkout@main
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8
+        cache: pip
+    - name: Install dependency
+      shell: bash
+      run: |
+        pip install --upgrade pip
+        pip install coverage
+        pip install pytest
+        pip install -r requirements.txt
+    - name: Install test dependency
+      shell: bash
+      working-directory: tests
+      run: |
+        pip install -r requirements.txt
+    - name: Generate coverage report
+      run: |
+        rm -rf ./coverage.xml
+        coverage erase
+        coverage run -m pytest
+        coverage xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3.1.0
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage.xml
+        fail_ci_if_error: true

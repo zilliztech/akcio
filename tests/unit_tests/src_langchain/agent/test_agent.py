@@ -18,7 +18,7 @@ class TestChatAgent(unittest.TestCase):
             description='Useful when you need to run python code in the REPL.',
         )
     ]
-    responses = ['''```json\n{"action": "Python REPL",\n"action_input": "print(2 + 2)"}''', "Final Answer: 4"]
+    responses = ['''{"action": "Python REPL",\n"action_input": "print(2 + 2)"}''', 'Final Answer: 4']
     llm = FakeListLLM(responses=responses)
     chat_agent = ChatAgent.from_llm_and_tools(llm=llm, tools=tools)
 
