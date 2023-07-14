@@ -3,7 +3,7 @@
 [OSSChat](https://osschat.io) |
 [Documentation](https://github.com/zilliztech/akcio/wiki) |
 [Contact](https://zilliz.com/contact-sales) |
-[ToS](./ToS.md)
+[LICENSE](./LICENSE)
 
 Index
 
@@ -225,7 +225,6 @@ This method is only recommended to load a small amount of data, but **not for a 
 
 ---
 
-## Notice
-Akcio is a project developed by Zilliz, All rights reserved. 
+## LICENSE
 
-By using our project or any part of our project, you agree to the [Terms of Service](./ToS.md).
+Akcio is published under the [Server Side Public License (SSPL) v1](./LICENSE).
