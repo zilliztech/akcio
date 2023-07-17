@@ -95,6 +95,7 @@ class TowheePipelines(BasePipelines):
         # Configure embedding
         search_config.embedding_model = self.textencoder_config['model']
         search_config.embedding_normalize = self.textencoder_config['norm']
+        search_config.embedding_device = self.textencoder_config['device']
 
         # Configure prompt
         if self.prompt_op:
@@ -127,6 +128,7 @@ class TowheePipelines(BasePipelines):
         # Configure embedding
         insert_config.embedding_model = self.textencoder_config['model']
         insert_config.embedding_normalize = self.textencoder_config['norm']
+        insert_config.embedding_device = self.textencoder_config['device']
 
         # Configure vector store (Milvus/Zilliz)
         insert_config.milvus_host = self.milvus_host
