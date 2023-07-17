@@ -1,6 +1,3 @@
-from config import CHAT_CONFIG, TEXTENCODER_CONFIG, VECTORDB_CONFIG, RERANK_CONFIG  # pylint: disable=C0413
-from src_towhee.pipelines import TowheePipelines  # pylint: disable=C0413
-from src_towhee.base import BasePipelines  # pylint: disable=C0413
 import unittest
 from unittest.mock import patch
 
@@ -12,11 +9,15 @@ from milvus import default_server
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
+from config import CHAT_CONFIG, TEXTENCODER_CONFIG, VECTORDB_CONFIG, RERANK_CONFIG  # pylint: disable=C0413
+from src_towhee.pipelines import TowheePipelines  # pylint: disable=C0413
+
 
 TEXTENCODER_CONFIG = {
     'model': 'paraphrase-albert-small-v2',
     'dim': 768,
-    'norm': False
+    'norm': False,
+    'device': -1
 }
 
 VECTORDB_CONFIG['connection_args'] = {
@@ -26,6 +27,8 @@ VECTORDB_CONFIG['connection_args'] = {
     'password': None,
     'secure': False
 }
+
+RERANK_CONFIG['rerank'] = False
 
 MOCK_ANSWER = 'mock answer'
 
@@ -51,6 +54,10 @@ def create_pipelines(llm_src):
 
 
 class TestPipelines(unittest.TestCase):
+    project = 'akcio_ut'
+    data_src = 'https://github.com/towhee-io/towhee/blob/main/requirements.txt'
+    question = 'test question'
+    
     @classmethod
     def setUpClass(cls):
         default_server.cleanup()
@@ -64,41 +71,28 @@ class TestPipelines(unittest.TestCase):
 
             pipelines = create_pipelines('openai')
 
-            # Check attributes
-            assert isinstance(pipelines, BasePipelines)
-            assert hasattr(pipelines, 'insert_pipeline')
-            assert hasattr(pipelines, 'search_pipeline')
-            assert hasattr(pipelines, 'create')
-            assert hasattr(pipelines, 'drop')
-            assert hasattr(pipelines, 'check')
-            assert hasattr(pipelines, 'count_entities')
-
-            project = 'akcio_ut'
-            data_src = 'https://github.com/towhee-io/towhee/blob/main/requirements.txt'
-            question = 'test question'
-
             # Check insert
-            if pipelines.check(project):
-                pipelines.drop(project)
+            if pipelines.check(self.project):
+                pipelines.drop(self.project)
 
-            assert not pipelines.check(project)
-            pipelines.create(project)
-            assert pipelines.check(project)
+            assert not pipelines.check(self.project)
+            pipelines.create(self.project)
+            assert pipelines.check(self.project)
 
             insert_pipeline = pipelines.insert_pipeline
-            res = insert_pipeline(data_src, project).to_list()
-            num = pipelines.count_entities(project)
+            res = insert_pipeline(self.data_src, self.project).to_list()
+            num = pipelines.count_entities(self.project)
             assert len(res) <= num
 
             # Check search
             search_pipeline = pipelines.search_pipeline
-            res = search_pipeline(question, [], project)
+            res = search_pipeline(self.question, [], self.project)
             final_answer = res.get()[0]
             assert final_answer == MOCK_ANSWER
 
             # Drop
-            pipelines.drop(project)
-            assert not pipelines.check(project)
+            pipelines.drop(self.project)
+            assert not pipelines.check(self.project)
 
     def test_chatglm(self):
         with patch('zhipuai.model_api.invoke') as mock_llm:
@@ -108,41 +102,28 @@ class TestPipelines(unittest.TestCase):
 
             pipelines = create_pipelines('chatglm')
 
-            # Check attributes
-            assert isinstance(pipelines, BasePipelines)
-            assert hasattr(pipelines, 'insert_pipeline')
-            assert hasattr(pipelines, 'search_pipeline')
-            assert hasattr(pipelines, 'create')
-            assert hasattr(pipelines, 'drop')
-            assert hasattr(pipelines, 'check')
-            assert hasattr(pipelines, 'count_entities')
-
-            project = 'akcio_ut'
-            data_src = 'https://github.com/towhee-io/towhee/blob/main/requirements.txt'
-            question = 'test question'
-
             # Check insert
-            if pipelines.check(project):
-                pipelines.drop(project)
+            if pipelines.check(self.project):
+                pipelines.drop(self.project)
 
-            assert not pipelines.check(project)
-            pipelines.create(project)
-            assert pipelines.check(project)
+            assert not pipelines.check(self.project)
+            pipelines.create(self.project)
+            assert pipelines.check(self.project)
 
             insert_pipeline = pipelines.insert_pipeline
-            res = insert_pipeline(data_src, project).to_list()
-            num = pipelines.count_entities(project)
+            res = insert_pipeline(self.data_src, self.project).to_list()
+            num = pipelines.count_entities(self.project)
             assert len(res) <= num
 
             # Check search
             search_pipeline = pipelines.search_pipeline
-            res = search_pipeline(question, [], project)
+            res = search_pipeline(self.question, [], self.project)
             final_answer = res.get()[0]
             assert final_answer == MOCK_ANSWER
 
             # Drop
-            pipelines.drop(project)
-            assert not pipelines.check(project)
+            pipelines.drop(self.project)
+            assert not pipelines.check(self.project)
 
     def test_ernie(self):
 
@@ -156,41 +137,28 @@ class TestPipelines(unittest.TestCase):
 
             pipelines = create_pipelines('ernie')
 
-            # Check attributes
-            assert isinstance(pipelines, BasePipelines)
-            assert hasattr(pipelines, 'insert_pipeline')
-            assert hasattr(pipelines, 'search_pipeline')
-            assert hasattr(pipelines, 'create')
-            assert hasattr(pipelines, 'drop')
-            assert hasattr(pipelines, 'check')
-            assert hasattr(pipelines, 'count_entities')
-
-            project = 'akcio_ut'
-            data_src = 'https://github.com/towhee-io/towhee/blob/main/requirements.txt'
-            question = 'test question'
-
             # Check insert
-            if pipelines.check(project):
-                pipelines.drop(project)
+            if pipelines.check(self.project):
+                pipelines.drop(self.project)
 
-            assert not pipelines.check(project)
-            pipelines.create(project)
-            assert pipelines.check(project)
+            assert not pipelines.check(self.project)
+            pipelines.create(self.project)
+            assert pipelines.check(self.project)
 
             insert_pipeline = pipelines.insert_pipeline
-            res = insert_pipeline(data_src, project).to_list()
-            num = pipelines.count_entities(project)
+            res = insert_pipeline(self.data_src, self.project).to_list()
+            num = pipelines.count_entities(self.project)
             assert len(res) <= num
 
             # Check search
             search_pipeline = pipelines.search_pipeline
-            res = search_pipeline(question, [], project)
+            res = search_pipeline(self.question, [], self.project)
             final_answer = res.get()[0]
             assert final_answer == MOCK_ANSWER
 
             # Drop
-            pipelines.drop(project)
-            assert not pipelines.check(project)
+            pipelines.drop(self.project)
+            assert not pipelines.check(self.project)
 
     def test_dashscope(self):
         from http import HTTPStatus
@@ -210,41 +178,28 @@ class TestPipelines(unittest.TestCase):
 
             pipelines = create_pipelines('dashscope')
 
-            # Check attributes
-            assert isinstance(pipelines, BasePipelines)
-            assert hasattr(pipelines, 'insert_pipeline')
-            assert hasattr(pipelines, 'search_pipeline')
-            assert hasattr(pipelines, 'create')
-            assert hasattr(pipelines, 'drop')
-            assert hasattr(pipelines, 'check')
-            assert hasattr(pipelines, 'count_entities')
-
-            project = 'akcio_ut'
-            data_src = 'https://github.com/towhee-io/towhee/blob/main/requirements.txt'
-            question = 'test question'
-
             # Check insert
-            if pipelines.check(project):
-                pipelines.drop(project)
+            if pipelines.check(self.project):
+                pipelines.drop(self.project)
 
-            assert not pipelines.check(project)
-            pipelines.create(project)
-            assert pipelines.check(project)
+            assert not pipelines.check(self.project)
+            pipelines.create(self.project)
+            assert pipelines.check(self.project)
 
             insert_pipeline = pipelines.insert_pipeline
-            res = insert_pipeline(data_src, project).to_list()
-            num = pipelines.count_entities(project)
+            res = insert_pipeline(self.data_src, self.project).to_list()
+            num = pipelines.count_entities(self.project)
             assert len(res) <= num
 
             # Check search
             search_pipeline = pipelines.search_pipeline
-            res = search_pipeline(question, [], project)
+            res = search_pipeline(self.question, [], self.project)
             final_answer = res.get()[0]
             assert final_answer == MOCK_ANSWER
 
             # Drop
-            pipelines.drop(project)
-            assert not pipelines.check(project)
+            pipelines.drop(self.project)
+            assert not pipelines.check(self.project)
 
     def test_minimax(self):
 
@@ -258,41 +213,28 @@ class TestPipelines(unittest.TestCase):
 
             pipelines = create_pipelines('minimax')
 
-            # Check attributes
-            assert isinstance(pipelines, BasePipelines)
-            assert hasattr(pipelines, 'insert_pipeline')
-            assert hasattr(pipelines, 'search_pipeline')
-            assert hasattr(pipelines, 'create')
-            assert hasattr(pipelines, 'drop')
-            assert hasattr(pipelines, 'check')
-            assert hasattr(pipelines, 'count_entities')
-
-            project = 'akcio_ut'
-            data_src = 'https://github.com/towhee-io/towhee/blob/main/requirements.txt'
-            question = 'test question'
-
             # Check insert
-            if pipelines.check(project):
-                pipelines.drop(project)
+            if pipelines.check(self.project):
+                pipelines.drop(self.project)
 
-            assert not pipelines.check(project)
-            pipelines.create(project)
-            assert pipelines.check(project)
+            assert not pipelines.check(self.project)
+            pipelines.create(self.project)
+            assert pipelines.check(self.project)
 
             insert_pipeline = pipelines.insert_pipeline
-            res = insert_pipeline(data_src, project).to_list()
-            num = pipelines.count_entities(project)
+            res = insert_pipeline(self.data_src, self.project).to_list()
+            num = pipelines.count_entities(self.project)
             assert len(res) <= num
 
             # Check search
             search_pipeline = pipelines.search_pipeline
-            res = search_pipeline(question, [], project)
+            res = search_pipeline(self.question, [], self.project)
             final_answer = res.get()[0]
             assert final_answer == MOCK_ANSWER
 
             # Drop
-            pipelines.drop(project)
-            assert not pipelines.check(project)
+            pipelines.drop(self.project)
+            assert not pipelines.check(self.project)
 
     def test_skychat(self):
 
@@ -308,41 +250,28 @@ class TestPipelines(unittest.TestCase):
 
             pipelines = create_pipelines('skychat')
 
-            # Check attributes
-            assert isinstance(pipelines, BasePipelines)
-            assert hasattr(pipelines, 'insert_pipeline')
-            assert hasattr(pipelines, 'search_pipeline')
-            assert hasattr(pipelines, 'create')
-            assert hasattr(pipelines, 'drop')
-            assert hasattr(pipelines, 'check')
-            assert hasattr(pipelines, 'count_entities')
-
-            project = 'akcio_ut'
-            data_src = 'https://github.com/towhee-io/towhee/blob/main/requirements.txt'
-            question = 'test question'
-
             # Check insert
-            if pipelines.check(project):
-                pipelines.drop(project)
+            if pipelines.check(self.project):
+                pipelines.drop(self.project)
 
-            assert not pipelines.check(project)
-            pipelines.create(project)
-            assert pipelines.check(project)
+            assert not pipelines.check(self.project)
+            pipelines.create(self.project)
+            assert pipelines.check(self.project)
 
             insert_pipeline = pipelines.insert_pipeline
-            res = insert_pipeline(data_src, project).to_list()
-            num = pipelines.count_entities(project)
+            res = insert_pipeline(self.data_src, self.project).to_list()
+            num = pipelines.count_entities(self.project)
             assert len(res) <= num
 
             # Check search
             search_pipeline = pipelines.search_pipeline
-            res = search_pipeline(question, [], project)
+            res = search_pipeline(self.question, [], self.project)
             final_answer = res.get()[0]
             assert final_answer == MOCK_ANSWER
 
             # Drop
-            pipelines.drop(project)
-            assert not pipelines.check(project)
+            pipelines.drop(self.project)
+            assert not pipelines.check(self.project)
 
     def test_dolly(self):
         class MockDolly:
@@ -355,41 +284,32 @@ class TestPipelines(unittest.TestCase):
 
             pipelines = create_pipelines('dolly')
 
-            # Check attributes
-            assert isinstance(pipelines, BasePipelines)
-            assert hasattr(pipelines, 'insert_pipeline')
-            assert hasattr(pipelines, 'search_pipeline')
-            assert hasattr(pipelines, 'create')
-            assert hasattr(pipelines, 'drop')
-            assert hasattr(pipelines, 'check')
-            assert hasattr(pipelines, 'count_entities')
-
-            project = 'akcio_ut'
-            data_src = 'https://github.com/towhee-io/towhee/blob/main/requirements.txt'
-            question = 'test question'
+            self.project = 'akcio_ut'
+            self.data_src = 'https://github.com/towhee-io/towhee/blob/main/requirements.txt'
+            self.question = 'test question'
 
             # Check insert
-            if pipelines.check(project):
-                pipelines.drop(project)
+            if pipelines.check(self.project):
+                pipelines.drop(self.project)
 
-            assert not pipelines.check(project)
-            pipelines.create(project)
-            assert pipelines.check(project)
+            assert not pipelines.check(self.project)
+            pipelines.create(self.project)
+            assert pipelines.check(self.project)
 
             insert_pipeline = pipelines.insert_pipeline
-            res = insert_pipeline(data_src, project).to_list()
-            num = pipelines.count_entities(project)
+            res = insert_pipeline(self.data_src, self.project).to_list()
+            num = pipelines.count_entities(self.project)
             assert len(res) <= num
 
             # Check search
             search_pipeline = pipelines.search_pipeline
-            res = search_pipeline(question, [], project)
+            res = search_pipeline(self.question, [], self.project)
             final_answer = res.get()[0]
             assert final_answer == MOCK_ANSWER
 
             # Drop
-            pipelines.drop(project)
-            assert not pipelines.check(project)
+            pipelines.drop(self.project)
+            assert not pipelines.check(self.project)
 
     @classmethod
     def tearDownClass(cls):

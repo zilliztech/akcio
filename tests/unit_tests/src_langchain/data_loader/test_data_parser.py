@@ -24,13 +24,13 @@ class TestDataParser(unittest.TestCase):
             with io.open(tmp_file_path, 'w') as file:
                 file.write(text)
             output = self.data_parser(tmp_file_path, source_type='file')
-            assert output == ['ab', 'cd']
+            assert output == ['ab', 'c', 'd']
 
     def test_call_from_urls(self):
         with patch('langchain.document_loaders.UnstructuredURLLoader.load') as mock_url_loader:
             mock_url_loader.return_value = [Document(page_content='ab\ncd', metadata={})]
             output = self.data_parser('www.mockurl.com', source_type='url')
-            assert output == ['ab', 'cd']
+            assert output == ['ab', 'c', 'd']
 
 
 if __name__ == '__main__':

@@ -45,6 +45,7 @@ CHAT_CONFIG = {
 ################## Embedding ##################
 TEXTENCODER_CONFIG = {
     'model': 'multi-qa-mpnet-base-cos-v1',
+    'device': -1, # -1 will use cpu
     'norm': True,
     'dim': 768
 }
@@ -89,7 +90,8 @@ MEMORYDB_CONFIG = {
 RERANK_CONFIG = {
     'rerank': True,
     'rerank_model': 'cross-encoder/ms-marco-MiniLM-L-12-v2',
-    'threshold': 0.6
+    'threshold': 0.6,
+    'rerank_device': -1  # -1 will use cpu
 }
 
 ################## Data loader ##################
