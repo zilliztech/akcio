@@ -30,8 +30,8 @@ def chat(session_id, project, question):
         messages = [(question, final_answer)]
         memory_store.add_history(project, session_id, messages)
         return final_answer
-    except Exception: # pylint: disable=W0703
-        return 'Something went wrong. Please clear history and try again!'
+    except Exception as e: # pylint: disable=W0703
+        return f'Something went wrong:\n{e}'
 
 
 def insert(data_src, project, source_type: str = 'file'): # pylint: disable=W0613
