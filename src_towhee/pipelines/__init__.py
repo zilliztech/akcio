@@ -41,6 +41,7 @@ class TowheePipelines(BasePipelines):
         self.milvus_host = self.milvus_uri.split('https://')[1].split(':')[0]
         self.milvus_port = self.milvus_uri.split('https://')[1].split(':')[1]
         milvus_user = vectordb_config['connection_args'].get('user')
+        self.milvus_secure = vectordb_config['connection_args'].get('secure', False)
         self.milvus_user = None if milvus_user == '' else milvus_user
         milvus_password = vectordb_config['connection_args'].get('password')
         self.milvus_password = None if milvus_password == '' else milvus_password
@@ -52,6 +53,7 @@ class TowheePipelines(BasePipelines):
             host=self.milvus_host,
             port=self.milvus_port,
             user=self.milvus_user,
+            secure=self.milvus_secure,
             password=self.milvus_password
         )
 
