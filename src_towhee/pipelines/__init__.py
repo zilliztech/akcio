@@ -163,7 +163,7 @@ class TowheePipelines(BasePipelines):
             FieldSchema(name='embedding', dtype=DataType.FLOAT_VECTOR,
                         description='embedding vectors', dim=self.textencoder_config['dim'])
         ]
-        schema = CollectionSchema(fields=fields, description='osschat')
+        schema = CollectionSchema(fields=fields, description='osschat', enable_dynamic_field=True)
         collection = Collection(name=project, schema=schema)
 
         index_params = self.milvus_index_params
