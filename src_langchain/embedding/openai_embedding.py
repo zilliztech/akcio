@@ -19,7 +19,7 @@ class TextEncoder(OpenAIEmbeddings):
     def __init__(self, *args, **kwargs):
         assert isinstance(
             self, Embeddings), 'Invalid text encoder. Only accept LangChain embeddings.'
-        kwargs['model_name'] = kwargs.get('model_name', MODEL)
+        kwargs['model'] = kwargs.get('model_name', MODEL)
         super().__init__(*args, **kwargs)
 
     def embed_documents(self, texts: List[str], norm: bool = NORM, chunk_size: int = 1000) -> List[List[float]]:
