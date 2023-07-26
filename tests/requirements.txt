@@ -5,3 +5,4 @@ milvus
 transformers
 dashscope
 zhipuai
+sentence-transformers
