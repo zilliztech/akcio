@@ -78,9 +78,9 @@ class DocStore:
             assert vec_count == scalar_count, f'Data count does not match: {vec_count} in vector db VS {scalar_count} in scalar db.'
         return vec_count
 
-    @classmethod
-    def drop(cls, project):
-        status = cls.has_project(project)
+    @staticmethod
+    def drop(project):
+        status = DocStore.has_project(project)
         assert status, f'No table found for project: {project}'
 
         VectorStore.drop(project)
@@ -88,12 +88,11 @@ class DocStore:
         if USE_SCALAR:
             ScalarStore.drop(project)
 
-        status = cls.has_project(project)
+        status = DocStore.has_project(project)
         assert not status, f'Failed to drop table for project: {project}'
 
-
-    @classmethod
-    def has_project(cls, project):
+    @staticmethod
+    def has_project(project):
         status = VectorStore.has_project(project)
         if USE_SCALAR:
             assert ScalarStore.has_project(project) == status
