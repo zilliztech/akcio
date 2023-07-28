@@ -167,15 +167,15 @@ class VectorStore(Milvus):
             res.append(doc)
         return res
 
-    @classmethod
-    def connect(cls, connection_args: dict = CONNECTION_ARGS):
+    @staticmethod
+    def connect(connection_args: dict = CONNECTION_ARGS):
         from pymilvus import connections  # pylint: disable=C0415
 
         connections.connect(**connection_args)
 
-    @classmethod
-    def drop(cls, project: str, connection_args: dict = CONNECTION_ARGS):
-        if cls.has_project(project=project, connection_args=connection_args):
+    @staticmethod
+    def drop(project: str, connection_args: dict = CONNECTION_ARGS):
+        if VectorStore.has_project(project=project, connection_args=connection_args):
             from pymilvus import Collection  # pylint: disable=C0415
 
             collection = Collection(project)
@@ -189,9 +189,9 @@ class VectorStore(Milvus):
         else:
             raise AttributeError(f'No table in vector db: {project}')
 
-    @classmethod
-    def has_project(cls, project: str, connection_args: dict = CONNECTION_ARGS):
+    @staticmethod
+    def has_project(project: str, connection_args: dict = CONNECTION_ARGS):
         from pymilvus import utility # pylint: disable=C0415
 
-        cls.connect(connection_args)
+        VectorStore.connect(connection_args)
         return utility.has_collection(project)

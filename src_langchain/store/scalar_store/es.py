@@ -29,14 +29,14 @@ class ScalarStore(ElasticSearchBM25Retriever):
         res_docs = self.get_relevant_documents(query=query)
         return res_docs
 
-    @classmethod
-    def connect(cls, connection_args: dict = CONNECTION_ARGS):
+    @staticmethod
+    def connect(connection_args: dict = CONNECTION_ARGS):
         client = elasticsearch.Elasticsearch(**connection_args)
         return client
 
-    @classmethod
-    def drop(cls, project: str, connection_args: dict = CONNECTION_ARGS):
-        client = cls.connect(connection_args)
+    @staticmethod
+    def drop(project: str, connection_args: dict = CONNECTION_ARGS):
+        client = ScalarStore.connect(connection_args)
         # confirm = input(f'Confirm to drop table {project} scalar db (y/n): ')
         # if confirm == 'y':
         try:
@@ -44,7 +44,7 @@ class ScalarStore(ElasticSearchBM25Retriever):
         except Exception as e:
             raise RuntimeError from e
 
-    @classmethod
-    def has_project(cls, project: str, connection_args: dict = CONNECTION_ARGS):
-        client = cls.connect(connection_args)
+    @staticmethod
+    def has_project(project: str, connection_args: dict = CONNECTION_ARGS):
+        client = ScalarStore.connect(connection_args)
         return client.indices.exists(index=project)

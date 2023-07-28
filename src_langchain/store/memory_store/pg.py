@@ -59,8 +59,8 @@ class MemoryStore:
                 messages.append((q, x.content))
         return messages
 
-    @classmethod
-    def connect(cls, connect_str: str = CONNECT_STR):
+    @staticmethod
+    def connect(connect_str: str = CONNECT_STR):
         import psycopg  # pylint: disable=C0415
         from psycopg.rows import dict_row  # pylint: disable=C0415
 
@@ -68,11 +68,11 @@ class MemoryStore:
         cursor = connection.cursor(row_factory=dict_row)
         return connection, cursor
 
-    @classmethod
-    def drop(cls, table_name, connect_str: str = CONNECT_STR, session_id: str = None):
-        connection, cursor = cls.connect(connect_str)
+    @staticmethod
+    def drop(table_name, connect_str: str = CONNECT_STR, session_id: str = None):
+        connection, cursor = MemoryStore.connect(connect_str)
 
-        existence = cls.check(table_name)
+        existence = MemoryStore.check(table_name)
 
         if existence:
             if session_id and len(session_id) > 0:
@@ -84,13 +84,12 @@ class MemoryStore:
             connection.commit()
 
         if not session_id or len(session_id) == 0:
-            existence = cls.check(table_name)
+            existence = MemoryStore.check(table_name)
             assert not existence, f'Failed to drop table {table_name}.'
 
-
-    @classmethod
-    def check(cls, table_name, connect_str: str = CONNECT_STR):
-        _, cursor = cls.connect(connect_str)
+    @staticmethod
+    def check(table_name, connect_str: str = CONNECT_STR):
+        _, cursor = MemoryStore.connect(connect_str)
 
         check = 'SELECT COUNT(*) FROM pg_class WHERE relname = %s;'
         cursor.execute(check, (table_name,))
