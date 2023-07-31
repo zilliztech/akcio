@@ -167,11 +167,11 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
 
     The main script will run a FastAPI service with default address `localhost:8900`.
 
-    - Option 1: Towhee
+    - Option 1: using Towhee
         ```shell
         $ python main.py --towhee
         ```
-    - Option 2: Towhee
+    - Option 2: using LangChain
         ```shell
         $ python main.py --langchain
         ```
