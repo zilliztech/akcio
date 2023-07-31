@@ -36,6 +36,7 @@ It also supports different integrations of LLM service and databases:
 |                         |              | **Towhee** | **LangChain** |
 |:-----------------------:|:------------:|:------:|:-----:|
 | **LLM**                 | OpenAI       | ✓      | ✓     |
+|                         | Llama-2      | ✓      |       |
 |                         | Dolly        | ✓      | ✓     |
 |                         | Ernie        | ✓      | ✓     |
 |                         | MiniMax      | ✓      | ✓     |
@@ -119,13 +120,18 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
         <summary> Check how to <strong>SWITCH LLM</strong>. </summary>
          If you want to use another supported LLM service, you can change the LLM option and set up for it.
          Besides directly modifying the configuration file, you can also set up via environment variables.
-         For example, to use Ernie instead of OpenAI, you need to change the option and set up Ernie API key & secret key:
 
-        ```shell
-        $ export LLM_OPTION=ernie
-        $ export ERNIE_API_KEY=your_ernie_api_key
-        $ export ERNIE_SECRET_KEY=your_ernie_secret_key
-        ```
+        - For example, to use Llama-2 at local which does not require any account, you just need to change the LLM option:
+            ```shell
+            $ export LLM_OPTION=llama_2
+            ```
+
+        - For example, to use Ernie instead of OpenAI, you need to change the option and set up Ernie API key & secret key:
+            ```shell
+            $ export LLM_OPTION=ernie
+            $ export ERNIE_API_KEY=your_ernie_api_key
+            $ export ERNIE_SECRET_KEY=your_ernie_secret_key
+            ```
         </details>
         
     - Embedding
