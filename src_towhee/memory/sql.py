@@ -36,7 +36,9 @@ class MemoryStore(BaseMemory):
     def get_history(self, project: str, session_id: str):
         if self.check(project):
             project_table = Table(project, self.meta,
-                                  autoload_with=self.engine)
+                                  autoload_with=self.engine,
+                                  extend_existing=True
+                                  )
             query = project_table.select().where(project_table.c.session_id == session_id)
             messages = []
             with self.engine.connect() as conn:
@@ -57,6 +59,7 @@ class MemoryStore(BaseMemory):
                                          autoincrement=True),
                                   Column('session_id', String, nullable=False),
                                   Column('message', JSON, nullable=False),
+                                  extend_existing=True
                                   )
             self.meta.create_all(self.engine)
         project_table = Table(project, self.meta, autoload_with=self.engine, extend_existing=True)
@@ -65,7 +68,7 @@ class MemoryStore(BaseMemory):
     def drop(self, project, session_id=None):
         if self.check(project):
             project_table = Table(project, self.meta,
-                                  autoload_with=self.engine)
+                                  autoload_with=self.engine, extend_existing=True)
             if session_id and len(session_id) > 0:
                 query = project_table.delete().where(project_table.c.session_id == session_id)
                 with self.engine.connect() as conn:

@@ -11,6 +11,14 @@ CHAT_CONFIG = {
             # 'max_tokens': 200,
             }
     },
+    'llama_2': {
+        'llama_2_model': 'llama-2-13b-chat',
+        'llm_kwargs':{
+            'temperature': 0.8,
+            'max_tokens': 200,
+            'n_ctx': 4096
+        }
+    },
     'ernie': {
         'ernie_api_key': None, # If None, use environment  value 'ERNIE_API_KEY'
         'ernie_secret_key': None, # If None, use environment value 'ERNIE_SECRET_KEY'
@@ -62,7 +70,7 @@ VECTORDB_CONFIG = {
         'password': os.getenv('MILVUS_PASSWORD', ''),
         'secure': True if os.getenv('MILVUS_SECURE', 'False').lower() == 'true' else False
         },
-    'top_k': 10,
+    'top_k': 1,
     'threshold': 0.6,
     'index_params': {
         'metric_type': 'IP',
