@@ -16,17 +16,27 @@ ChatGPT has constraints due to its limited knowledge base, sometimes resulting i
 
 We have built [OSSChat](https://osschat.io) as a working demonstration of the CVP stack. Now we are presenting the technology behind OSSChat in this repository with a code name of Akcio.
 
-<img src='pics/osschat_web.png' width='100%' alignment='centre'>
+<!-- OSSChat -->
+<table>
+  <tr>
+    <td width="40%">
+        <img src="./pics/osschat.png" />
+    </td>
+    <td width="40%">
+<img src="https://github.com/towhee-io/data/raw/main/akcio/osschat.gif" />
+    </td>
+  </tr>
+</table>
 
 With this project, you are able to build a knowledge-enhanced ChatBot using LLM service like ChatGPT. 
 By the end, you will learn how to start a backend service using FastAPI, which provides standby APIs to support further applications. Alternatively, we show how to use Gradio to build an online demo with user interface.
 
 ## Overview
 
-<img src='pics/osschat.png' width='75%' alignment='centre'>
-
 Akcio allows you to create a ChatGPT-like system with added intelligence obtained through semantic search of customized knowledge base.
 Instead of sending the user query directly to LLM service, our system firstly retrieves relevant information from stores by semantic search or keyword match. Then it feeds both user needs and helpful information into LLM. This allows LLM to better tailor its response to the user's needs and provide more accurate and helpful information.
+
+<img src="./pics/architecture.png" />
 
 You can find more details and instructions at our [documentation](https://github.com/zilliztech/akcio/wiki).
 
