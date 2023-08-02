@@ -29,14 +29,16 @@ We have built [OSSChat](https://osschat.io) as a working demonstration of the CV
 </table>
 
 With this project, you are able to build a knowledge-enhanced ChatBot using LLM service like ChatGPT. 
-By the end, you will learn how to start a backend service using FastAPI, which provides standby APIs to support further applications. Alternatively, we show how to use Gradio to build an online demo with user interface.
+By the end, you will learn how to start a backend service using FastAPI, which provides standby APIs to support further applications. Alternatively, we show how to use Gradio to [build an online demo](https://github.com/zilliztech/akcio/wiki/Demo).
 
 ## Overview
 
+<p align="center" width="100%">
+    <img width="60%" src="./pics/architecture.png">
+</p>
+
 Akcio allows you to create a ChatGPT-like system with added intelligence obtained through semantic search of customized knowledge base.
 Instead of sending the user query directly to LLM service, our system firstly retrieves relevant information from stores by semantic search or keyword match. Then it feeds both user needs and helpful information into LLM. This allows LLM to better tailor its response to the user's needs and provide more accurate and helpful information.
-
-<img src="./pics/architecture.png" />
 
 You can find more details and instructions at our [documentation](https://github.com/zilliztech/akcio/wiki).
 
@@ -118,7 +120,7 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
 
     - LLM
 
-        By default, the system will use OpenAI service as the LLM option.
+        By default, the system will use **OpenAI** service as the LLM option.
         To set your OpenAI API key without modifying the configuration file, you can pass it as environment variable.
 
         ```shell
@@ -131,12 +133,12 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
          If you want to use another supported LLM service, you can change the LLM option and set up for it.
          Besides directly modifying the configuration file, you can also set up via environment variables.
 
-        - For example, to use Llama-2 at local which does not require any account, you just need to change the LLM option:
+        - For example, to use **Llama-2** at local which does not require any account, you just need to change the LLM option:
             ```shell
             $ export LLM_OPTION=llama_2
             ```
 
-        - For example, to use Ernie instead of OpenAI, you need to change the option and set up Ernie API key & secret key:
+        - For example, to use **Ernie** instead of OpenAI, you need to change the option and set up Ernie API key & secret key:
             ```shell
             $ export LLM_OPTION=ernie
             $ export ERNIE_API_KEY=your_ernie_api_key
@@ -190,7 +192,9 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
     
     You can open url https://localhost:8900/docs in browser to access the web service.
 
-    <img src='pics/fastapi.png' width='75%' alignment='centre'>
+    <p align="center" width="100%">
+        <img width="80%" src="./pics/fastapi.png">
+    </p>
 
     > `/`: Check service status
     >
@@ -199,6 +203,8 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
     > `/project/add`: Add data to project (will create the project if not exist)
     >
     > `/project/drop`: Drop project including delete data in both vector and memory storages.
+    
+    Check [Online Operations](https://github.com/zilliztech/akcio/wiki/Online-Operations) to learn more about these APIs.
 
 
 ## Load data
@@ -239,7 +245,6 @@ This method is only recommended to load a small amount of data, but **not for a 
 
 <br />
 
----
 
 ## LICENSE
 
