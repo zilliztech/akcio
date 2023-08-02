@@ -1,7 +1,8 @@
 import argparse
 
 import uvicorn
-from fastapi import FastAPI
+from typing import Union
+from fastapi import FastAPI, UploadFile
 from fastapi.encoders import jsonable_encoder
 
 
@@ -42,9 +43,13 @@ def do_answer_api(session_id: str, project: str, question: str):
 
 
 @app.post('/project/add')
-def do_project_add_api(data_src: str, project: str, source_type: str = 'file'):
+def do_project_add_api(project: str, url: str = None, file: UploadFile = None):
+    assert url or file, 'You need to upload file or enter url of document to add data.'
     try:
-        num = insert(data_src=data_src, project=project, source_type=source_type)
+        if url:
+            num = insert(data_src=url, project=project, source_type='url')
+        if file:
+            num = insert(data_src=file.filename, project=project, source_type='file')
         return jsonable_encoder({'status': True, 'msg': f'Successfully inserted doc chunks: {num}'}), 200
     except Exception as e:  # pylint: disable=W0703
         return jsonable_encoder({'status': False, 'msg': f'Failed to load data:\n{e}'}), 400
