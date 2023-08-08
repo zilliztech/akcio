@@ -1,5 +1,8 @@
 import os
 
+REWRITE_QUERY = True if os.getenv('REWRITE_QUERY', 'True').lower() == 'true' else False
+INSERT_MODE = os.getenv('INSERT_MODE', 'basic')
+
 ################## LLM ##################
 LLM_OPTION = os.getenv('LLM_OPTION', 'openai')  # select your LLM service
 CHAT_CONFIG = {
@@ -52,7 +55,7 @@ CHAT_CONFIG = {
 
 ################## Embedding ##################
 TEXTENCODER_CONFIG = {
-    'model': 'multi-qa-mpnet-base-cos-v1',
+    'model': 'shibing624/text2vec-base-chinese-paraphrase',
     'device': -1, # -1 will use cpu
     'norm': True,
     'dim': 768
@@ -70,7 +73,7 @@ VECTORDB_CONFIG = {
         'password': os.getenv('MILVUS_PASSWORD', ''),
         'secure': True if os.getenv('MILVUS_SECURE', 'False').lower() == 'true' else False
         },
-    'top_k': 1,
+    'top_k': 5,
     'threshold': 0.6,
     'index_params': {
         'metric_type': 'IP',
@@ -96,7 +99,7 @@ MEMORYDB_CONFIG = {
 
 ############### Rerank configs ##################
 RERANK_CONFIG = {
-    'rerank': True,
+    'rerank': False,
     'rerank_model': 'cross-encoder/ms-marco-MiniLM-L-12-v2',
     'threshold': 0.6,
     'rerank_device': -1  # -1 will use cpu

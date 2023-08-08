@@ -5,7 +5,9 @@ import logging
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from src_towhee.pipelines import TowheePipelines  # pylint: disable=C0413
+from src_towhee.pipelines.tool_pipelines import rewrite_query  # pylint: disable=C0413
 from src_towhee.memory import MemoryStore  # pylint: disable=C0413
+from config import REWRITE_QUERY
 
 
 logger = logging.getLogger(__name__)
@@ -23,7 +25,11 @@ def chat(session_id, project, question):
     '''Chat API'''
     try:
         history = memory_store.get_history(project, session_id)
-        res = search_pipeline(question, history, project)
+        if REWRITE_QUERY:
+            new_question = rewrite_query(question, history).get()[0]
+        else:
+            new_question = question
+        res = search_pipeline(new_question, history, project)
         final_answer = res.get()[0]
 
         # Update history
