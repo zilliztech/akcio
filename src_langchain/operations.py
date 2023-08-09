@@ -45,9 +45,9 @@ def chat(session_id, project, question):
     )
     try:
         final_answer = agent_chain.run(input=question)
-        return final_answer
+        return question, final_answer
     except Exception as e:  # pylint: disable=W0703
-        return f'Something went wrong:\n{e}'
+        return question, f'Something went wrong:\n{e}'
 
 
 def insert(data_src, project, source_type: str = 'file'):

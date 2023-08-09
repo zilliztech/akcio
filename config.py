@@ -1,5 +1,8 @@
 import os
 
+QUERY_MODE = os.getenv('QUERY_MODE', 'osschat-search')  # options: osschat-search, rewrite_query
+INSERT_MODE = os.getenv('INSERT_MODE', 'osschat-insert')  # options: osschat-insert, generate_questions
+
 ################## LLM ##################
 LLM_OPTION = os.getenv('LLM_OPTION', 'openai')  # select your LLM service
 CHAT_CONFIG = {
@@ -7,14 +10,14 @@ CHAT_CONFIG = {
         'openai_model': 'gpt-3.5-turbo',
         'openai_api_key': None,  # will use environment  value 'OPENAI_API_KEY' if None
         'llm_kwargs': {
-            'temperature': 0.8,
+            'temperature': 0.2,
             # 'max_tokens': 200,
             }
     },
     'llama_2': {
         'llama_2_model': 'llama-2-13b-chat',
         'llm_kwargs':{
-            'temperature': 0.8,
+            'temperature': 0.2,
             'max_tokens': 200,
             'n_ctx': 4096
         }
@@ -71,7 +74,7 @@ VECTORDB_CONFIG = {
         'secure': True if os.getenv('MILVUS_SECURE', 'False').lower() == 'true' else False
         },
     'top_k': 1,
-    'threshold': 0.6,
+    'threshold': 0,
     'index_params': {
         'metric_type': 'IP',
         'index_type': 'IVF_FLAT',

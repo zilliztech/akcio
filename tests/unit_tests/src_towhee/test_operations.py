@@ -83,7 +83,7 @@ class TestOperations(unittest.TestCase):
         
                 from src_towhee.operations import chat, get_history, clear_history
 
-                answer = chat(self.session_id, self.project, self.question)
+                question, answer = chat(self.session_id, self.project, self.question)
                 assert answer == self.expect_answer
 
                 history = get_history(self.project, self.session_id)

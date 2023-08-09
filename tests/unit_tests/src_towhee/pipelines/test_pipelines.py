@@ -5,13 +5,17 @@ import json
 import sys
 import os
 
-from milvus import default_server
+from milvus import MilvusServer
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
-from config import CHAT_CONFIG, TEXTENCODER_CONFIG, VECTORDB_CONFIG, RERANK_CONFIG  # pylint: disable=C0413
+from config import (  # pylint: disable=C0413
+    CHAT_CONFIG, TEXTENCODER_CONFIG,
+    VECTORDB_CONFIG, RERANK_CONFIG,
+    )
 from src_towhee.pipelines import TowheePipelines  # pylint: disable=C0413
 
+milvus_server = MilvusServer()
 
 TEXTENCODER_CONFIG = {
     'model': 'paraphrase-albert-small-v2',
@@ -21,7 +25,7 @@ TEXTENCODER_CONFIG = {
 }
 
 VECTORDB_CONFIG['connection_args'] = {
-    'uri': f'https://127.0.0.1:{default_server.listen_port}',
+    'uri': f'https://127.0.0.1:{milvus_server.listen_port}',
     # 'uri': 'https://localhost:19530',
     'user': None,
     'password': None,
@@ -32,11 +36,6 @@ RERANK_CONFIG['rerank'] = False
 
 MOCK_ANSWER = 'mock answer'
 
-
-def mock_prompt(question, context, history):
-    return [{'question': question}]
-
-
 def create_pipelines(llm_src):
     # Check llm_src has corresponding chat config
     assert llm_src in CHAT_CONFIG
@@ -45,10 +44,11 @@ def create_pipelines(llm_src):
     pipelines = TowheePipelines(
         llm_src=llm_src,
         use_scalar=False,
-        prompt_op=mock_prompt,
         textencoder_config=TEXTENCODER_CONFIG,
         vectordb_config=VECTORDB_CONFIG,
-        rerank_config=RERANK_CONFIG
+        rerank_config=RERANK_CONFIG,
+        query_mode='osschat-search',
+        insert_mode='osschat-insert'
     )
     return pipelines
 
@@ -57,11 +57,11 @@ class TestPipelines(unittest.TestCase):
     project = 'akcio_ut'
     data_src = 'https://github.com/towhee-io/towhee/blob/main/requirements.txt'
     question = 'test question'
-    
+
     @classmethod
     def setUpClass(cls):
-        default_server.cleanup()
-        default_server.start()
+        milvus_server.cleanup()
+        milvus_server.start()
 
     def test_openai(self):
         with patch('openai.ChatCompletion.create') as mock_llm:
@@ -313,8 +313,8 @@ class TestPipelines(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        default_server.stop()
-        default_server.cleanup()
+        milvus_server.stop()
+        milvus_server.cleanup()
 
 
 if __name__ == '__main__':

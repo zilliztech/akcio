@@ -34,10 +34,18 @@ def check_api():
 @app.get('/answer')
 def do_answer_api(session_id: str, project: str, question: str):
     try:
-        final_answer = chat(session_id=session_id,
+        new_question, final_answer = chat(session_id=session_id,
                             project=project, question=question)
         assert isinstance(final_answer, str)
-        return jsonable_encoder({'status': True, 'msg': final_answer}), 200
+        return jsonable_encoder({
+            'status': True,
+            'msg': final_answer,
+            'debug': {
+                'original question': question,
+                'modified question': new_question,
+                'answer': final_answer,
+            }
+            }), 200
     except Exception as e:  # pylint: disable=W0703
         return jsonable_encoder({'status': False, 'msg': f'Failed to answer question:\n{e}', 'code': 400}), 400
 

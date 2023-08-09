@@ -28,11 +28,11 @@ def create_session_id():
     return 'sess_' + suid
 
 
-def respond(session, project, msg):
-    answer = chat(session, project, msg)
+def respond(session, project, query):
+    _, answer = chat(session, project, query)
     history = get_history(project, session)
-    if len(history) == 0 or history[-1] != (msg, answer):
-        history.append((msg, answer))
+    if len(history) == 0 or history[-1] != (query, answer):
+        history.append((query, answer))
     return history
 
 
