@@ -11,10 +11,11 @@ from config import ( # pylint: disable=C0413
     USE_SCALAR, LLM_OPTION,
     TEXTENCODER_CONFIG, CHAT_CONFIG,
     VECTORDB_CONFIG, SCALARDB_CONFIG,
-    RERANK_CONFIG
+    RERANK_CONFIG, QUERY_MODE, INSERT_MODE
 )
-from src_towhee.pipelines.prompts import PROMPT_OP  # pylint: disable=C0413
 from src_towhee.base import BasePipelines  # pylint: disable=C0413
+from src_towhee.pipelines.search import build_search_pipeline  # pylint: disable=C0413
+from src_towhee.pipelines.insert import build_insert_pipeline  # pylint: disable=C0413
 
 
 class TowheePipelines(BasePipelines):
@@ -22,16 +23,18 @@ class TowheePipelines(BasePipelines):
     def __init__(self,
                  llm_src: str = LLM_OPTION,
                  use_scalar: bool = USE_SCALAR,
-                 prompt_op: Any = PROMPT_OP,
                  chat_config: Dict = CHAT_CONFIG,
                  textencoder_config: Dict = TEXTENCODER_CONFIG,
                  vectordb_config: Dict = VECTORDB_CONFIG,
                  scalardb_config: Dict = SCALARDB_CONFIG,
-                 rerank_config: Dict = RERANK_CONFIG
+                 rerank_config: Dict = RERANK_CONFIG,
+                 query_mode: str = QUERY_MODE,
+                 insert_mode: str = INSERT_MODE
                  ): # pylint: disable=W0102
-        self.prompt_op = prompt_op
         self.use_scalar = use_scalar
         self.llm_src = llm_src
+        self.query_mode = query_mode
+        self.insert_mode = insert_mode
 
         self.chat_config = chat_config
         self.textencoder_config = textencoder_config
@@ -75,14 +78,14 @@ class TowheePipelines(BasePipelines):
 
     @property
     def search_pipeline(self):
-        search_pipeline = AutoPipes.pipeline(
-            'osschat-search', config=self.search_config)
+        search_pipeline = build_search_pipeline(
+            self.query_mode, config=self.search_config)
         return search_pipeline
 
     @property
     def insert_pipeline(self):
-        insert_pipeline = AutoPipes.pipeline(
-            'osschat-insert', config=self.insert_config)
+        insert_pipeline = build_insert_pipeline(
+            self.insert_mode, config=self.insert_config)
         return insert_pipeline
 
     @property
@@ -99,9 +102,6 @@ class TowheePipelines(BasePipelines):
         search_config.embedding_normalize = self.textencoder_config['norm']
         search_config.embedding_device = self.textencoder_config['device']
 
-        # Configure prompt
-        if self.prompt_op:
-            search_config.customize_prompt = self.prompt_op
 
         # Configure vector store (Milvus/Zilliz)
         search_config.milvus_host = self.milvus_host

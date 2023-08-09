@@ -5,7 +5,7 @@ import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
-from src_towhee.pipelines.prompts import PROMPT_OP, QUERY_PROMPT, SYSTEM_PROMPT  # pylint: disable=C0413
+from src_towhee.pipelines.search.prompts import PROMPT_OP, QUERY_PROMPT, SYSTEM_PROMPT  # pylint: disable=C0413
 
 
 class TestPrompts(unittest.TestCase):

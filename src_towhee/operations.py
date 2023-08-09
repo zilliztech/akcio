@@ -23,15 +23,20 @@ def chat(session_id, project, question):
     '''Chat API'''
     try:
         history = memory_store.get_history(project, session_id)
-        res = search_pipeline(question, history, project)
-        final_answer = res.get()[0]
-
+        res = search_pipeline(question, history, project).get()
+        if len(res) == 2:
+            new_question, final_answer = res
+        elif len(res) == 1:
+            new_question = question
+            final_answer = res[0]
+        else:
+            raise RuntimeError(f'Invalid pipeline outputs: {res}')
         # Update history
         messages = [(question, final_answer)]
         memory_store.add_history(project, session_id, messages)
-        return final_answer
+        return new_question, final_answer
     except Exception as e: # pylint: disable=W0703
-        return f'Something went wrong:\n{e}'
+        return question, f'Something went wrong:\n{e}'
 
 
 def insert(data_src, project, source_type: str = 'file'): # pylint: disable=W0613
@@ -105,7 +110,7 @@ def clear_history(project, session_id):
 
 # if __name__ == '__main__':
 #     project = 'akcio'
-#     data_src = 'https://docs.towhee.io/'
+#     data_src = 'https://towhee.io'
 #     session_id = 'test000'
 #     question0 = 'What is your code name?'
 #     question1 = 'What is Towhee?'
@@ -115,14 +120,14 @@ def clear_history(project, session_id):
 #     print('\nCount:', count)
 #     print('\nCheck:', check(project))
 
-#     answer = chat(project=project, session_id=session_id, question=question0)
-#     print('\nAnswer:', answer)
+#     new_question, answer = chat(project=project, session_id=session_id, question=question0)
+#     print('\n' + new_question, '\n' + answer)
 
-#     answer = chat(project=project, session_id=session_id, question=question1)
-#     print('\nAnswer:', answer)
+#     new_question, answer = chat(project=project, session_id=session_id, question=question1)
+#     print('\n' + new_question, '\n' + answer)
 
-#     answer = chat(project=project, session_id=session_id, question=question2)
-#     print('\nAnswer:', answer)
+#     new_question, answer = chat(project=project, session_id=session_id, question=question2)
+#     print('\n' + new_question, '\n' + answer)
 #     print('\nHistory:', get_history(project, session_id))
 
 #     clear_history(project, session_id)
