@@ -2,8 +2,6 @@ from towhee import ops
 
 
 def get_llm_op(config):
-    if config.customize_llm:
-        return config.customize_llm
     if config.llm_src.lower() == 'openai':
         return ops.LLM.OpenAI(model_name=config.openai_model, api_key=config.openai_api_key, **config.llm_kwargs)
     if config.llm_src.lower() == 'dolly':

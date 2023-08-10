@@ -19,12 +19,12 @@ def build_prompt(doc, project: str = '', num: int = 10):
     query_prompt = QUERY_TEMP.format(project=project, doc=doc)
     return [({'system': sys_prompt}), ({'question': query_prompt})]
 
-def parse_output(res):
+def parse_output(doc, res):
     questions = []
     for q in res.split('\n'):
         q = ('. ').join(q.split('. ')[1:])
         questions.append(q)
-    return questions
+    return [(doc, q) for q in questions]
 
 def custom_pipeline(config):
     embedding_op = get_embedding_op(config)
@@ -37,7 +37,7 @@ def custom_pipeline(config):
             ))
             .map(('chunk', 'project'), 'prompt', build_prompt)
             .map('prompt', 'gen_res', llm_op)
-            .flat_map('gen_res', 'gen_question', parse_output)
+            .flat_map(('chunk', 'gen_res'), ('chunk', 'gen_question'), parse_output)
             .map('gen_question', 'embedding', embedding_op)
     )
 

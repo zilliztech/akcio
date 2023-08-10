@@ -109,7 +109,7 @@ def clear_history(project, session_id):
 
 
 # if __name__ == '__main__':
-#     project = 'akcio'
+#     project = 'akcio_test'
 #     data_src = 'https://towhee.io'
 #     session_id = 'test000'
 #     question0 = 'What is your code name?'
