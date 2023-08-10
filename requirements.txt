@@ -3,10 +3,11 @@ unstructured
 pexpect
 pdf2image
 SQLAlchemy>=2.0.15
-# psycopg2-binary
+psycopg2-binary
 openai
 gradio>=3.30.0
 fastapi
 uvicorn
 towhee>=1.1.0
 pymilvus
+elasticsearch

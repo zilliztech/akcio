@@ -14,6 +14,7 @@ Whether you need help with a specific question or just want to have a conversati
 '''
 
 QUERY_PROMPT = '''Use previous conversation history (if there is any) and the following pieces of context to answer the question at the end.
+Don't mention that you got this answer from context.
 If you don't know the answer, just say that you don't know, don't try to make up an answer.
 
 {context}

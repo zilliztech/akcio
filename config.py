@@ -73,7 +73,7 @@ VECTORDB_CONFIG = {
         'password': os.getenv('MILVUS_PASSWORD', ''),
         'secure': True if os.getenv('MILVUS_SECURE', 'False').lower() == 'true' else False
         },
-    'top_k': 1,
+    'top_k': 5,
     'threshold': 0,
     'index_params': {
         'metric_type': 'IP',

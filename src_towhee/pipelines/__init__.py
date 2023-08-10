@@ -3,7 +3,7 @@ import os
 from typing import Any, Dict
 
 from pymilvus import Collection, connections
-from towhee import AutoConfig, AutoPipes
+from towhee import AutoConfig
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
@@ -11,7 +11,8 @@ from config import ( # pylint: disable=C0413
     USE_SCALAR, LLM_OPTION,
     TEXTENCODER_CONFIG, CHAT_CONFIG,
     VECTORDB_CONFIG, SCALARDB_CONFIG,
-    RERANK_CONFIG, QUERY_MODE, INSERT_MODE
+    RERANK_CONFIG, QUERY_MODE, INSERT_MODE,
+    DATAPARSER_CONFIG
 )
 from src_towhee.base import BasePipelines  # pylint: disable=C0413
 from src_towhee.pipelines.search import build_search_pipeline  # pylint: disable=C0413
@@ -29,7 +30,8 @@ class TowheePipelines(BasePipelines):
                  scalardb_config: Dict = SCALARDB_CONFIG,
                  rerank_config: Dict = RERANK_CONFIG,
                  query_mode: str = QUERY_MODE,
-                 insert_mode: str = INSERT_MODE
+                 insert_mode: str = INSERT_MODE,
+                 chunk_size: int = DATAPARSER_CONFIG['chunk_size']
                  ): # pylint: disable=W0102
         self.use_scalar = use_scalar
         self.llm_src = llm_src
@@ -39,6 +41,7 @@ class TowheePipelines(BasePipelines):
         self.chat_config = chat_config
         self.textencoder_config = textencoder_config
         self.rerank_config = rerank_config
+        self.chunk_size = chunk_size
 
         self.milvus_uri = vectordb_config['connection_args']['uri']
         self.milvus_host = self.milvus_uri.split('https://')[1].split(':')[0]
@@ -125,7 +128,13 @@ class TowheePipelines(BasePipelines):
 
     @property
     def insert_config(self):
-        insert_config = AutoConfig.load_config('osschat-insert')
+        insert_config = AutoConfig.load_config(
+            'osschat-insert',
+            llm_src=self.llm_src,
+            **self.chat_config[self.llm_src]
+            )
+        # Configure chunk size
+        insert_config.chunk_size = self.chunk_size
 
         # Configure embedding
         insert_config.embedding_model = self.textencoder_config['model']
