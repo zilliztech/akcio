@@ -63,6 +63,7 @@ TEXTENCODER_CONFIG = {
 
 
 ################## Store ##################
+TEMP_DIR = './tmp'
 USE_SCALAR = True if os.getenv('USE_SCALAR', 'False').lower() == 'true' else False
 
 # Vector db configs
