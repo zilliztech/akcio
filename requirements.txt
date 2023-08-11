@@ -10,4 +10,4 @@ fastapi
 uvicorn
 towhee>=1.1.0
 pymilvus
-elasticsearch
+elasticsearch>=8.0.0

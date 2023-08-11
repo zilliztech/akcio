@@ -85,10 +85,12 @@ VECTORDB_CONFIG = {
 # Scalar db configs
 SCALARDB_CONFIG = {
     'connection_args': {
-        'hosts': os.getenv('ES_HOSTS', 'https://localhost:9200'),
+        # 'hosts': os.getenv('ES_HOSTS', 'https://localhost:9200'),
+        'cloud_id': os.getenv('ES_CLOUD_ID'),
         'ca_certs': os.getenv('ES_CA_CERTS', None),
         'basic_auth': (os.getenv('ES_USER', 'user_name'), os.getenv('ES_PASSWORD', 'es_password'))
         },
+    'top_k': 3
 }
 
 # Memory db configs

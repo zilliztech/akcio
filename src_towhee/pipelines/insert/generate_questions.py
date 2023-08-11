@@ -44,7 +44,7 @@ def custom_pipeline(config):
     if config.embedding_normalize:
         p = p.map('embedding', 'embedding', ops.towhee.np_normalize())
 
-    p = p.map(('project', 'chunk', 'gen_question', 'embedding'), 'milvus_res',
+    p = p.map(('project', 'doc', 'chunk', 'gen_question', 'embedding'), 'milvus_res',
               ops.ann_insert.osschat_milvus(host=config.milvus_host,
                                             port=config.milvus_port,
                                             user=config.milvus_user,
@@ -52,14 +52,9 @@ def custom_pipeline(config):
                                             ))
 
     if config.es_enable:
-        es_index_op = ops.elasticsearch.osschat_index(host=config.es_host,
-                                                      port=config.es_port,
-                                                      user=config.es_user,
-                                                      password=config.es_password,
-                                                      ca_certs=config.es_ca_certs,
-                                                      )
+        es_index_op = ops.elasticsearch.osschat_index(**config.es_connection_kwargs)
         p = (
-            p.map(('gen_question', 'chunk'), 'es_doc', lambda x, y: {'sentence': x, 'doc': y})
+            p.map(('gen_question', 'chunk'), 'es_doc', lambda x, y: {'question': x, 'doc': y})
              .map(('project', 'es_doc'), 'es_res', es_index_op)
              .map(('milvus_res', 'es_res'), 'res', lambda x, y: {'milvus_res': x, 'es_res': y})
         )

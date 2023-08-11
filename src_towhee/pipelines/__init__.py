@@ -66,18 +66,9 @@ class TowheePipelines(BasePipelines):
         if self.use_scalar:
             from elasticsearch import Elasticsearch  # pylint: disable=C0415
 
-            self.es_uri = scalardb_config['connection_args']['hosts']
-            self.es_host = self.es_uri.split('https://')[1].split(':')[0]
-            self.es_port = self.es_uri.split('https://')[1].split(':')[1]
-            self.es_ca_certs = scalardb_config['connection_args']['ca_certs']
-            self.es_basic_auth = scalardb_config['connection_args']['basic_auth']
-            self.es_user = self.es_basic_auth[0]
-            self.es_password = self.es_basic_auth[1]
-            self.es_client = Elasticsearch(
-                self.es_uri,
-                ca_certs=self.es_ca_certs,
-                basic_auth=self.es_basic_auth
-            )
+            self.es_connection_kwargs = scalardb_config['connection_args']
+            self.es_top_k = scalardb_config['top_k']
+            self.es_client = Elasticsearch(**self.es_connection_kwargs)
 
     @property
     def search_pipeline(self):
@@ -117,11 +108,8 @@ class TowheePipelines(BasePipelines):
         # Configure scalar store (ES)
         if self.use_scalar:
             search_config.es_enable = True
-            search_config.es_host = self.es_host
-            search_config.es_port = self.es_port
-            search_config.es_user = self.es_user
-            search_config.es_password = self.es_password
-            search_config.es_ca_certs = self.es_ca_certs
+            search_config.es_connection_kwargs = self.es_connection_kwargs
+            search_config.es_top_k = self.es_top_k
         else:
             search_config.es_enable = False
         return search_config
@@ -150,11 +138,7 @@ class TowheePipelines(BasePipelines):
         # Configure scalar store (ES)
         if self.use_scalar:
             insert_config.es_enable = True
-            insert_config.es_host = self.es_host
-            insert_config.es_port = self.es_port
-            insert_config.es_user = self.es_user
-            insert_config.es_password = self.es_password
-            insert_config.es_ca_certs = self.es_ca_certs
+            insert_config.es_connection_kwargs = self.es_connection_kwargs
         else:
             insert_config.es_enable = False
         return insert_config
@@ -168,11 +152,14 @@ class TowheePipelines(BasePipelines):
             FieldSchema(name='text_id', dtype=DataType.VARCHAR,
                         description='text', max_length=500),
             FieldSchema(name='text', dtype=DataType.VARCHAR,
-                        description='text', max_length=1000),
-            FieldSchema(name='embedding', dtype=DataType.FLOAT_VECTOR,
-                        description='embedding vectors', dim=self.textencoder_config['dim'])
+                        description='text', max_length=1000)
         ]
-        schema = CollectionSchema(fields=fields, description='osschat', enable_dynamic_field=True)
+        if INSERT_MODE == 'generate_questions':
+            fields.append(FieldSchema(name='question', dtype=DataType.VARCHAR,
+                        description='generated question', max_length=500))
+        fields.append(FieldSchema(name='embedding', dtype=DataType.FLOAT_VECTOR,
+                        description='embedding vectors', dim=self.textencoder_config['dim']))
+        schema = CollectionSchema(fields=fields, description='osschat', enable_dynamic_field=False)
         collection = Collection(name=project, schema=schema)
 
         index_params = self.milvus_index_params
