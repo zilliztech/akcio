@@ -1,10 +1,14 @@
 import argparse
+import os
 
 import uvicorn
-from typing import Union
 from fastapi import FastAPI, UploadFile
 from fastapi.encoders import jsonable_encoder
 
+from config import TEMP_DIR
+
+
+os.makedirs(TEMP_DIR, exist_ok=True)
 
 # Specify mode
 parser = argparse.ArgumentParser(description='Start service with different modes.')
@@ -57,7 +61,11 @@ def do_project_add_api(project: str, url: str = None, file: UploadFile = None):
         if url:
             num = insert(data_src=url, project=project, source_type='url')
         if file:
-            num = insert(data_src=file.filename, project=project, source_type='file')
+            temp_file = os.path.join(TEMP_DIR, file.filename)
+            with open(temp_file, 'wb') as f:
+                content = file.file.read()
+                f.write(content)
+            num = insert(data_src=temp_file, project=project, source_type='file')
         return jsonable_encoder({'status': True, 'msg': f'Successfully inserted doc chunks: {num}'}), 200
     except Exception as e:  # pylint: disable=W0703
         return jsonable_encoder({'status': False, 'msg': f'Failed to load data:\n{e}'}), 400

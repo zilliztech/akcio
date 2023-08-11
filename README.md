@@ -169,11 +169,31 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
         $ export MILVUS_URI=https://localhost:19530
         ```
 
-       For the Memory Store, set **SQL_URI**:
+        For the Memory Store, set **SQL_URI**:
         ```shell
         $ export SQL_URI={database_type}://{user}:{password}@{host}/{database_name}
         ```
         > LangChain mode only supports [Postgresql](https://www.postgresql.org/) as database type.
+ 
+
+        <details>
+        <summary>By default, scalar store (elastic) is disabled.
+        Click to check how to <strong>enable Elastic</strong>.</summary>
+
+        The following commands help to connect your Elastic cloud.
+
+        ```shell
+        $ export USE_SCALAR=True
+        $ export ES_CLOUD_ID=your_elastic_cloud_id
+        $ export ES_USER=your_elastic_username
+        $ export ES_PASSWORD=your_elastic_password
+        ```
+
+        To use host & port instead of cloud id, you can manually modify the `VECTORDB_CONFIG` in [config.py](./config.py).
+
+        </details>
+
+<br />
 
 4. Start service
 
