@@ -1,24 +1,35 @@
-import argparse
 import os
+import argparse
+import uuid
 
 import uvicorn
 from fastapi import FastAPI, UploadFile
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import PlainTextResponse
 
 from config import TEMP_DIR
 
-
 os.makedirs(TEMP_DIR, exist_ok=True)
+os.environ['PROMETHEUS_DISABLE_CREATED_SERIES'] = 'true'
 
 # Specify mode
 parser = argparse.ArgumentParser(description='Start service with different modes.')
 parser.add_argument('--langchain', action='store_true')
 parser.add_argument('--towhee', action='store_true')
-
+parser.add_argument('--moniter', action='store_true')
+parser.add_argument('--max_observation', default=1000)
+parser.add_argument('--name', default=str(uuid.uuid4()))
 args = parser.parse_args()
 
+app = FastAPI()
+origins = ['*']
+
+# Apply args
 USE_LANGCHAIN = args.langchain
 USE_TOWHEE = args.towhee
+MAX_OBSERVATION = args.max_observation
+ENABLE_MONITER = args.moniter
+NAME = args.name
 
 assert (USE_LANGCHAIN and not USE_TOWHEE ) or (USE_TOWHEE and not USE_LANGCHAIN), \
     'The service should start with either "--langchain" or "--towhee".'
@@ -27,19 +38,29 @@ if USE_LANGCHAIN:
     from src_langchain.operations import chat, insert, drop, check, get_history, clear_history, count  # pylint: disable=C0413
 if USE_TOWHEE:
     from src_towhee.operations import chat, insert, drop, check, get_history, clear_history, count  # pylint: disable=C0413
+if ENABLE_MONITER:
+    from moniter import enable_moniter  # pylint: disable=C0413
+    from prometheus_client import generate_latest, REGISTRY  # pylint: disable=C0413
 
-app = FastAPI()
-origins = ['*']
+    enable_moniter(app, MAX_OBSERVATION, NAME)
+
+    @app.get('/metrics')
+    async def metrics():
+        registry = REGISTRY
+        data = generate_latest(registry)
+        return PlainTextResponse(content=data, media_type='text/plain')
+
 
 @app.get('/')
 def check_api():
-    return jsonable_encoder({'status': True, 'msg': 'ok'}), 200
+    res = jsonable_encoder({'status': True, 'msg': 'ok'}), 200
+    return res
+
 
 @app.get('/answer')
 def do_answer_api(session_id: str, project: str, question: str):
     try:
-        new_question, final_answer = chat(session_id=session_id,
-                            project=project, question=question)
+        new_question, final_answer = chat(session_id=session_id, project=project, question=question)
         assert isinstance(final_answer, str)
         return jsonable_encoder({
             'status': True,
