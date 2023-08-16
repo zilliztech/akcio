@@ -8,34 +8,36 @@ from utils import get_llm_op  # pylint: disable=C0413
 
 
 REWRITE_TEMP = '''
-HISTORY:
-[]
-NOW QUESTION: Hello, how are you?
-NEED COREFERENCE RESOLUTION: No => THOUGHT: So output question is the same as now question. => OUTPUT QUESTION: Hello, how are you?
--------------------
-HISTORY:
-[Q: Is Milvus a vector database?
-A: Yes, Milvus is a vector database.]
-NOW QUESTION: How to use it?
-NEED COREFERENCE RESOLUTION: Yes => THOUGHT: I need to replace 'it' with 'Milvus' in now question. => OUTPUT QUESTION: How to use Milvus?
+如果 NOW QUESTION 里有代词，要把代词替换成 HISTORY 里对应的词。补全最后一轮的内容，下面开始：
 -------------------
 HISTORY:
 []
-NOW QUESTION: What is the features of it?
-NEED COREFERENCE RESOLUTION: Yes => THOUGHT: I need to replace 'it' in now question, but I can't find a word in history to replace it, so the output question is the same as now question. => OUTPUT QUESTION: What is the features of it?
+NOW QUESTION: 你好吗？
+有代词吗: 无 => 思考: 所以 OUTPUT QUESTION 与 NOW QUESTION 相同 => OUTPUT QUESTION: 你好吗？
 -------------------
 HISTORY:
-[Q: What is PyTorch?
-A: PyTorch is an open-source machine learning library for Python. It provides a flexible and efficient framework for building and training deep neural networks. 
-Q: What is Tensorflow?
-A: TensorFlow is an open-source machine learning framework. It provides a comprehensive set of tools, libraries, and resources for building and deploying machine learning models.]
-NOW QUESTION: What is the difference between them?
-NEED COREFERENCE RESOLUTION: Yes => THOUGHT: I need replace 'them' with 'PyTorch and Tensorflow' in now question. => OUTPUT QUESTION: What is the different between PyTorch and Tensorflow?
+[Q: Milvus是矢量数据库吗？
+A: 是的，Milvus 是一个矢量数据库。]
+NOW QUESTION: 如何使用它？
+有代词吗: 有,代词是“它” => 思考: 我需要在 NOW QUESTION 中将“它”替换为“Milvus” => OUTPUT QUESTION: 如何使用Milvus？
+-------------------
+HISTORY:
+[]
+NOW QUESTION: 它有什么特点呢？
+有代词吗: 有,代词是“它” => 思考: 我需要替换 NOW QUESTION 中的“它”，但我在HISTORY中找不到单词来替换它，所以 OUTPUT QUESTION 与 NOW QUESTION 相同。=> OUTPUT QUESTION: 它有什么特点呢？
+-------------------
+HISTORY:
+[Q: 什么是 PyTorch？
+A: PyTorch 是一个 Python 开源机器学习库。它为构建和训练深度神经网络提供了灵活高效的框架。
+Q: 什么是TensorFlow？
+A: TensorFlow 是一个开源机器学习框架。它提供了一套全面的工具、库和资源，用于构建和部署机器学习模型。]
+NOW QUESTION: 它们之间有什么区别？
+有代词吗: 有,代词是“它们” => 思考: 我需要在 NOW QUESTION 中将“它们”替换为“PyTorch 和 Tensorflow”。 => OUTPUT QUESTION: PyTorch 和 Tensorflow 有什么区别？
 -------------------
 HISTORY:
 [{history_str}]
 NOW QUESTION: {question}
-NEED COREFERENCE RESOLUTION: '''
+有代词吗: '''
 
 def build_prompt(question: str, history: list = []):  # pylint: disable=W0102
     if not history:
@@ -50,7 +52,8 @@ def build_prompt(question: str, history: list = []):  # pylint: disable=W0102
 
 def parse_raw_ret(raw_ret, question):
     try:
-        new_question = raw_ret.split('=> OUTPUT QUESTION: ')[1]
+        raw_ret = raw_ret.replace('&gt;', '>')
+        new_question = raw_ret.split('=> OUTPUT QUESTION: ')[1].split('-------------------')[0]
     except:  # pylint: disable=W0702
         new_question = question
     return new_question
