@@ -2,40 +2,12 @@ import sys
 import os
 from towhee import AutoPipes, pipe
 
+from pipelines.search import REWRITE_TEMP
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from utils import get_llm_op  # pylint: disable=C0413
 
-
-REWRITE_TEMP = '''
-HISTORY:
-[]
-NOW QUESTION: Hello, how are you?
-NEED COREFERENCE RESOLUTION: No => THOUGHT: So output question is the same as now question. => OUTPUT QUESTION: Hello, how are you?
--------------------
-HISTORY:
-[Q: Is Milvus a vector database?
-A: Yes, Milvus is a vector database.]
-NOW QUESTION: How to use it?
-NEED COREFERENCE RESOLUTION: Yes => THOUGHT: I need to replace 'it' with 'Milvus' in now question. => OUTPUT QUESTION: How to use Milvus?
--------------------
-HISTORY:
-[]
-NOW QUESTION: What is the features of it?
-NEED COREFERENCE RESOLUTION: Yes => THOUGHT: I need to replace 'it' in now question, but I can't find a word in history to replace it, so the output question is the same as now question. => OUTPUT QUESTION: What is the features of it?
--------------------
-HISTORY:
-[Q: What is PyTorch?
-A: PyTorch is an open-source machine learning library for Python. It provides a flexible and efficient framework for building and training deep neural networks. 
-Q: What is Tensorflow?
-A: TensorFlow is an open-source machine learning framework. It provides a comprehensive set of tools, libraries, and resources for building and deploying machine learning models.]
-NOW QUESTION: What is the difference between them?
-NEED COREFERENCE RESOLUTION: Yes => THOUGHT: I need replace 'them' with 'PyTorch and Tensorflow' in now question. => OUTPUT QUESTION: What is the different between PyTorch and Tensorflow?
--------------------
-HISTORY:
-[{history_str}]
-NOW QUESTION: {question}
-NEED COREFERENCE RESOLUTION: '''
 
 def build_prompt(question: str, history: list = []):  # pylint: disable=W0102
     if not history:

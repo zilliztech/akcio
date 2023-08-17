@@ -98,7 +98,9 @@ class TestPipelines(unittest.TestCase):
         with patch('zhipuai.model_api.invoke') as mock_llm:
 
             mock_llm.return_value = {
-                'data': {'choices': [{'content': MOCK_ANSWER}]}}
+                'data': {'choices': [{'content': MOCK_ANSWER}]},
+                'code': 200
+            }
 
             pipelines = create_pipelines('chatglm')
 
