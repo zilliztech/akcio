@@ -7,15 +7,9 @@ from config import LANGUAGE
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 if LANGUAGE == 'zh':
-    from prompts.zh import REWRITE_TEMP, QUERY_PROMPT, SYSTEM_PROMPT  # pylint: disable=C0413
+    from prompts.zh import REWRITE_TEMP, QUERY_PROMPT, SYSTEM_PROMPT  # pylint: disable=C0413,W0611
 else:
-    from prompts.en import REWRITE_TEMP, QUERY_PROMPT, SYSTEM_PROMPT  # pylint: disable=C0413
-
-REWRITE_TEMP = REWRITE_TEMP
-QUERY_PROMPT = QUERY_PROMPT
-SYSTEM_PROMPT = SYSTEM_PROMPT
-
-sys.path.append(os.path.dirname(__file__))
+    from prompts.en import REWRITE_TEMP, QUERY_PROMPT, SYSTEM_PROMPT  # pylint: disable=C0413,W0611
 
 PROMPT_OP = ops.prompt.template(QUERY_PROMPT, ['question', 'context'], SYSTEM_PROMPT)
 

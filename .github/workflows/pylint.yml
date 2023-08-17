@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - main
+      - zh
       # file paths to consider in the event
     paths:
       - '**.py'
