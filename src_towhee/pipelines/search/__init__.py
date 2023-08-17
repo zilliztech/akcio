@@ -1,18 +1,24 @@
 import sys
 import os
-from towhee import AutoPipes, AutoConfig
+from towhee import AutoPipes, AutoConfig, ops
 
-sys.path.append(os.path.dirname(__file__))
+from config import LANGUAGE
 
-from prompts import PROMPT_OP  # pylint: disable=C0413
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
+if LANGUAGE == 'zh':
+    from prompts.zh import REWRITE_TEMP, QUERY_PROMPT, SYSTEM_PROMPT  # pylint: disable=C0413,W0611
+else:
+    from prompts.en import REWRITE_TEMP, QUERY_PROMPT, SYSTEM_PROMPT  # pylint: disable=C0413,W0611
+
+PROMPT_OP = ops.prompt.template(QUERY_PROMPT, ['question', 'context'], SYSTEM_PROMPT)
 
 def build_search_pipeline(
         name: str = 'osschat-search',
         config: object = AutoConfig.load_config('osschat-search')
         ):
-    if PROMPT_OP:
-        config.customize_prompt = PROMPT_OP
+
+    config.customize_prompt = PROMPT_OP
     try:
         search_pipeline = AutoPipes.pipeline(name, config=config)
     except Exception:  # pylint: disable=W0703
