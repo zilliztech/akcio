@@ -5,6 +5,7 @@ INSERT_MODE = os.getenv('INSERT_MODE', 'osschat-insert')  # options: osschat-ins
 
 ################## LLM ##################
 LLM_OPTION = os.getenv('LLM_OPTION', 'openai')  # select your LLM service
+LANGUAGE = 'en'  # options: en, zh
 CHAT_CONFIG = {
     'openai': {
         'openai_model': 'gpt-3.5-turbo',
@@ -47,7 +48,8 @@ CHAT_CONFIG = {
         'dashscope_api_key': None  # If None, use environment value 'DASHSCOPE_API_KEY'
     },
     'chatglm':{
-        'chatglm_model': 'chatglm_130b',
+        # 'chatglm_model': 'chatglm_130b',
+        'chatglm_model': 'chatglm_std',
         'chatglm_api_key': None  # If None, use environment value 'ZHIPUAI_API_KEY'
     }
 }
