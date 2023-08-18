@@ -9,7 +9,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import SystemMessage
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
-from langchain.chat_models import ChatOpenAI
+from langchain.chat_models import ChatOpenAI, ChatLiteLLM
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -22,7 +22,7 @@ class QuestionGenerator:
     openai_api_key: Optional[str] = QUESTIONGENERATOR_CONFIG.get('openai_api_key', os.getenv('OPENAI_API_KEY'))
     max_tokens: Optional[int] = QUESTIONGENERATOR_CONFIG.get('max_tokens', None)
 
-    chat: BaseChatModel = ChatOpenAI(temperature=temperature, openai_api_key=openai_api_key)
+    chat: BaseChatModel = ChatLiteLLM(temperature=temperature, openai_api_key=openai_api_key)
 
     def generate_qa(self, doc: str, project: str, chunk_size: int = 300):
         no_answer_str = 'NO ANSWER'
