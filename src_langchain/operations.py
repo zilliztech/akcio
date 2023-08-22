@@ -79,19 +79,28 @@ def drop(project):
 
 
 def check(project):
-    '''Check existences of project tables in both vector and memory stores.'''
+    '''Check existences of project tables in both doc stores and memory stores.'''
     try:
         doc_check = DocStore.has_project(project)
     except Exception as e:
-        logger.error('Failed to check table in vector db:\n%s', e)
+        logger.error('Failed to check doc stores:\n%s', e)
         raise RuntimeError from e
-    # Clear memory
+    # Check memory
     try:
         memory_check = MemoryStore.check(project)
     except Exception as e:
         logger.error('Failed to clean memory for the project:\n%s', e)
         raise RuntimeError from e
     return {'store': doc_check, 'memory': memory_check}
+
+def count(project):
+    '''Count entities.'''
+    try:
+        counts = DocStore.count_entities(project=project)
+        return counts
+    except Exception as e:
+        logger.error('Failed to count entities:\n%s', e)
+        raise RuntimeError from e
 
 
 def get_history(project, session_id):

@@ -195,3 +195,12 @@ class VectorStore(Milvus):
 
         VectorStore.connect(connection_args)
         return utility.has_collection(project)
+
+
+    @staticmethod
+    def count_entities(project: str, connection_args: dict = CONNECTION_ARGS):
+        from pymilvus import Collection # pylint: disable=C0415
+
+        VectorStore.connect(connection_args)
+        collection = Collection(project)
+        return collection.num_entities

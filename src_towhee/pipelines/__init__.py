@@ -190,10 +190,14 @@ class TowheePipelines(BasePipelines):
         return status
 
     def count_entities(self, project):
-        collection = Collection(project)
-        collection.flush()
-        milvus_count = collection.num_entities
-        if self.use_scalar:
-            es_count = self.es_client.count(index=project)['count']
-            assert es_count == milvus_count, 'Mismatched data count in Milvus vs Elastic.'
-        return milvus_count
+        if not self.check(project):
+            milvus_count = es_count = None
+        else:
+            collection = Collection(project)
+            collection.flush()
+            milvus_count = collection.num_entities
+            if self.use_scalar:
+                es_count = self.es_client.count(index=project)['count']
+            else:
+                es_count = None
+        return {'vector store': milvus_count, 'scalar store': es_count}

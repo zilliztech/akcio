@@ -97,3 +97,15 @@ class DocStore:
         if USE_SCALAR:
             assert ScalarStore.has_project(project) == status
         return status
+
+    @staticmethod
+    def count_entities(project):
+        if not VectorStore.has_project(project):
+            milvus_count = es_count = None
+        else:
+            milvus_count = VectorStore.count_entities(project)
+            if USE_SCALAR:
+                es_count =  ScalarStore.count_entities(project)
+            else:
+                es_count = None
+        return {'vector store': milvus_count, 'scalar store': es_count}

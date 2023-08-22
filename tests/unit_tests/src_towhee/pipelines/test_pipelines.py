@@ -81,7 +81,7 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
-            num = pipelines.count_entities(self.project)
+            num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
             # Check search
@@ -114,7 +114,7 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
-            num = pipelines.count_entities(self.project)
+            num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
             # Check search
@@ -149,7 +149,7 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
-            num = pipelines.count_entities(self.project)
+            num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
             # Check search
@@ -190,7 +190,7 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
-            num = pipelines.count_entities(self.project)
+            num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
             # Check search
@@ -225,7 +225,7 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
-            num = pipelines.count_entities(self.project)
+            num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
             # Check search
@@ -262,7 +262,7 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
-            num = pipelines.count_entities(self.project)
+            num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
             # Check search
@@ -300,7 +300,7 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
-            num = pipelines.count_entities(self.project)
+            num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
             # Check search
