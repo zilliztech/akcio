@@ -24,9 +24,9 @@ assert (USE_LANGCHAIN and not USE_TOWHEE ) or (USE_TOWHEE and not USE_LANGCHAIN)
     'The service should start with either "--langchain" or "--towhee".'
 
 if USE_LANGCHAIN:
-    from src_langchain.operations import chat, insert, drop  # pylint: disable=C0413
+    from src_langchain.operations import chat, insert, drop, check, get_history, clear_history  # pylint: disable=C0413
 if USE_TOWHEE:
-    from src_towhee.operations import chat, insert, drop  # pylint: disable=C0413
+    from src_towhee.operations import chat, insert, drop, check, get_history, clear_history  # pylint: disable=C0413
 
 app = FastAPI()
 origins = ['*']
@@ -79,6 +79,33 @@ def do_project_drop_api(project: str):
         return jsonable_encoder({'status': True, 'msg': f'Dropped project: {project}'}), 200
     except Exception as e:  # pylint: disable=W0703
         return jsonable_encoder({'status': False, 'msg': f'Failed to drop project:\n{e}'}), 400
+
+
+@app.get('/project/check')
+def do_project_check_api(project: str):
+    try:
+        status = check(project)
+        return jsonable_encoder({'status': True, 'msg': status}), 200
+    except Exception as e:  # pylint: disable=W0703
+        return jsonable_encoder({'status': False, 'msg': f'Failed to check project:\n{e}'}), 400
+
+
+@app.get('/history/get')
+def do_history_get_api(project: str, session_id: str = None):
+    try:
+        history = get_history(project=project, session_id=session_id)
+        return jsonable_encoder({'status': True, 'msg': history}), 200
+    except Exception as e:  # pylint: disable=W0703
+        return jsonable_encoder({'status': False, 'msg': f'Failed to get history:\n{e}'}), 400
+
+
+@app.get('/history/clear')
+def do_history_clear_api(project: str, session_id: str = None):
+    try:
+        clear_history(project=project, session_id=session_id)
+        return jsonable_encoder({'status': True, 'msg': f'Successfully clear history for project {project} ({session_id}).'}), 200
+    except Exception as e:  # pylint: disable=W0703
+        return jsonable_encoder({'status': False, 'msg': f'Failed to clear history:\n{e}'}), 400
 
 
 if __name__ == '__main__':
