@@ -24,9 +24,9 @@ assert (USE_LANGCHAIN and not USE_TOWHEE ) or (USE_TOWHEE and not USE_LANGCHAIN)
     'The service should start with either "--langchain" or "--towhee".'
 
 if USE_LANGCHAIN:
-    from src_langchain.operations import chat, insert, drop, check, get_history, clear_history  # pylint: disable=C0413
+    from src_langchain.operations import chat, insert, drop, check, get_history, clear_history, count  # pylint: disable=C0413
 if USE_TOWHEE:
-    from src_towhee.operations import chat, insert, drop, check, get_history, clear_history  # pylint: disable=C0413
+    from src_towhee.operations import chat, insert, drop, check, get_history, clear_history, count  # pylint: disable=C0413
 
 app = FastAPI()
 origins = ['*']
@@ -88,6 +88,15 @@ def do_project_check_api(project: str):
         return jsonable_encoder({'status': True, 'msg': status}), 200
     except Exception as e:  # pylint: disable=W0703
         return jsonable_encoder({'status': False, 'msg': f'Failed to check project:\n{e}'}), 400
+
+
+@app.get('/project/count')
+def do_project_count_api(project: str):
+    try:
+        counts = count(project)
+        return jsonable_encoder({'status': True, 'msg': counts}), 200
+    except Exception as e:  # pylint: disable=W0703
+        return jsonable_encoder({'status': False, 'msg': f'Failed to count entities:\n{e}'}), 400
 
 
 @app.get('/history/get')

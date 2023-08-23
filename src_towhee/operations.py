@@ -46,7 +46,7 @@ def insert(data_src, project, source_type: str = 'file'): # pylint: disable=W061
     if not towhee_pipelines.check(project):
         towhee_pipelines.create(project)
     res = insert_pipeline(data_src, project).to_list()
-    num = towhee_pipelines.count_entities(project)
+    num = towhee_pipelines.count_entities(project)['vector store']
     assert len(res) <= num, 'Failed to insert data.'
     return len(res)
 
@@ -79,7 +79,7 @@ def check(project):
     try:
         doc_check = towhee_pipelines.check(project)
     except Exception as e:
-        logger.error('Failed to check table in vector db:\n%s', e)
+        logger.error('Failed to check doc stores:\n%s', e)
         raise RuntimeError from e
     # Check memory
     try:
@@ -88,6 +88,16 @@ def check(project):
         logger.error('Failed to clean memory for the project:\n%s', e)
         raise RuntimeError from e
     return {'store': doc_check, 'memory': memory_check}
+
+
+def count(project):
+    '''Count entities.'''
+    try:
+        counts = towhee_pipelines.count_entities(project)
+        return counts
+    except Exception as e:
+        logger.error('Failed to count entities:\n%s', e)
+        raise RuntimeError from e
 
 
 def get_history(project, session_id):

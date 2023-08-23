@@ -48,3 +48,8 @@ class ScalarStore(ElasticSearchBM25Retriever):
     def has_project(project: str, connection_args: dict = CONNECTION_ARGS):
         client = ScalarStore.connect(connection_args)
         return client.indices.exists(index=project)
+
+    @staticmethod
+    def count_entities(project: str, connection_args: dict = CONNECTION_ARGS):
+        client = ScalarStore.connect(connection_args)
+        return client.count(index=project)['count']
