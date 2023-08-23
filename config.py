@@ -93,13 +93,13 @@ SCALARDB_CONFIG = {
     'top_k': 3
 }
 
-for arg in ['ES_CLOUD_ID', 'ES_CA_CERTS', 'ES_CA_CERTS']:
-    arg_k = arg.replace('ES_', '').lower()
-    arg_v = os.getenv(arg)
-    if arg_v:
-        SCALARDB_CONFIG['connection_args'][arg_k] = arg_v
+if os.getenv('ES_CLOUD_ID'):
+    del SCALARDB_CONFIG['connection_args']['hosts']
+    SCALARDB_CONFIG['connection_args']['cloud_id'] = os.getenv('ES_CLOUD_ID')
 if os.getenv('ES_USER'):
     SCALARDB_CONFIG['connection_args']['basic_auth'] = (os.getenv('ES_USER'), os.getenv('ES_PASSWORD'))
+if os.getenv('ES_CA_CERTS'):
+    SCALARDB_CONFIG['connection_args']['ca_certs'] = os.getenv('ES_CA_CERTS')
 
 # Memory db configs
 MEMORYDB_CONFIG = {
