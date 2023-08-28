@@ -21,12 +21,12 @@ def build_search_pipeline(
     config.customize_prompt = PROMPT_OP
     try:
         search_pipeline = AutoPipes.pipeline(name, config=config)
-    except Exception:  # pylint: disable=W0703
+    except RuntimeError as e:  # pylint: disable=W0703
         if name.replace('-', '_') == 'rewrite_query':
             sys.path.append(os.path.dirname(__file__))
             from rewrite_query import custom_pipeline    # pylint: disable=c0415
 
             search_pipeline = custom_pipeline(config=config)
         else:
-            raise AttributeError(f'Invalid query mode: {name}')  # pylint: disable=W0707
+            raise RuntimeError(e) from e  # pylint: disable=W0707
     return search_pipeline
