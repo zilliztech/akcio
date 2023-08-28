@@ -80,14 +80,17 @@ def do_project_add_api(project: str, url: str = None, file: UploadFile = None):
     assert url or file, 'You need to upload file or enter url of document to add data.'
     try:
         if url:
-            num = insert(data_src=url, project=project, source_type='url')
+            chunk_num, token_count = insert(data_src=url, project=project, source_type='url')
         if file:
             temp_file = os.path.join(TEMP_DIR, file.filename)
             with open(temp_file, 'wb') as f:
                 content = file.file.read()
                 f.write(content)
-            num = insert(data_src=temp_file, project=project, source_type='file')
-        return jsonable_encoder({'status': True, 'msg': f'Successfully inserted doc chunks: {num}'}), 200
+            chunk_num, token_count = insert(data_src=temp_file, project=project, source_type='file')
+        return jsonable_encoder({'status': True, 'msg': {
+            'chunk count': chunk_num,
+            'token count': token_count
+        }}), 200
     except Exception as e:  # pylint: disable=W0703
         return jsonable_encoder({'status': False, 'msg': f'Failed to load data:\n{e}'}), 400
 

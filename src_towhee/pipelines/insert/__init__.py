@@ -12,7 +12,7 @@ def build_insert_pipeline(
     except RuntimeError as e:  # pylint: disable=W0703
         if name.replace('-', '_') == 'generate_questions':
             sys.path.append(os.path.dirname(__file__))
-            from generate_questions import custom_pipeline    # pylint: disable=c0415
+            from generate_questions import custom_pipeline  # pylint: disable=c0415
 
             insert_pipeline = custom_pipeline(config=config)
         else:

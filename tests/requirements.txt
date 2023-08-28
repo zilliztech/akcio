@@ -1,6 +1,7 @@
 towhee
 torch
 langchain
+tiktoken
 milvus
 transformers
 dashscope

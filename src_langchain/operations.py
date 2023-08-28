@@ -56,9 +56,9 @@ def insert(data_src, project, source_type: str = 'file'):
     '''
     doc_db = DocStore(table_name=project,
                       embedding_func=encoder)
-    docs = load_data(data_src=data_src, source_type=source_type)
+    docs, token_count = load_data(data_src=data_src, source_type=source_type)
     num = doc_db.insert(docs)
-    return num
+    return num, token_count
 
 
 def drop(project):

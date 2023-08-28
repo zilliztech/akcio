@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../../..'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
 from src_langchain.data_loader.data_splitter import MarkDownSplitter
 
