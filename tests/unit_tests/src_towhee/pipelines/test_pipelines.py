@@ -55,7 +55,7 @@ def create_pipelines(llm_src):
 
 class TestPipelines(unittest.TestCase):
     project = 'akcio_ut'
-    data_src = 'https://github.com/towhee-io/towhee/blob/main/requirements.txt'
+    data_src = 'https://towhee.io'
     question = 'test question'
 
     @classmethod
@@ -81,6 +81,10 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
+            token_count = 0
+            for x in res:
+                token_count += x[0]['token_count']
+            assert token_count == 290
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -114,6 +118,10 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
+            token_count = 0
+            for x in res:
+                token_count += x[0]['token_count']
+            assert token_count == 290
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -149,6 +157,10 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
+            token_count = 0
+            for x in res:
+                token_count += x[0]['token_count']
+            assert token_count == 290
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -190,6 +202,10 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
+            token_count = 0
+            for x in res:
+                token_count += x[0]['token_count']
+            assert token_count == 290
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -225,6 +241,10 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
+            token_count = 0
+            for x in res:
+                token_count += x[0]['token_count']
+            assert token_count == 290
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -262,6 +282,10 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
+            token_count = 0
+            for x in res:
+                token_count += x[0]['token_count']
+            assert token_count == 290
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -286,10 +310,6 @@ class TestPipelines(unittest.TestCase):
 
             pipelines = create_pipelines('dolly')
 
-            self.project = 'akcio_ut'
-            self.data_src = 'https://github.com/towhee-io/towhee/blob/main/requirements.txt'
-            self.question = 'test question'
-
             # Check insert
             if pipelines.check(self.project):
                 pipelines.drop(self.project)
@@ -300,6 +320,10 @@ class TestPipelines(unittest.TestCase):
 
             insert_pipeline = pipelines.insert_pipeline
             res = insert_pipeline(self.data_src, self.project).to_list()
+            token_count = 0
+            for x in res:
+                token_count += x[0]['token_count']
+            assert token_count == 290
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
