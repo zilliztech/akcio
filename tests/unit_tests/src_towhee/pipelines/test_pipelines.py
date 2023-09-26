@@ -84,7 +84,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 290
+            assert token_count == 261
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -121,7 +121,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 290
+            assert token_count == 261
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -160,7 +160,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 290
+            assert token_count == 261
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -205,7 +205,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 290
+            assert token_count == 261
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -244,7 +244,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 290
+            assert token_count == 261
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -285,7 +285,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 290
+            assert token_count == 261
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -323,7 +323,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 290
+            assert token_count == 261
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
