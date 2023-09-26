@@ -5,7 +5,7 @@ INSERT_MODE = os.getenv('INSERT_MODE', 'osschat-insert')  # options: osschat-ins
 
 ################## LLM ##################
 LLM_OPTION = os.getenv('LLM_OPTION', 'openai')  # select your LLM service
-LANGUAGE = 'en'  # options: en, zh
+LANGUAGE = os.getenv('LANGUAGE', 'en')  # options: en, zh
 CHAT_CONFIG = {
     'openai': {
         'openai_model': 'gpt-3.5-turbo',
@@ -57,7 +57,7 @@ CHAT_CONFIG = {
 
 ################## Embedding ##################
 TEXTENCODER_CONFIG = {
-    'model': 'multi-qa-mpnet-base-cos-v1',
+    'model': f'BAAI/bge-base-{LANGUAGE}',
     'device': -1, # -1 will use cpu
     'norm': True,
     'dim': 768
@@ -108,10 +108,17 @@ MEMORYDB_CONFIG = {
 
 
 ############### Rerank configs ##################
+if LANGUAGE == 'en' and INSERT_MODE == 'osschat-insert':
+    rerank_model = 'cross-encoder/ms-marco-MiniLM-L-12-v2'
+elif LANGUAGE == 'zh' and INSERT_MODE == 'osschat-insert':
+    rerank_model = 'amberoad/bert-multilingual-passage-reranking-msmarco'
+else:
+    raise NotImplementedError
+
 RERANK_CONFIG = {
-    'rerank': True,
-    'rerank_model': 'cross-encoder/ms-marco-MiniLM-L-12-v2',
-    'threshold': 0.6,
+    'rerank': True, # or False
+    'rerank_model': rerank_model,
+    'threshold': 0.0,
     'rerank_device': -1  # -1 will use cpu
 }
 
