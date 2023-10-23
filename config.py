@@ -5,7 +5,7 @@ INSERT_MODE = os.getenv('INSERT_MODE', 'osschat-insert')  # options: osschat-ins
 
 ################## LLM ##################
 LLM_OPTION = os.getenv('LLM_OPTION', 'openai')  # select your LLM service
-LANGUAGE = os.getenv('LANGUAGE', 'en')  # options: en, zh
+LANGUAGE = os.getenv('DOC_LANGUAGE', 'en')  # options: en, zh
 CHAT_CONFIG = {
     'openai': {
         'openai_model': 'gpt-3.5-turbo',

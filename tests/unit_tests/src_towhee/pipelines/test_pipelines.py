@@ -55,11 +55,13 @@ def create_pipelines(llm_src):
 
 class TestPipelines(unittest.TestCase):
     project = 'akcio_ut'
-    data_src = 'https://towhee.io'
+    data_src = 'akcio_ut.txt'
     question = 'test question'
 
     @classmethod
     def setUpClass(cls):
+        with open(cls.data_src, 'w+', encoding='utf-8') as tmp_f:
+            tmp_f.write('This is test content.')
         milvus_server.cleanup()
         milvus_server.start()
 
@@ -84,7 +86,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 261
+            assert token_count == 5
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -121,7 +123,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 261
+            assert token_count == 5
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -137,13 +139,24 @@ class TestPipelines(unittest.TestCase):
 
     def test_ernie(self):
 
-        class MockRequest:
-            def json(self):
-                return {'result': MOCK_ANSWER}
+        from erniebot.response import EBResponse
 
-        with patch('requests.request') as mock_llm:
-
-            mock_llm.return_value = MockRequest()
+        with patch('erniebot.ChatCompletion.create') as mock_post:
+            mock_res = EBResponse(code=200,
+                                  body={'id': 'as-0000000000', 'object': 'chat.completion', 'created': 11111111,
+                                        'result': MOCK_ANSWER,
+                                        'usage': {'prompt_tokens': 1, 'completion_tokens': 13, 'total_tokens': 14},
+                                        'need_clear_history': False, 'is_truncated': False},
+                                  headers={'Connection': 'keep-alive',
+                                           'Content-Security-Policy': 'frame-ancestors https://*.baidu.com/',
+                                           'Content-Type': 'application/json', 'Date': 'Mon, 23 Oct 2023 03:30:53 GMT',
+                                           'Server': 'nginx', 'Statement': 'AI-generated',
+                                           'Vary': 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers',
+                                           'X-Frame-Options': 'allow-from https://*.baidu.com/',
+                                           'X-Request-Id': '0' * 32,
+                                           'Transfer-Encoding': 'chunked'}
+                                  )
+            mock_post.return_value = mock_res
 
             pipelines = create_pipelines('ernie')
 
@@ -160,7 +173,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 261
+            assert token_count == 5
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -205,7 +218,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 261
+            assert token_count == 5
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -244,7 +257,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 261
+            assert token_count == 5
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -285,7 +298,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 261
+            assert token_count == 5
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -323,7 +336,7 @@ class TestPipelines(unittest.TestCase):
             token_count = 0
             for x in res:
                 token_count += x[0]['token_count']
-            assert token_count == 261
+            assert token_count == 5
             num = pipelines.count_entities(self.project)['vector store']
             assert len(res) <= num
 
@@ -339,6 +352,7 @@ class TestPipelines(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        os.remove(cls.data_src)
         milvus_server.stop()
         milvus_server.cleanup()
 

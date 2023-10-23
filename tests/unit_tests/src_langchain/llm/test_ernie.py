@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 from langchain.schema import HumanMessage, AIMessage
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../../..'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
 
 class TestERNIE(unittest.TestCase):
