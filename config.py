@@ -24,8 +24,9 @@ CHAT_CONFIG = {
         }
     },
     'ernie': {
-        'ernie_api_key': None, # If None, use environment  value 'ERNIE_API_KEY'
-        'ernie_secret_key': None, # If None, use environment value 'ERNIE_SECRET_KEY'
+        'ernie_model': 'ernie-bot-turbo',  # 'ernie-bot' or 'ernie-bot-turbo'
+        'eb_api_type': None, # If None, use environment  value 'EB_API_TYPE'
+        'eb_access_token': None, # If None, use environment value 'EB_ACCESS_TOKEN'
         'llm_kwargs': {}
     },
     'minimax': {
