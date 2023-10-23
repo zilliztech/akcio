@@ -1,5 +1,4 @@
-from config import CHAT_CONFIG  # pylint: disable=C0413
-from typing import Any, List, Dict
+from typing import Any, List, Dict, Optional
 import os
 import sys
 
@@ -8,6 +7,9 @@ from langchain.schema import BaseMessage, ChatResult, HumanMessage, AIMessage, S
     ChatGeneration
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+
+from config import CHAT_CONFIG  # pylint: disable=C0413
+
 
 CHAT_CONFIG = CHAT_CONFIG['ernie']
 llm_kwargs = CHAT_CONFIG.get('llm_kwargs', {})
@@ -20,7 +22,25 @@ class ChatLLM(BaseChatModel):
     eb_access_token: str = CHAT_CONFIG['eb_access_token'] or os.getenv('EB_ACCESS_TOKEN')
     llm_kwargs: dict = llm_kwargs
 
-    def _generate(self, messages: List[BaseMessage]) -> ChatResult:
+    def _generate(self, messages: List[BaseMessage], stop: Optional[List[str]] = None) -> ChatResult:  # pylint: disable=W0613
+        import erniebot  # pylint: disable=C0415
+        erniebot.api_type = self.eb_api_type
+        erniebot.access_token = self.eb_access_token
+
+        message_dicts = self._create_message_dicts(messages)
+
+        response = erniebot.ChatCompletion.create(
+            model=self.model_name,
+            messages=message_dicts,
+            **self.llm_kwargs
+        )
+        return self._create_chat_result(response)
+
+    async def _agenerate(
+        self,
+        messages: List[BaseMessage],
+        stop: Optional[List[str]] = None  # pylint: disable=W0613
+    ) -> ChatResult:
         import erniebot  # pylint: disable=C0415
         erniebot.api_type = self.eb_api_type
         erniebot.access_token = self.eb_access_token

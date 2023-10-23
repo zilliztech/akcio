@@ -7,3 +7,4 @@ transformers
 dashscope
 zhipuai
 sentence-transformers
+erniebot
