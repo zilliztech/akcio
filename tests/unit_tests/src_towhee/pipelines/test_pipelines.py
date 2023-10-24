@@ -142,12 +142,12 @@ class TestPipelines(unittest.TestCase):
         from erniebot.response import EBResponse
 
         with patch('erniebot.ChatCompletion.create') as mock_post:
-            mock_res = EBResponse(code=200,
-                                  body={'id': 'as-0000000000', 'object': 'chat.completion', 'created': 11111111,
+            mock_res = EBResponse(rcode=200,
+                                  rbody={'id': 'as-0000000000', 'object': 'chat.completion', 'created': 11111111,
                                         'result': MOCK_ANSWER,
                                         'usage': {'prompt_tokens': 1, 'completion_tokens': 13, 'total_tokens': 14},
                                         'need_clear_history': False, 'is_truncated': False},
-                                  headers={'Connection': 'keep-alive',
+                                  rheaders={'Connection': 'keep-alive',
                                            'Content-Security-Policy': 'frame-ancestors https://*.baidu.com/',
                                            'Content-Type': 'application/json', 'Date': 'Mon, 23 Oct 2023 03:30:53 GMT',
                                            'Server': 'nginx', 'Statement': 'AI-generated',

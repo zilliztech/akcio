@@ -7,4 +7,4 @@ transformers
 dashscope
 zhipuai
 sentence-transformers
-erniebot
+erniebot==0.4.0
