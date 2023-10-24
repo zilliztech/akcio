@@ -72,7 +72,7 @@ USE_SCALAR = True if os.getenv('USE_SCALAR', 'False').lower() == 'true' else Fal
 # Vector db configs
 VECTORDB_CONFIG = {
     'connection_args': {
-        'uri': os.getenv('MILVUS_URI', 'https://localhost:19530'),
+        'uri': os.getenv('MILVUS_URI', 'http://localhost:19530'),
         'user': os.getenv('MILVUS_USER', ''),
         'password': os.getenv('MILVUS_PASSWORD', ''),
         'secure': True if os.getenv('MILVUS_SECURE', 'False').lower() == 'true' else False
