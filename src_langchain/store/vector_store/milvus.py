@@ -1,7 +1,8 @@
 import os
 import sys
 import logging
-from typing import Optional, Any, Tuple, List, Dict
+from typing import Optional, Any, Tuple, List, Dict, Union
+from uuid import uuid4
 
 from langchain.vectorstores import Milvus
 from langchain.embeddings.base import Embeddings
@@ -14,7 +15,7 @@ from config import VECTORDB_CONFIG  # pylint: disable=C0413
 
 logger = logging.getLogger('vector_store')
 
-CONNECTION_ARGS = VECTORDB_CONFIG.get('connection_args', {'host': 'localhost', 'port': 19530})
+CONNECTION_ARGS = VECTORDB_CONFIG.get('connection_args', {'uri': 'http://localhost:19530'})
 TOP_K = VECTORDB_CONFIG.get('top_k', 3)
 INDEX_PARAMS = VECTORDB_CONFIG.get('index_params', None)
 SEARCH_PARAMS = VECTORDB_CONFIG.get('search_params', None)
@@ -26,7 +27,12 @@ class VectorStore(Milvus):
     '''
 
     def __init__(self, table_name: str, embedding_func: Embeddings = None, connection_args: dict = CONNECTION_ARGS):
-        '''Initialize vector db'''
+        '''Initialize vector db
+
+        connection_args:
+            uri: milvus or zilliz uri
+            token: zilliz token
+        '''
         # assert isinstance(
         #     embedding_func, Embeddings), 'Invalid embedding function. Only accept langchain.embeddings.'
         self.embedding_func = embedding_func
@@ -39,6 +45,61 @@ class VectorStore(Milvus):
             index_params=INDEX_PARAMS,
             search_params=SEARCH_PARAMS
         )
+
+    def _create_connection_alias(self, connection_args: dict) -> str:
+        """Create the connection to the Milvus server."""
+        from pymilvus import MilvusException, connections  # pylint: disable = C0415
+
+        # Grab the connection arguments that are used for checking existing connection
+        host: str = connection_args.get('host', None)
+        port: Union[str, int] = connection_args.get('port', None)
+        uri: str = connection_args.get('uri', None)
+        user = connection_args.get('user', None)
+        password = connection_args.get('password', None)
+        token = connection_args.get('token', None)
+
+
+        _connection_args = {}  # pylint: disable = C0103
+        # Order of use is uri > host/port
+        if uri is not None:
+            _connection_args['uri'] = uri
+            given_address = uri.split('://')[1]
+        elif host is not None and port is not None:
+            _connection_args['host'] = host
+            _connection_args['port'] = port
+            given_address = f'{host}:{port}'
+        else:
+            logger.debug('Missing standard address type for reuse attempt')
+            given_address = None
+
+        # Order of use is token > user/password
+        if token is not None:
+            _connection_args['token'] = token
+            _connection_args['secure'] = True
+        elif user is not None and password is not None:
+            _connection_args['user'] = user
+            _connection_args['password'] = password
+            _connection_args['secure'] = True
+        else:
+            _connection_args['secure'] = False
+
+        # If a valid address was given, then check if a connection exists
+        if given_address is not None:
+            for con in connections.list_connections():
+                addr = connections.get_connection_addr(con[0])
+                if addr == given_address:
+                    logger.debug('Using previous connection: %s', con[0])
+                    return con[0]
+
+        # Generate a new connection if one doesn't exist
+        alias = uuid4().hex
+        try:
+            connections.connect(alias=alias, **_connection_args)
+            logger.debug('Created new connection using: %s', alias)
+            return alias
+        except MilvusException as e:
+            logger.error('Failed to create new connection using: %s', alias)
+            raise e
 
     def similarity_search_with_score_by_vector(
         self,

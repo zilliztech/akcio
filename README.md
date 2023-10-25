@@ -159,22 +159,21 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
 
         - Vector Store: You need to prepare the service of vector database in advance. For example, you can refer to [Milvus Documents](https://milvus.io/docs) or [Zilliz Cloud](https://zilliz.com/doc/quick_start) to learn about how to start a Milvus service.
         - Scalar Store (Optional): This is optional, only work when `USE_SCALAR` is true in [configuration](config.py). If this is enabled (i.e. USE_SCALAR=True), the default scalar store will use [Elastic](https://www.elastic.co/). In this case, you need to prepare the Elasticsearch service in advance.
-        - Memory Store: You need to prepare the database for memory storage as well. By default, LangChain mode supports [Postgresql](https://www.postgresql.org/) and Towhee mode allows interaction with any database supported by [SQLAlchemy 2.0](https://docs.sqlalchemy.org/en/20/dialects/).
+        - Memory Store: You need to prepare the database for memory storage as well. By default, both LangChain and Towhee mode allow interaction with any database supported by [SQLAlchemy 2.0](https://docs.sqlalchemy.org/en/20/dialects/).
 
         The system will use default store configs.
         To set up your special connections for each database, you can also export environment variables instead of modifying the configuration file.
 
-        For the Vector Store, set **MILVUS_URI**:
+        For the Vector Store, set **ZILLIZ_URI**:
         ```shell
-        $ export MILVUS_URI=https://localhost:19530
+        $ export ZILLIZ_URI=your_zilliz_cloud_endpoint
+        $ export ZILLIZ_TOKEN=your_zilliz_cloud_api_key  # skip this if using Milvus instance
         ```
 
         For the Memory Store, set **SQL_URI**:
         ```shell
         $ export SQL_URI={database_type}://{user}:{password}@{host}/{database_name}
-        ```
-        > LangChain mode only supports [Postgresql](https://www.postgresql.org/) as database type.
- 
+        ``` 
 
         <details>
         <summary>By default, scalar store (elastic) is disabled.

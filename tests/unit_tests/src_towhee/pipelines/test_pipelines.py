@@ -25,11 +25,10 @@ TEXTENCODER_CONFIG = {
 }
 
 VECTORDB_CONFIG['connection_args'] = {
-    'uri': f'https://127.0.0.1:{milvus_server.listen_port}',
+    'uri': f'http://127.0.0.1:{milvus_server.listen_port}',
     # 'uri': 'https://localhost:19530',
     'user': None,
     'password': None,
-    'secure': False
 }
 
 RERANK_CONFIG['rerank'] = False

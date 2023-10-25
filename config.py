@@ -72,10 +72,8 @@ USE_SCALAR = True if os.getenv('USE_SCALAR', 'False').lower() == 'true' else Fal
 # Vector db configs
 VECTORDB_CONFIG = {
     'connection_args': {
-        'uri': os.getenv('MILVUS_URI', 'http://localhost:19530'),
-        'user': os.getenv('MILVUS_USER', ''),
-        'password': os.getenv('MILVUS_PASSWORD', ''),
-        'secure': True if os.getenv('MILVUS_SECURE', 'False').lower() == 'true' else False
+        'uri': os.getenv('ZILLIZ_URI', 'http://localhost:19530'),
+        'token': os.getenv('ZILLIZ_TOKEN')
         },
     'top_k': 5,
     'threshold': 0,
@@ -104,7 +102,7 @@ if os.getenv('ES_CA_CERTS'):
 
 # Memory db configs
 MEMORYDB_CONFIG = {
-    'connect_str': os.getenv('SQL_URI', 'postgresql://postgres:postgres@localhost/chat_history')
+    'connect_str': os.getenv('SQL_URI', 'sqlite:///./sqlite.db')
 }
 
 

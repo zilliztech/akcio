@@ -43,25 +43,42 @@ class TowheePipelines(BasePipelines):
         self.rerank_config = rerank_config
         self.chunk_size = chunk_size
 
-        self.milvus_uri = vectordb_config['connection_args']['uri']
-        self.milvus_host = self.milvus_uri.split('https://')[1].split(':')[0]
-        self.milvus_port = self.milvus_uri.split('https://')[1].split(':')[1]
-        milvus_user = vectordb_config['connection_args'].get('user')
-        self.milvus_secure = vectordb_config['connection_args'].get('secure', False)
-        self.milvus_user = None if milvus_user == '' else milvus_user
-        milvus_password = vectordb_config['connection_args'].get('password')
-        self.milvus_password = None if milvus_password == '' else milvus_password
         self.milvus_topk = vectordb_config.get('top_k', 5)
         self.milvus_threshold = vectordb_config.get('threshold', 0)
         self.milvus_index_params = vectordb_config.get('index_params', {})
 
-        connections.connect(
-            host=self.milvus_host,
-            port=self.milvus_port,
-            user=self.milvus_user,
-            secure=self.milvus_secure,
-            password=self.milvus_password
-        )
+        self.connection_args = vectordb_config['connection_args']
+        for k, v in self.connection_args.copy().items():
+            if v is None:
+                del self.connection_args[k]
+            if isinstance(v, str) and len(v) == 0:
+                del self.connection_args[k]
+
+        if 'uri' in self.connection_args:
+            self.milvus_uri = self.connection_args['uri']
+            self.milvus_host = self.connection_args.pop('host', None)
+            self.milvus_port = self.connection_args.pop('port', None)
+        elif 'host' in self.connection_args and 'port' in self.connection_args:
+            self.milvus_uri = None
+            self.milvus_host = self.connection_args.get('host')
+            self.milvus_port = self.connection_args.get('port')
+        else:
+            raise AttributeError('Invalid connection args for milvus.')
+
+        if 'token' in self.connection_args:
+            self.milvus_token = self.connection_args.get('token', None)
+            self.milvus_user = self.connection_args.pop('user', None)
+            self.milvus_password = self.connection_args.pop('password', None)
+        else:
+            self.milvus_token = None
+            self.milvus_user = self.connection_args.get('user')
+            self.milvus_password = self.connection_args.get('password')
+
+        if self.milvus_token or self.milvus_user:
+            self.connection_args['secure'] = True
+            self.milvus_secure = True
+
+        connections.connect(**self.connection_args)
 
         if self.use_scalar:
             from elasticsearch import Elasticsearch  # pylint: disable=C0415
@@ -98,6 +115,8 @@ class TowheePipelines(BasePipelines):
 
 
         # Configure vector store (Milvus/Zilliz)
+        search_config.milvus_uri = self.milvus_uri
+        search_config.milvus_token = self.milvus_token
         search_config.milvus_host = self.milvus_host
         search_config.milvus_port = self.milvus_port
         search_config.milvus_user = self.milvus_user
@@ -130,6 +149,8 @@ class TowheePipelines(BasePipelines):
         insert_config.embedding_device = self.textencoder_config['device']
 
         # Configure vector store (Milvus/Zilliz)
+        insert_config.milvus_uri = self.milvus_uri
+        insert_config.milvus_token = self.milvus_token
         insert_config.milvus_host = self.milvus_host
         insert_config.milvus_port = self.milvus_port
         insert_config.milvus_user = self.milvus_user
