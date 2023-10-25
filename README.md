@@ -62,7 +62,7 @@ It also supports different integrations of LLM service and databases:
 | **Scalar Store (Optional)** | Elastic  | ✓      | ✓     |
 | **Memory Store**        | Postgresql   | ✓      | ✓     |
 |                         | MySQL and MariaDB     | ✓     |       |
-|                         | SQLite       | ✓      |       |
+|                         | SQLite       | ✓      | ✓     |
 |                         | Oracle       | ✓      |       |
 |                         | Microsoft SQL Server  | ✓     |       |
 | **Rerank**              | MS MARCO Cross-Encoders | ✓ | |
@@ -149,7 +149,7 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
     - Embedding
 
         By default, the embedding module uses methods from [Sentence Transformers](https://www.sbert.net/) to convert text inputs to vectors. Here are some information about the default embedding method:
-        - model: [multi-qa-mpnet-base-cos-v1](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-cos-v1)(420MB)
+        - model: [BAAI/bge-base-en](https://huggingface.co/BAAI/bge-base-en)
         - dim: 768
         - normalization: True
 
@@ -159,7 +159,7 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
 
         - Vector Store: You need to prepare the service of vector database in advance. For example, you can refer to [Milvus Documents](https://milvus.io/docs) or [Zilliz Cloud](https://zilliz.com/doc/quick_start) to learn about how to start a Milvus service.
         - Scalar Store (Optional): This is optional, only work when `USE_SCALAR` is true in [configuration](config.py). If this is enabled (i.e. USE_SCALAR=True), the default scalar store will use [Elastic](https://www.elastic.co/). In this case, you need to prepare the Elasticsearch service in advance.
-        - Memory Store: You need to prepare the database for memory storage as well. By default, both LangChain and Towhee mode allow interaction with any database supported by [SQLAlchemy 2.0](https://docs.sqlalchemy.org/en/20/dialects/).
+        - Memory Store: By default, both LangChain and Towhee mode allow interaction with any database supported by [SQLAlchemy 2.0](https://docs.sqlalchemy.org/en/20/dialects/).
 
         The system will use default store configs.
         To set up your special connections for each database, you can also export environment variables instead of modifying the configuration file.
