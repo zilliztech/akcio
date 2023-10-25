@@ -44,9 +44,10 @@ def clear_memory(project, session):
 
 def add_project(project, data_url: str = None, data_file: object = None):
     if data_file:
-        return insert(data_src=data_file.name, project=project, source_type='file')
+        num_chunks, _ = insert(data_src=data_file.name, project=project, source_type='file')
     if data_url:
-        return insert(data_src=data_url, project=project, source_type='url')
+        num_chunks, _ = insert(data_src=data_url, project=project, source_type='url')
+    return num_chunks
 
 
 def check_project(project):
