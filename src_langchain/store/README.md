@@ -23,7 +23,7 @@ The default module also works with [Zilliz Cloud](https://zilliz.com) by setting
 # Vector db configs
 VECTORDB_CONFIG = {
     'connection_args': {
-        'uri': os.getenv('MILVUS_URI', 'your_endpoint'),
+        'uri': os.getenv('ZILLIZ_URI', 'your_endpoint'),
         'user': os.getenv('MILVUS_USER', 'user_name'),
         'password': os.getenv('MILVUS_PASSWORD', 'password_goes_here'),
         'secure': True

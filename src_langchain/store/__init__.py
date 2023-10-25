@@ -3,7 +3,7 @@ import sys
 from typing import Optional, List
 
 from .vector_store.milvus import VectorStore, Embeddings
-from .memory_store.pg import MemoryStore
+from .memory_store.sql import MemoryStore
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
