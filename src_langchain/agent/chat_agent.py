@@ -1,11 +1,11 @@
 from typing import Any, List, Optional, Sequence
-from pydantic import Field
 
-from langchain.agents.conversational_chat.prompt import PREFIX, SUFFIX
+from pydantic import Field
+from langchain.schema.language_model import BaseLanguageModel
 from langchain.callbacks.base import BaseCallbackManager
 from langchain.agents import ConversationalChatAgent, AgentOutputParser, Agent
 from langchain.prompts.base import BasePromptTemplate
-from langchain.schema import BaseOutputParser, BaseLanguageModel
+from langchain.schema import BaseOutputParser
 from langchain.tools.base import BaseTool
 
 from .output_parser import OutputParser

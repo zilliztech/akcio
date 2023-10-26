@@ -3,6 +3,7 @@ import argparse
 import uuid
 
 import uvicorn
+from functools import partial
 from fastapi import FastAPI, UploadFile
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import PlainTextResponse
@@ -17,6 +18,9 @@ parser = argparse.ArgumentParser(description='Start service with different modes
 parser.add_argument('--langchain', action='store_true')
 parser.add_argument('--towhee', action='store_true')
 parser.add_argument('--moniter', action='store_true')
+parser.add_argument('--agent', action='store_true',
+                    help='The default is False, which only works when `--langchain` is enabled.'
+                         ' It means using the agent in langchain to dynamically select tools.')
 parser.add_argument('--max_observation', default=1000)
 parser.add_argument('--name', default=str(uuid.uuid4()))
 args = parser.parse_args()
@@ -29,6 +33,7 @@ USE_LANGCHAIN = args.langchain
 USE_TOWHEE = args.towhee
 MAX_OBSERVATION = args.max_observation
 ENABLE_MONITER = args.moniter
+ENABLE_AGENT = args.agent
 NAME = args.name
 
 assert (USE_LANGCHAIN and not USE_TOWHEE ) or (USE_TOWHEE and not USE_LANGCHAIN), \
@@ -36,6 +41,7 @@ assert (USE_LANGCHAIN and not USE_TOWHEE ) or (USE_TOWHEE and not USE_LANGCHAIN)
 
 if USE_LANGCHAIN:
     from src_langchain.operations import chat, insert, drop, check, get_history, clear_history, count  # pylint: disable=C0413
+    chat = partial(chat, enable_agent=ENABLE_AGENT)
 if USE_TOWHEE:
     from src_towhee.operations import chat, insert, drop, check, get_history, clear_history, count  # pylint: disable=C0413
 if ENABLE_MONITER:
