@@ -42,7 +42,7 @@ class DataParser:
             token_count += len(self.enc.encode(doc))
         return docs, token_count
 
-    def from_files(self, files: list, encoding: Optional[str] = None) -> List[Document]:
+    def from_files(self, files: list, encoding: Optional[str] = 'utf-8') -> List[Document]:
         '''Load documents from path or file-like object, return a list of unsplit LangChain Documents'''
         docs = []
         for file in files:
