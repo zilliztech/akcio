@@ -138,11 +138,11 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
             $ export LLM_OPTION=llama_2
             ```
 
-        - For example, to use **Ernie** instead of OpenAI, you need to change the option and set up Ernie API key & secret key:
+        - For example, to use **Ernie** instead of OpenAI, you need to change the option and set up [ERNIE Bot SDK token](https://github.com/PaddlePaddle/ERNIE-Bot-SDK/tree/develop) :
             ```shell
             $ export LLM_OPTION=ernie
-            $ export ERNIE_API_KEY=your_ernie_api_key
-            $ export ERNIE_SECRET_KEY=your_ernie_secret_key
+            $ export EB_API_TYPE=your_api_type
+            $ export EB_ACCESS_TOKEN=your_ernie_access_token
             ```
         </details>
         
