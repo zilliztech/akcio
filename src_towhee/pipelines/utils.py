@@ -7,7 +7,8 @@ def get_llm_op(config):
     if config.llm_src.lower() == 'dolly':
         return ops.LLM.Dolly(model_name=config.dolly_model, **config.llm_kwargs)
     if config.llm_src.lower() == 'ernie':
-        return ops.LLM.Ernie(api_key=config.ernie_api_key, secret_key=config.ernie_secret_key, **config.llm_kwargs)
+        return ops.LLM.Ernie(model_name=config.ernie_model, eb_api_type=config.eb_api_type,
+                             eb_access_token=config.eb_access_token, **config.llm_kwargs)
     if config.llm_src.lower() == 'minimax':
         return ops.LLM.MiniMax(model=config.minimax_model, api_key=config.minimax_api_key, group_id=config.minimax_group_id, **config.llm_kwargs)
     if config.llm_src.lower() == 'dashscope':
