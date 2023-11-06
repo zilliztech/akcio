@@ -209,7 +209,7 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
 
 4. Access via browser
     
-    You can open url https://localhost:8900/docs in browser to access the web service.
+    You can open url http://localhost:8900/docs in browser to access the web service.
 
     <p align="center" width="100%">
         <img width="80%" src="./pics/fastapi.png">
