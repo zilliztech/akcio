@@ -6,7 +6,9 @@ LLM is the key component to ensure the functionality of chatbot. Besides providi
 
 The chatbot uses `ChatLLM` module to generate responses as the final answer, which will be returned to the user end. In order to adapt the LangChain agent, this must be a LangChain `BaseChatModel`.
 
-By default, it uses `ChatOpenAI` from LangChain, which calls the chat service of OpenAI.
+By default, it uses `ChatLiteLLM` from LangChain, which calls the chat service of OpenAI (and Can support 50+ LLMs including Anthropic, Cohere, Google Palm, Replicate, Llama2 )
+See ChatLiteLLM usage https://python.langchain.com/docs/integrations/chat/litellm
+
 Refer to [LangChain Models](https://python.langchain.com/en/latest/modules/models.html) for more LLM options.
 
 ### Configuration

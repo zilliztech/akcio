@@ -2,7 +2,7 @@ import os
 import sys
 from typing import Optional
 
-from langchain.chat_models import ChatOpenAI
+from langchain.chat_models import ChatOpenAI, ChatLiteLLM
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
@@ -12,7 +12,7 @@ CHAT_CONFIG = CHAT_CONFIG['openai']
 llm_kwargs = CHAT_CONFIG.get('llm_kwargs', {})
 
 
-class ChatLLM(ChatOpenAI):
+class ChatLLM(ChatLiteLLM):
     '''Chat with LLM given context. Must be a LangChain BaseLanguageModel to adapt agent.'''
     model_name: str = CHAT_CONFIG.get('openai_model', 'gpt-3.5-turbo')
     openai_api_key: Optional[str] = CHAT_CONFIG.get('openai_api_key', None)
