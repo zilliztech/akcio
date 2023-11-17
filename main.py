@@ -40,10 +40,10 @@ assert (USE_LANGCHAIN and not USE_TOWHEE ) or (USE_TOWHEE and not USE_LANGCHAIN)
     'The service should start with either "--langchain" or "--towhee".'
 
 if USE_LANGCHAIN:
-    from src_langchain.operations import chat, insert, drop, check, get_history, clear_history, count  # pylint: disable=C0413
+    from src.langchain.operations import chat, insert, drop, check, get_history, clear_history, count  # pylint: disable=C0413
     chat = partial(chat, enable_agent=ENABLE_AGENT)
 if USE_TOWHEE:
-    from src_towhee.operations import chat, insert, drop, check, get_history, clear_history, count  # pylint: disable=C0413
+    from src.towhee.operations import chat, insert, drop, check, get_history, clear_history, count  # pylint: disable=C0413
 if ENABLE_MONITER:
     from moniter import enable_moniter  # pylint: disable=C0413
     from prometheus_client import generate_latest, REGISTRY  # pylint: disable=C0413

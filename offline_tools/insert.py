@@ -7,7 +7,7 @@ import time
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from src_langchain.embedding import TextEncoder  # pylint: disable=C0413
+from src.langchain.embedding import TextEncoder  # pylint: disable=C0413
 from offline_tools.generator_questions import get_output_csv  # pylint: disable=C0413
 from offline_tools.utils.stackoverflow_json2csv import stackoverflow_json2csv  # pylint: disable=C0413
 from offline_tools.utils.load_npy import langchain_load  # pylint: disable=C0413

@@ -71,34 +71,34 @@ It also supports different integrations of LLM service and databases:
 
 The option using Towhee simplifies the process of building a system by providing [pre-defined pipelines](https://towhee.io/tasks/pipeline). These built-in pipelines require less coding and make system building much easier. If you require customization, you can either simply modify configuration or create your own pipeline with rich options of [Towhee Operators](https://towhee.io/tasks/operator).
 
-- [Pipelines](./src_towhee/pipelines)
+- [Pipelines](./src.towhee/pipelines)
     - **Insert:**
         The insert pipeline builds a knowledge base by saving documents and corresponding data in database(s).
     - **Search:**
         The search pipeline enables the question-answering capability powered by information retrieval (semantic search and optional keyword match) and LLM service.
     - **Prompt:** a prompt operator prepares messages for LLM by assembling system message, chat history, and the user's query processed by template.
 
-- [Memory](./src_towhee/memory):
-    The memory storage stores chat history to support context in conversation. (available: [most SQL](./src_towhee/memory/sql.py))
+- [Memory](./src.towhee/memory):
+    The memory storage stores chat history to support context in conversation. (available: [most SQL](./src.towhee/memory/sql.py))
 
 
 ### Option 2: LangChain
 
 The option using LangChain employs the use of [Agent](https://python.langchain.com/docs/modules/agents) in order to enable LLM to utilize specific tools, resulting in a greater demand for LLM's ability to comprehend tasks and make informed decisions.
 
-- [Agent](./src_langchain/agent)
+- [Agent](./src.langchain/agent)
     - **ChatAgent:** agent ensembles all modules together to build up qa system.
     - Other agents (todo)
-- [LLM](./src_langchain/llm)
+- [LLM](./src.langchain/llm)
     - **ChatLLM:** large language model or service to generate answers.
-- [Embedding](./src_langchain/embedding/)
+- [Embedding](./src.langchain/embedding/)
     - **TextEncoder:** encoder converts each text input to a vector.
     - Other encoders (todo)
-- [Store](./src_langchain/store)
+- [Store](./src.langchain/store)
     - **VectorStore:** vector database stores document chunks in embeddings, and performs document retrieval via semantic search.
-    - **ScalarStore:** optional, database stores metadata for each document chunk, which supports additional information retrieval. (available: [Elastic](src_langchain/store/scalar_store/es.py))
+    - **ScalarStore:** optional, database stores metadata for each document chunk, which supports additional information retrieval. (available: [Elastic](src.langchain/store/scalar_store/es.py))
     - **MemoryStore:** memory storage stores chat history to support context in conversation.
-- [DataLoader](./src_langchain/data_loader/)
+- [DataLoader](./src.langchain/data_loader/)
     - **DataParser:** tool loads data from given source and then splits documents into processed doc chunks.
 
 ## Deployment
@@ -228,7 +228,7 @@ The option using LangChain employs the use of [Agent](https://python.langchain.c
 
 ## Load data
 
-The `insert` function in [operations](./src_langchain/operations.py) loads project data from url(s) or file(s).
+The `insert` function in [operations](./src.langchain/operations.py) loads project data from url(s) or file(s).
 
 There are 2 options to load project data:
 
