@@ -65,8 +65,8 @@ If you're interested in contributing to the `zilliztech/akcio` codebase, follow 
 4. During development, you might want to run `pylint`. You can do so with one of the commands below:
     ```bash
     $ pip install pylint==2.10.2
-    $ pylint --rcfile=.pylintrc --output-format=colorized src_towhee
-    $ pylint --rcfile=.pylintrc --output-format=colorized src_langchain
+    $ pylint --rcfile=.pylintrc --output-format=colorized src.towhee
+    $ pylint --rcfile=.pylintrc --output-format=colorized src.langchain
     $ pylint --rcfile=.pylintrc --output-format=colorized offline_tools
     ```
 

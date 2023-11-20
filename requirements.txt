@@ -4,11 +4,12 @@ pexpect
 pdf2image
 SQLAlchemy>=2.0.15
 psycopg2-binary
-openai
+openai==0.28
 gradio>=3.30.0
 fastapi
 uvicorn
 towhee>=1.1.0
+pydantic<2.0
 pymilvus
 elasticsearch>=8.0.0
 prometheus-client

@@ -115,7 +115,7 @@ else:
     raise NotImplementedError
 
 RERANK_CONFIG = {
-    'rerank': True, # or False
+    'rerank': False, # or False
     'rerank_model': rerank_model,
     'threshold': 0.0,
     'rerank_device': -1  # -1 will use cpu
@@ -126,7 +126,7 @@ DATAPARSER_CONFIG = {
     'chunk_size': 300
 }
 
-QUESTIONGENERATOR_CONFIG = {
-    'model_name': 'gpt-3.5-turbo',
-    'temperature': 0,
-}
+# QUESTIONGENERATOR_CONFIG = {
+#     'model_name': 'gpt-3.5-turbo',
+#     'temperature': 0,
+# }
